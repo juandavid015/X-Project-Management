@@ -1,44 +1,36 @@
-import { gql, useQuery } from "@apollo/client"
+
 import { UserPreview } from "./UserPreview";
+import { User } from "@auth0/auth0-react";
 
-export const GET_PROJECT_MEMBERS = gql`
-    query GetProject($projectId: String!) {
-        getProject(projectId: $projectId) {
-            members {
-                email,
-                name,
-                image
-            }
-        }
-    }
-`
-export const Members = () => {
-    const {loading, error, data} = useQuery(GET_PROJECT_MEMBERS, {
-        variables: {projectId: '647923fd28fe2dee258fd9bc'}
-    });
+interface MembersProps {
+    members?: User[],
+    [key: string] : any
+    height: string
+    width: string
+}
 
-    if (loading) return (<p>Loading...</p>)
-    if (error)  return (<p>Error</p>)
+
+export const Members = ({members, height, width}: MembersProps) => {
+   
+    if(!members?.length ) return null
     
-    let members = data?.getProject?.members;
-    console.log(members)
 
     return(
-        <div className="flex border-r border-white-gray">
+        <div className={` flex border-r border-white-gray w-fit ${height ? height : 'h-[30px]'}`} >
 
         {
             members?.map((user:any, index:any) => {
                 if(index <= 2) {
                     return (
                         <UserPreview expanded={false} name={user.name} image={user.image} key={index + 'mem'} 
-                        className={`rounded-full h-[30px] w-[30px] overflow-hidden 
+                        className={`rounded-full overflow-hidden ${width} ${height}
                         ${index === 0 ? '': '-ml-[12.25%]'}
                         `}/>
                     )
                 } else if(index === members.length - 1) {
                     return (
                         <div key={index + 'mem'}
-                        className="flex rounded-full bg-white-gray h-[30px] w-[30px]">
+                        className={`flex rounded-full bg-white-gray ${width} ${height}`}>
                             <span className="m-auto">{`+${members.length - 3}`}</span>
                         </div>
                     )

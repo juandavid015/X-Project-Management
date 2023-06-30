@@ -117,7 +117,7 @@ export const RemoveCircleIcon = ({className}: ClassName) => {
 }
 export const RemoveIcon = ({className}: ClassName) => {
     return (
-        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" id="x"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"></path></svg>
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" id="x"><path fillRule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"></path></svg>
     )
 }
 
@@ -137,5 +137,51 @@ export const MoreOptionsIcon = ({className}: ClassName) => {
 export const ColorPaletteIcon = ({className}: ClassName) => {
     return (
         <svg className={className} xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 32 32" viewBox="0 0 32 32" id="color-palette"><path fill="#fddd56" d="M27,5c-2.9-2.9-6.8-4.5-11-4.5v7c2.3,0,4.4,0.9,6,2.5s2.5,3.8,2.5,6h7C31.5,11.9,29.9,7.9,27,5z"></path><path fill="#70cadb" d="M5,5c-2.9,2.9-4.5,6.8-4.5,11h7c0-2.3,0.9-4.4,2.5-6s3.8-2.5,6-2.5v-7C11.9,0.5,7.9,2.1,5,5z"></path><path fill="#b9d34c" d="M10,22c-1.6-1.6-2.5-3.8-2.5-6h-7c0,4.1,1.6,8.1,4.5,11s6.8,4.5,11,4.5v-7C13.7,24.5,11.6,23.6,10,22z"></path><path fill="#ee654b" d="M24.5,16c0,2.3-0.9,4.4-2.5,6s-3.8,2.5-6,2.5v7c4.1,0,8.1-1.6,11-4.5s4.5-6.8,4.5-11H24.5z"></path><path fill="#9e61a4" d="M16,0.5v7c-2.3,0-4.4,0.9-6,2.5L5,5C7.9,2.1,11.9,0.5,16,0.5z"></path><path fill="#70cadb" d="M10,10c-1.6,1.6-2.5,3.8-2.5,6h-7c0-4.1,1.6-8.1,4.5-11L10,10z"></path><path fill="#55bb8c" d="M10,22l-5,5c-2.9-2.9-4.5-6.8-4.5-11h7C7.5,18.3,8.4,20.4,10,22z"></path><path fill="#b9d34c" d="M16,24.5v7c-4.1,0-8.1-1.6-11-4.5l4.9-5C11.6,23.6,13.7,24.5,16,24.5z"></path><path fill="#ed4569" d="M27,27c-2.9,2.9-6.8,4.5-11,4.5v-7c2.3,0,4.4-0.9,6-2.5L27,27z"></path><path fill="#ee654b" d="M31.5,16c0,4.1-1.6,8.1-4.5,11l-5-5c1.6-1.6,2.5-3.8,2.5-6H31.5z"></path><path fill="#f8a839" d="M31.5,16h-7c0-2.3-0.9-4.4-2.5-6l5-5C29.9,7.9,31.5,11.9,31.5,16z"></path><path fill="#fddd56" d="M27,5l-5,5c-1.6-1.6-3.8-2.5-6-2.5v-7C20.1,0.5,24.1,2.1,27,5z"></path></svg>
+    )
+}
+
+export const PriorityIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  ><path fillRule="evenodd" d="M11.55 5.007v7c0 .552-.47 1-1.05 1-.58 0-1.05-.448-1.05-1v-7c0-.552.47-1 1.05-1 .58 0 1.05.448 1.05 1zm0 10c0 .552-.47 1-1.05 1-.58 0-1.05-.448-1.05-1s.47-1 1.05-1c.58 0 1.05.448 1.05 1zM18.9 17c0 .552-.47 1-1.05 1H3.15c-.58 0-1.05-.448-1.05-1V3c0-.552.47-1 1.05-1h14.7c.58 0 1.05.448 1.05 1v14zm0-17H2.1C.94 0 0 .899 0 2.003v16.004C0 19.112.94 20 2.1 20h16.8c1.16 0 2.1-.892 2.1-1.997V2.007C21 .902 19.95 0 18.9 0z"></path></svg>
+    )
+}
+
+export const LowLeftIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="lower-left"><path d="M17,16H9.41l8.3-8.29a1,1,0,1,0-1.42-1.42L8,14.59V7A1,1,0,0,0,6,7V17a1,1,0,0,0,.08.38,1,1,0,0,0,.54.54A1,1,0,0,0,7,18H17a1,1,0,0,0,0-2Z"></path></svg>
+
+    )
+}
+export const EqualIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" baseProfile="tiny" version="1.2" viewBox="0 0 24 24" id="equals"><path d="M18 7H6a2 2 0 0 0 0 4h12a2 2 0 0 0 0-4zm0 7H6a2 2 0 0 0 0 4h12a2 2 0 0 0 0-4z"></path></svg>
+    )
+}
+
+
+export const MessageIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="message"><g data-name="Layer 2"><g data-name="message-square"><circle cx="12" cy="11" r="1"></circle><circle cx="16" cy="11" r="1"></circle><circle cx="8" cy="11" r="1"></circle><path d="M19 3H5a3 3 0 0 0-3 3v15a1 1 0 0 0 .51.87A1 1 0 0 0 3 22a1 1 0 0 0 .51-.14L8 19.14a1 1 0 0 1 .55-.14H19a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zm1 13a1 1 0 0 1-1 1H8.55a3 3 0 0 0-1.55.43l-3 1.8V6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1z"></path></g></g></svg>
+    )
+}
+export const DocumentIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 32 32" id="document"><path d="M4 32h24a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v28a2 2 0 0 0 2 2zM4 2h24v28H4V2zm19 4h-8a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2zm0 6H9a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zm0 6H9a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zm0 6H9a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2z"></path></svg>    )
+}
+export const CheckIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" id="check"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z"></path></svg>
+    )
+}
+
+export const UserIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" id="user"><path  d="M7.763 2A6.77 6.77 0 0 0 1 8.763c0 1.807.703 3.505 1.98 4.782a6.718 6.718 0 0 0 4.783 1.981 6.77 6.77 0 0 0 6.763-6.763A6.77 6.77 0 0 0 7.763 2ZM3.675 13.501a5.094 5.094 0 0 1 3.958-1.989c.024.001.047.007.071.007h.023c.022 0 .042-.006.064-.007a5.087 5.087 0 0 1 3.992 2.046 6.226 6.226 0 0 1-4.02 1.468 6.212 6.212 0 0 1-4.088-1.525zm4.032-2.494c-.025 0-.049.004-.074.005a2.243 2.243 0 0 1-2.167-2.255 2.246 2.246 0 0 1 2.262-2.238 2.246 2.246 0 0 1 2.238 2.262c0 1.212-.97 2.197-2.174 2.232-.028-.001-.056-.006-.085-.006Zm4.447 2.215a5.594 5.594 0 0 0-3.116-2.052 2.749 2.749 0 0 0 1.428-2.412A2.747 2.747 0 0 0 7.704 6.02a2.747 2.747 0 0 0-2.738 2.762 2.73 2.73 0 0 0 1.422 2.386 5.602 5.602 0 0 0-3.081 1.995 6.22 6.22 0 0 1-1.806-4.398 6.27 6.27 0 0 1 6.263-6.263 6.27 6.27 0 0 1 6.263 6.263 6.247 6.247 0 0 1-1.873 4.457z"></path></svg>    )
+}
+
+
+export const LargeArrow = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" id="arrow"><path d="M1 26h43.586l-6.293 6.293 1.414 1.414L48.414 25l-8.707-8.707-1.414 1.414L44.586 24H1z"></path></svg>
     )
 }
