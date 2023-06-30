@@ -23,7 +23,12 @@ const typeDefs = `#graphql
     MODERATE
     HIGH
   }
-
+  input UserInput {
+    id: String!,
+    email: String!,
+    name: String!,
+    image: String
+  }
   type User {
     id: String!,
     email: String!,
@@ -33,6 +38,7 @@ const typeDefs = `#graphql
 
   type Project {
     id: String!,
+    userIds: [String]
     title: String!,
     tasks: [Task],
     members: [User],
@@ -55,7 +61,7 @@ const typeDefs = `#graphql
     priority: Priority,
     timeline: String
     members: [User]
-
+    userIds: [String]
   }
 
   # The "Query" type is special: it lists all of the available queries that
@@ -87,18 +93,20 @@ const typeDefs = `#graphql
       labels: [LabelInput],
       priority: Priority,
       timeline: String,
-      projectId: String
+      projectId: String,
+      userIds: [String]
     ): Task
 
     updateTask (
-      id: String
+      id: String!,
+      userIds: [String],
       title: String,
       description: String,
       status: AllowedStatus,
       labels: [LabelInput],
       priority: Priority,
       timeline: String,
-      projectId: String
+      projectId: String,
     ): Task
 
     removeTask (
@@ -106,9 +114,14 @@ const typeDefs = `#graphql
     ): Task
 
 
-    addMemberToProject(
-      userId: String
-      projectId: String
+    updateProject(
+      userIds: [String]!
+      projectId: String!
+    ): Project
+
+    assignMemberToProject(
+      projectId: String!
+      userEmail: String!
     ): Project
 
     assignMemberToTask(
@@ -133,9 +146,14 @@ const resolvers = {
         // throw new GraphQLError('Invalid user credentials', {
         //   extensions: {code: 'UNAUTHENTICATED', }
         // })
-         return await prisma.task.findMany({where: {
-        projectId: args.projectId
-      }})
+         return await prisma.task.findMany({
+          where: {
+            projectId: args.projectId
+           },
+           include: {
+            members: true
+           }
+          })
       },
       getProject: async (root: any, args: any, context) => {
         return await prisma.project.findUnique({
@@ -153,28 +171,61 @@ const resolvers = {
         createUser: async (root: any, args: createUser) => await prisma.user.create({data: {email: args.email, name: args.name, image: args.image}}),
         createProject: async(root: any, args: any) => await prisma.project.create({data: {...args}}),
         createTask: async (root: any, args: any) => {
-        let { projectId, id, ...taskData } = args
+        let { projectId, userIds, id, ...taskData } = args
 
      
           return await prisma.task.create({data: {
             ...taskData,
             project: {
               connect: {id: projectId}
-            }
-          }, })
+            },
+            members: {
+              connect: userIds.map((id: number) => ({id}))
+            },
+            
+          }, 
+          include: {
+            members: true
+          }
+        })
 
         },
         updateTask: async (root: any, args: any) => {
-          const {id, ...taskData} = args;
-
-          return await prisma.task.update({
+          const { id, userIds, ...taskData } = args;
+          const data = { ...taskData };
+        
+          if (userIds) {
+            const task = await prisma.task.findUnique({
+              where: {
+                id: id,
+              },
+              include: {
+                members: true,
+              },
+            });
+        
+            const existingMembers = task.members.map((member) => member.id);
+        
+            const membersToAdd = userIds.filter((userId: string) => !existingMembers.includes(userId));
+            const membersToRemove = existingMembers.filter((memberId) => !userIds.includes(memberId));
+        
+            data.members = {
+              connect: membersToAdd.map((userId: string) => ({ id: userId })),
+              disconnect: membersToRemove.map((userId) => ({ id: userId })),
+            };
+          }
+        
+          const updatedTask = await prisma.task.update({
             where: {
-              id: id
-            }, 
-            data: {
-              ...taskData
-            }
-          })
+              id: id,
+            },
+            data: data,
+            include: {
+              members: true,
+            },
+          });
+        
+          return updatedTask;
         },
 
         removeTask: async(root: any, args: any) => {
@@ -188,26 +239,76 @@ const resolvers = {
           return deletedTask;
         },
  
-        addMemberToProject: async (root: any, args: any) => {
-          let { projectId, userId, ...projectData} = args
-  
-          let memberAdded = await prisma.project.update({
-            where: {
-              id: projectId
-            },
-            data: {
-              ...projectData,
-              members: {
-                connect: {id: userId}
+        updateProject: async (root: any, args: any) => {
+          let { projectId, userIds, ...projectData} = args
+
+          if(userIds){
+            const project = await prisma.project.findUnique({
+              where: {
+                id: projectId
+              }, 
+              include: {
+                members: true
               }
+            });
+
+            const existingMembers = project.members.map((member) => member.id);
+        
+            const membersToAdd = userIds.filter((userId: string) => !existingMembers.includes(userId));
+            const membersToRemove = existingMembers.filter((memberId) => !userIds.includes(memberId));
+        
+            projectData.members = {
+              connect: membersToAdd.map((userId: string) => ({ id: userId })),
+              disconnect: membersToRemove.map((userId) => ({ id: userId })),
+          };
+          }
+          
+          
+          const updatedProject = await prisma.project.update({
+            where: {
+              id: projectId,
             },
+            data: projectData,
             include: {
-              members: true
+              members: true,
+            },
+          });
+        
+          return updatedProject;
+        },
+
+        assignMemberToProject: async (root: any, args: any) => {
+
+          let {projectId, userEmail} = args
+          let updatedProject;
+          const userToAssign = await prisma.user.findUnique({
+            where: {
+              email: userEmail
             }
           })
+          if (userToAssign) {
+            updatedProject = await prisma.project.update({
+              where: {
+                id: projectId,
+              },
+              data: {
+                members: {
+                  connect: {email: userEmail}
+                },
+              },
+              
+              include: {
+                members: true,
+              },
+            });
 
-          return memberAdded
+
+          } 
+
+          return updatedProject
+  
         },
+
         assignMemberToTask: async (root: any, args: any) => {
           let {taskId, userId, ...taskData} = args
 
