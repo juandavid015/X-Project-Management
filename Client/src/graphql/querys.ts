@@ -6,11 +6,35 @@ export const GET_PROJECT_TASKS = gql`
             id
             title
             description
+            timeline
+            userIds
             labels {
                 name
                 color
             }
+            members {
+                id
+                email
+                name
+                image
+            }
             status
+            priority
+        }
+    }
+`
+
+export const GET_PROJECT_MEMBERS = gql`
+    query GetProjectMembers($projectId: String!) {
+        getProject(projectId: $projectId) {
+            id
+            userIds
+            members {
+                id
+                email
+                name
+                image
+            }
         }
     }
 `

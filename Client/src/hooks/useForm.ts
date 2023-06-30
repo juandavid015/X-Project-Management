@@ -1,9 +1,17 @@
 import { useState } from 'react';
+import { Task } from '../types/types';
 
 type FormValues = {
     [key: string]: any;
   };
-  
+export type SetFormData<T> = React.Dispatch<React.SetStateAction<T>>
+
+export type HandleInputChange<T> =  (
+  e: React.ChangeEvent<T>,
+  index: number,
+  propertyName: keyof Task
+) => void
+
   export const useForm = <T extends FormValues>(initialState: T) => {
     const [formData, setFormData] = useState<T>(initialState);
   

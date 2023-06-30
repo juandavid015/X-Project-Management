@@ -2,29 +2,38 @@ import { gql } from "@apollo/client";
 
 export const UPDATE_TASK = gql`
     mutation UpdateTask(
-        $id: String!
+        $id: String!,
         $title: String!,
         $description: String, 
         $timeline: String,
         $priority: Priority,
-        $labels: [LabelInput]
+        $labels: [LabelInput],
+        $userIds: [String]
     ) {
         updateTask(
-            id: $id
+            id: $id,
             title: $title,
             description: $description,
             timeline: $timeline,
             priority: $priority,
-            labels: $labels
+            labels: $labels,
+            userIds: $userIds
         ) {
             id,
             title, 
             description,
             timeline,
             priority,
+            userIds,
             labels {
                 name,
                 color
+            },
+            members {
+                id
+                name
+                email
+                image
             }
         }
     }
@@ -37,7 +46,8 @@ export const CREATE_TASK = gql`
         $priority: Priority,
         $labels: [LabelInput],
         $projectId: String!,
-        $status: AllowedStatus
+        $status: AllowedStatus,
+        $userIds: [String]
     ) {
         createTask(
             title: $title,
@@ -47,6 +57,7 @@ export const CREATE_TASK = gql`
             labels: $labels,
             status: $status
             projectId: $projectId,
+            userIds: $userIds
         ) {
             id,
             title, 
@@ -54,9 +65,16 @@ export const CREATE_TASK = gql`
             timeline,
             priority,
             status,
+            userIds,
             labels {
                 name,
                 color
+            },
+            members {
+                id
+                name
+                email
+                image
             }
         }
     }
@@ -69,3 +87,31 @@ export const DELETE_TASK = gql`
         }
     }
 `
+
+export const UPDATE_PROJECT_MEMBER = gql`
+mutation UpdateProject($projectId: String!, $userIds: [String]!) {
+    updateProject(projectId: $projectId, userIds: $userIds) {
+        id,
+        userIds
+        members {
+            id
+            email,
+            name,
+            image
+        }
+    }
+} `
+
+export const ASSIGN_PROJECT_MEMBER = gql`
+mutation AssignProjectMember($projectId: String!, $userEmail: String!) {
+    assignMemberToProject(projectId: $projectId, userEmail: $userEmail) {
+        id,
+        userIds
+        members {
+            id
+            email,
+            name,
+            image
+        }
+    }
+} `
