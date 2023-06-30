@@ -12,7 +12,9 @@ export default {
         "dark-med": "rgba(3, 8, 34, 0.7)",
         "dark-purple-md": "rgba(53, 25, 134, 0.6)",
         "gray": "#CBCBCB",
-        "red-warning": "#D00000"
+        "red-warning": "#D00000",
+        "blue-bright": "#1731c4",
+        "yellow-gold": "#efa32a",
       },
       gridTemplateColumns: {
         'kanban': 'repeat(4, 238px)',

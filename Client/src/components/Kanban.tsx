@@ -1,10 +1,10 @@
 
-import { useQuery} from "@apollo/client";
+import { useApolloClient, useQuery} from "@apollo/client";
 import { KanbanHeader } from "./KanbanHeader";
 import { KanbanCardEditable} from "./KanbanCardEditable";
 import { useState } from "react";
 import { Task } from "../types/types";
-import { GET_PROJECT_TASKS } from "../graphql/querys";
+import { GET_PROJECT_MEMBERS, GET_PROJECT_TASKS } from "../graphql/querys";
 import { KanbanCard } from "./KanbanCard";
 import { AddIcon } from "../assets/icons/Icons";
 
@@ -19,20 +19,29 @@ export const Kanban = () => {
         // onError: error => console.log(error.networkError.result.errors),
     })
 
+    const client = useApolloClient();
+
+    // Manually read the data from the cache
+    let projectMembers = client.readQuery({
+      query: GET_PROJECT_MEMBERS,
+      variables: { projectId: '64776d5011f6af1e77f4e984' },
+    });
+    projectMembers = projectMembers?.getProject?.members;
     const [creatingNewCard, setCreatingNewCard] = useState({
         creating: false,
         creatingOn: '',
         editingOnCard: ''
     });
-
+  
     if (loading) return <p>Loading...</p>;
     if (error) {    
         // Handle other errors
         return <p>Error: {error.message}</p>;
       }
 
-    const tasks = data.getProjectTasks
-    // console.log('tasks', tasks)
+    let tasks = data.getProjectTasks
+    tasks = tasks.filter((task: Task) => task.projectId !== null)
+
     
     return (
         <div className={`grid 
@@ -55,6 +64,7 @@ export const Kanban = () => {
                                         ) :
                                         (
                                             <KanbanCardEditable
+                                            projectMembers={projectMembers}
                                             task={task}
                                             key={index}
                                             status={status}
@@ -69,6 +79,7 @@ export const Kanban = () => {
                             {
                                 creatingNewCard.creating && creatingNewCard.creatingOn === status && (
                                     <KanbanCardEditable
+                                    projectMembers={projectMembers}
                                     key={index}
                                     status={status}
                                     create
