@@ -1,6 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { prisma } from './db.js';
+import { getNextId, prisma } from './db.js';
 import { GraphQLError } from 'graphql';
 import {validateToken} from './utils/validateToken.js';
 // A schema is a collection of type definitions (hence "typeDefs")
@@ -62,6 +62,7 @@ const typeDefs = `#graphql
     timeline: String
     members: [User]
     userIds: [String]
+    indexPosition: Float!
   }
 
   # The "Query" type is special: it lists all of the available queries that
@@ -113,6 +114,14 @@ const typeDefs = `#graphql
       id: String!
     ): Task
 
+    moveTask (
+      actualTaskId: String!
+      previousTaskPosition: Float
+      actualTaskPosition: Float
+      nextTaskPosition: Float
+      newStatus: AllowedStatus
+    ): Task
+
 
     updateProject(
       userIds: [String]!
@@ -152,7 +161,10 @@ const resolvers = {
            },
            include: {
             members: true
-           }
+           },
+           orderBy: [
+            {indexPosition: 'asc'}
+           ]
           })
       },
       getProject: async (root: any, args: any, context) => {
@@ -175,6 +187,7 @@ const resolvers = {
 
      
           return await prisma.task.create({data: {
+            indexPosition: await getNextId(),
             ...taskData,
             project: {
               connect: {id: projectId}
@@ -238,6 +251,82 @@ const resolvers = {
 
           return deletedTask;
         },
+        moveTask: async(root:any, args: any) => {
+          const {previousTaskPosition, nextTaskPosition, actualTaskPosition, actualTaskId, newStatus} = args;
+          let task = await prisma.task.findUnique({where: {id: actualTaskId}})
+          let targetTaskPosition = task.indexPosition;
+
+          let newActualTaskPosition:number;
+  
+          if ((previousTaskPosition && actualTaskPosition && newActualTaskPosition) && targetTaskPosition === previousTaskPosition) {
+            newActualTaskPosition = (actualTaskPosition + (actualTaskPosition + 0.002 ))/ 2
+          } else if ((actualTaskPosition && previousTaskPosition && nextTaskPosition) && targetTaskPosition !== previousTaskPosition) {
+            newActualTaskPosition = (previousTaskPosition + nextTaskPosition) / 2
+          } else if(actualTaskPosition && !nextTaskPosition && !previousTaskPosition) {
+            newActualTaskPosition = actualTaskPosition - 1;
+          } else if (actualTaskPosition && !previousTaskPosition && nextTaskPosition ) {
+            newActualTaskPosition = actualTaskPosition - 1;
+          } else if ((actualTaskPosition && !nextTaskPosition && previousTaskPosition) && targetTaskPosition === previousTaskPosition) {
+            newActualTaskPosition = await getNextId();  
+          } else if ((actualTaskPosition && !nextTaskPosition && previousTaskPosition && targetTaskPosition !== previousTaskPosition)) {
+            newActualTaskPosition = ((previousTaskPosition + 0.003 )+ actualTaskPosition) / 2;
+          } else if (!actualTaskPosition) {
+            newActualTaskPosition = await getNextId();
+          }
+
+          if(newActualTaskPosition === actualTaskPosition) {
+            newActualTaskPosition -= 0.001
+          }
+          const updatedTask = await prisma.task.update({
+            where: { id: actualTaskId },
+            data: { indexPosition: newActualTaskPosition, status: newStatus },
+            include: { members: true }
+          })
+
+          return updatedTask;
+        },
+
+        // moveTask: async(root: any, args: any) => {
+        //   const { actualTaskId, nextTaskId, newStatus } = args
+
+        //   const actualTask = actualTaskId && await prisma.task.findUnique({
+        //     where: { id: actualTaskId}
+        //   })
+        //   const targetTask = nextTaskId && await prisma.task.findUnique({
+        //     where: { id: nextTaskId}
+        //   })
+
+        //   if(actualTask && targetTask) {
+        //     const actualTaskPosition = actualTask.indexPosition;
+
+        //     const updatedTask = await prisma.task.update({
+        //       where: { id: actualTaskId },
+        //       data: { indexPosition: targetTask.indexPosition, status: newStatus },
+        //       include: { members: true }
+        //     })
+
+        //     await prisma.task.update({
+        //       where: { id: nextTaskId },
+        //       data: { indexPosition: actualTaskPosition },
+        //       include: { members: true }
+        //     })
+
+        //     return updatedTask
+
+        //   } else if(actualTask && !targetTask) {
+
+        //     return await prisma.task.update({
+        //       where: { id: actualTaskId},
+        //       data: { status: newStatus},
+        //       include: { members: true }
+        //     })
+        //   } 
+
+        //   return await prisma.task.findUnique({
+        //     where: { id: actualTaskId},
+        //     include: {members: true}
+        //   })
+        // },
  
         updateProject: async (root: any, args: any) => {
           let { projectId, userIds, ...projectData} = args

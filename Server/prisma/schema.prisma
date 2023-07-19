@@ -14,7 +14,10 @@ type Label {
   name String
   color String
 }
-
+model Sequence {
+  id String @id @map("_id")
+   sequence_value Int
+}
 model User {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   email   String   @unique
@@ -44,6 +47,7 @@ model Task {
   projectId String @db.ObjectId
   userIds String[] @db.ObjectId
   members User[] @relation(fields: [userIds], references: [id])
+  indexPosition Float @unique
 }
 
 
