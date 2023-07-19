@@ -115,3 +115,14 @@ mutation AssignProjectMember($projectId: String!, $userEmail: String!) {
         }
     }
 } `
+
+
+export const MOVE_TASK = gql`
+    mutation MoveTask($actualTaskId: String!, $previousTaskPosition: Float, $nextTaskPosition: Float, $actualTaskPosition: Float $newStatus: AllowedStatus) {
+        moveTask(actualTaskId: $actualTaskId, previousTaskPosition: $previousTaskPosition, nextTaskPosition: $nextTaskPosition, actualTaskPosition: $actualTaskPosition, newStatus: $newStatus) {
+            id,
+            status,
+            indexPosition,
+        }
+    }
+`

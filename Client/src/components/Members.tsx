@@ -23,14 +23,14 @@ export const Members = ({members, height, width}: MembersProps) => {
                 if(index <= 2) {
                     return (
                         <UserPreview expanded={false} name={user.name} image={user.image} key={index + 'mem'} 
-                        className={`rounded-full overflow-hidden ${width} ${height}
+                        className={`pointer-events-none rounded-full overflow-hidden ${width} ${height}
                         ${index === 0 ? '': '-ml-[12.25%]'}
                         `}/>
                     )
                 } else if(index === members.length - 1) {
                     return (
                         <div key={index + 'mem'}
-                        className={`flex rounded-full bg-white-gray ${width} ${height}`}>
+                        className={`pointer-events-none flex rounded-full bg-white-gray ${width} ${height}`}>
                             <span className="m-auto">{`+${members.length - 3}`}</span>
                         </div>
                     )

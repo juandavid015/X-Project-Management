@@ -1,9 +1,4 @@
-export enum Status {
-    PENDING = 'PENDING',
-    IN_PROGRESS = 'IN_PROGRESS',
-    REVIEW = 'REVIEW',
-    COMPLETED = 'COMPLETED'
-}
+export type Status = 'PENDING' | 'IN_PROGRESS' | 'REVIEW' | 'COMPLETED';
 
 export type Priority = "HIGH" | "MODERATE" | "LOW" | undefined;
 
@@ -23,12 +18,13 @@ export interface Task {
     title: string,
     description: string,
     labels: Label[]
-    status: string
+    status: Status
     timeline: string,
     priority: Priority,
     projectId?: string,
     members: User[] | [],
-    userIds: String[] | []
+    userIds: String[] | [],
+    indexPosition: number
 }
 
 export interface TaskCreate extends Task {

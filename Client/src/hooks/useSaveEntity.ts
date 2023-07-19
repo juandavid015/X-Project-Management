@@ -34,7 +34,7 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
     const entityName = getEntityName(documentNode)
   // Extract field name to be updated dynamically
      const fieldName = getFieldName(queryDocumentNode)
-    console.log(queryDocumentNode)
+    // console.log(queryDocumentNode)
 
     const saveEntity = async (entityData: EntityData<any>) => {
   
@@ -43,7 +43,7 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
           variables:  entityData,
           update(cache, { data:  createOrUpdateEntity  }) {
             // Manually modify the cache to add the new reference to the entity list
-            console.log('HELLO')
+            // console.log('HELLO')
             cache.modify({
                 
               fields: {
@@ -58,15 +58,12 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
                     fragment: gql`
                       fragment EntityRef on Entity {
                         id
-                        userIds
-                        members
-                        
                       }
                     `,
                   });
-                  console.log('ex', existingProjectEntities)
+                  // console.log('ex', existingProjectEntities)
                   if (Array.isArray(existingProjectEntities)) {
-
+                    // console.log('yep')
                     if (existingProjectEntities.some((entity: StoreObject) => 
                     readField('id', entity) === readField('id', newEntity))) {
                       return existingProjectEntities.map((entity: StoreObject) => {
@@ -90,7 +87,7 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
             });
           },
         });
-        
+        // console.log('data', data)
         return data
         // Handle successful response or perform additional actions
       } catch (error) {

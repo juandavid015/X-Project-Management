@@ -7,8 +7,9 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', "react-hooks"],
   rules: {
+    "react-hooks/rules-of-hooks": 'error',
     'react-refresh/only-export-components': 'warn',
   },
 }
