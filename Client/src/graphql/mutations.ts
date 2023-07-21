@@ -75,7 +75,8 @@ export const CREATE_TASK = gql`
                 name
                 email
                 image
-            }
+            },
+            indexPosition
         }
     }
 `

@@ -21,7 +21,7 @@ interface MembersFieldProps {
 
 
 export const MembersField = ({members, projectMembers, handleInputChange, setFormData, onFinish}:MembersFieldProps) => {
-    console.log('m', members)
+    // console.log('m', members)
     const [openedSearch , setOpenedSearch] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     useClickOutside({elementRef: containerRef, onClickOutside: ()=> setOpenedSearch(false) })

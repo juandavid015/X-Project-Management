@@ -1,21 +1,38 @@
 
 import { useEffect, useRef, useState } from 'react';
-import { TaskColumns, TaskSkeleton } from '../components/Kanban';
+import { TaskColumns,  } from '../components/Kanban';
 import { Status, Task } from '../types/types';
 
+type TaskDragInfo = {
+	actualTaskId: string, 
+	previousTaskPosition?: number, 
+	actualTaskPosition?: number,
+	nextTaskPosition?: number, 
+	newStatus: string
+}
+type TaskOptmisticResponse = Task & {
+	__typename: string,
+	id: string  
+	projectId: string
+}
 interface UserDragTaskProps {
-    reOrdering: any
-    mockedData?: any,
-    setMockedData: any
+    reOrdering: (taskDragInfo: TaskDragInfo, optimisticResponse?: TaskOptmisticResponse) => Promise<void>,
+    mockedData?: TaskColumns,
+    setMockedData: React.Dispatch<React.SetStateAction<TaskColumns>>
 }
 
-type TaskDragged = {
+export type TaskDragged = {
 	id: string,
 	index: number,
 	isDragging: boolean,
 	taskPosition: number,
 	colName: string,
 	colIndex: number
+}
+
+export type TaskSkeletonStyles = {
+	height: string,
+	width: string
 }
 // The main hook function for handling drag and drop functionality
 export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTaskProps) => {
@@ -25,7 +42,7 @@ export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTas
 	const [initialColName, setInitialColName] = useState('');
 	const [initialTask, setInitialTask] = useState<Task | undefined>();
 	const [taskDragged, setTaskDragged] = useState<TaskDragged | undefined>();
-	const [skeletonStyles, setSkeletonStyles] = useState<{ height: string; width: string }>({
+	const [skeletonStyles, setSkeletonStyles] = useState<TaskSkeletonStyles>({
 	  height: '',
 	  width: '',
 	});
@@ -63,6 +80,10 @@ export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTas
 			width: targetStyles.width, 
 			height: targetStyles.height
 		})
+			// Set and save the element node of the task being dragged, so then can be used to attach the dragEnd Handler
+		// manually to it
+        taskRef.current = e.currentTarget as HTMLElement;
+		
         setTaskDragged({
 			isDragging: false,
 			taskPosition: initialTaskPosition, 
@@ -71,39 +92,20 @@ export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTas
 			colName: colName, 
 			colIndex: colIndex
 		});
-		// Set and save the element node of the task being dragged, so then can be used to attach the dragEnd Handler
-		// manually to it
-        taskRef.current = e.currentTarget as HTMLElement;
-       
+	
     }
-   
-    const dropHandler = async (e:React.DragEvent, colName: string, colIndex: number) => {
-        e.preventDefault();
-        const currentTaskId = e.dataTransfer.getData('application/tasks');
 
-		// find the index of the task target (drop target)
-        const taskIndex = findClosestTaskIndex(e)
-		// set the adjacents position of the drop target
-        const previousTaskPosition = mockedData[colIndex][colName][taskIndex - 1]?.indexPosition;
-        const currentTaskPosition = mockedData[colIndex][colName][taskIndex]?.indexPosition;
-        const nextTaskPosition = mockedData[colIndex][colName][taskIndex + 1]?.indexPosition;
-        // console.log('DATA', previousTaskPosition, currentTaskPosition, nextTaskPosition, colName)
+	const dragEnterHandler = (e:React.DragEvent) => {
 
-        taskDragged && setTaskDragged({...taskDragged, isDragging: false})
-        // execute mutation to change the index (order) and status of the task
-        await reOrdering({
-            actualTaskId: currentTaskId, 
-            previousTaskPosition: previousTaskPosition, 
-            actualTaskPosition: currentTaskPosition,
-            nextTaskPosition: nextTaskPosition, 
-            newStatus: colName
-        })
-        .finally(() => {
-            console.log('done', )
-        })
-    }
-    
-    const dragOverHandler = (e: React.DragEvent, colIndex: number, colName: Status) => {
+		const element = e.target as HTMLElement
+		if(element.className.includes('task')) {
+			taskDragged && setTaskDragged({...taskDragged, isDragging: true});
+		}
+		
+	
+	}
+	
+	const dragOverHandler = (e: React.DragEvent, colIndex: number, colName: Status) => {
         e.preventDefault();
         e.dataTransfer.dropEffect ='move';
     
@@ -131,8 +133,8 @@ export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTas
 
 					taskInSourceColumn.indexPosition = parseFloat(Date.now().toString()) ;// Set the new position
 					taskInSourceColumn.status = colName, // Set the new column
-					columnSource.splice(taskInSourceIndex, 1); // Remove the task from the source column
-					columnTarget.splice(taskInTargetIndex, 0, taskInSourceColumn); // Insert the task at the desired position in the new column
+					taskInSourceIndex >= 0 && columnSource.splice(taskInSourceIndex, 1); // Remove the existing task from the source column
+					taskInSourceIndex >= 0 && columnTarget.splice(taskInTargetIndex, 0, taskInSourceColumn); // Insert the existing task at the desired position in the new column
 
 				} else { // Otherwise, move the task of position on the its own column
 
@@ -150,24 +152,57 @@ export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTas
 					} else { // move the task between two drop target siblings
 					taskInTargetColumn.indexPosition = (previousTaskPosition + nextTaskPosition) / 2;
 					}
-					columnTarget[taskTargetIndex] = taskInTargetColumn;
-					
+					newMockedData[colIndex][colName][taskTargetIndex] = taskInTargetColumn;
+					setTaskDragged((prevTaskDragged)=> {
+						return prevTaskDragged && {...prevTaskDragged, colIndex, colName, taskPosition: taskInTargetColumn.indexPosition}
+					});
 				}
 				// apply the changes
 				newMockedData[colIndex][colName] = columnTarget.sort(
-					(a: TaskSkeleton | Task, b: TaskSkeleton | Task) => a.indexPosition - b.indexPosition
+					(a: Task, b: Task) => a.indexPosition - b.indexPosition
 				);
-			
+				
 				return newMockedData;
 			});
 			
-			setTaskDragged({...taskDragged, colIndex, colName, isDragging: true,});
+			
 		}
 
-      };
+    };
+   
+    const dropHandler = async (e:React.DragEvent, colName: string, colIndex: number) => {
+        e.preventDefault();
+        const currentTaskId = e.dataTransfer.getData('application/tasks');
+
+		// find the index of the task target (drop target)
+        const taskIndex = findClosestTaskIndex(e)
+		// set the adjacents position of the drop target
+        const previousTaskPosition = mockedData ? mockedData[colIndex][colName][taskIndex - 1]?.indexPosition : undefined;
+        const currentTaskPosition = mockedData ? mockedData[colIndex][colName][taskIndex]?.indexPosition : undefined;
+        const nextTaskPosition =  mockedData ? mockedData[colIndex][colName][taskIndex + 1]?.indexPosition : undefined;
+        // console.log('DATA', previousTaskPosition, currentTaskPosition, nextTaskPosition, colName)
+
+		const optimisticData = {...initialTask, indexPosition: taskDragged?.taskPosition, status: taskDragged?.colName}
+        // execute mutation to change the index (order) and status of the task
+        await reOrdering({
+            actualTaskId: currentTaskId, 
+            previousTaskPosition: previousTaskPosition, 
+            actualTaskPosition: currentTaskPosition,
+            nextTaskPosition: nextTaskPosition, 
+            newStatus: colName
+        }, optimisticData as TaskOptmisticResponse)
+        .finally(() => {
+            console.log('done', )
+        })
+		// setTaskDragged({...taskDragged, isDragging: false})
+		
+    }
+    
+    
 
     const dragEndHandler = (e: React.DragEvent, colIndex: number, colName: string) => {
         //https://stackoverflow.com/questions/24537000/react-js-events-not-firing-for-the-last-rendered-element
+
       	if(e.dataTransfer.dropEffect === 'none' && taskDragged && initialTask) {
 			
 			setMockedData((prevMockedData: TaskColumns) => {
@@ -189,15 +224,20 @@ export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTas
 					// add again to its original/source column
 					columnSource.push(initialTask);
 					newPrevMockedData[initialColIndex][initialColName] = columnSource.sort(
-						(a: TaskSkeleton | Task, b: TaskSkeleton | Task) => a.indexPosition - b.indexPosition
+						(a: Task, b: Task) => a.indexPosition - b.indexPosition
 					);
 					return newPrevMockedData
 
 				}
 
 			})
-			setTaskDragged({...taskDragged, isDragging: false});
-      }
+			
+    	}
+	
+		setTaskDragged((prevTaskDragged)=> {
+			return prevTaskDragged && {...prevTaskDragged, isDragging: false}
+		});
+	
     };
   
   
@@ -230,6 +270,7 @@ export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTas
     return {
       dragOverHandler,
       dragStartHandler, 
+	  dragEnterHandler,
       dropHandler, 
       dragEndHandler, 
       taskDragged, 

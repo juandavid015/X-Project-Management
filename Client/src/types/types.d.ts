@@ -1,6 +1,6 @@
 export type Status = 'PENDING' | 'IN_PROGRESS' | 'REVIEW' | 'COMPLETED';
 
-export type Priority = "HIGH" | "MODERATE" | "LOW" | undefined;
+export type Priority = "HIGH" | "MODERATE" | "LOW" | null;
 
 export  interface Label {
     name: string,

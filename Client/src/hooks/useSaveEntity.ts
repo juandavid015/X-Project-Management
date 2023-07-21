@@ -35,12 +35,17 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
   // Extract field name to be updated dynamically
      const fieldName = getFieldName(queryDocumentNode)
     // console.log(queryDocumentNode)
+    
 
-    const saveEntity = async (entityData: EntityData<any>) => {
+    const saveEntity = async (entityData: EntityData<any>, optimisticData?: EntityData<any>) => {
   
       try {
+        // console.log('E',entityName,  entityData, optimisticData)
         const { data } = await createOrUpdateEntity({
           variables:  entityData,
+          optimisticResponse: {
+            [entityName]: optimisticData
+          },
           update(cache, { data:  createOrUpdateEntity  }) {
             // Manually modify the cache to add the new reference to the entity list
             // console.log('HELLO')

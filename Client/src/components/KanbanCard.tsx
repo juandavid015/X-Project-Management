@@ -1,5 +1,6 @@
 
 import { DocumentIcon, EditIcon, EqualIcon, LabelIcon, LowLeftIcon, MessageIcon } from "../assets/icons/Icons"
+import { TaskSkeletonStyles, TaskDragged } from "../hooks/useDragTask"
 import { Label, Task } from "../types/types"
 import { Members } from "./Members"
 
@@ -8,12 +9,12 @@ interface Props extends Task {
     onEdit?: () => void
     onDragStart: (e: React.DragEvent) => void,
     onDrop?: (e: React.DragEvent) => void,
-    onDragEnter?: any
-    onDragLeave?: any
-    taskDragged: any
+    onDragEnter?: (e: React.DragEvent) => void,
+    onDragLeave?: (e: React.DragEvent) => void,
+    taskDragged: TaskDragged | undefined
     onDragOver?: (e: React.DragEvent) => void,
     onDragEnd?: (e: React.DragEvent) => void,
-    skeletonStyles: any
+    skeletonStyles: TaskSkeletonStyles
 }
 
 export const KanbanCard = ({create, onEdit, onDragStart, taskDragged, skeletonStyles, ...task}: Props) => {

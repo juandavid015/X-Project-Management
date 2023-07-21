@@ -1,7 +1,7 @@
 
 import React, {  useEffect, useRef, useState } from 'react';
 import { CREATE_TASK, UPDATE_TASK } from "../graphql/mutations";
-import {  Task, TaskCreate, User } from "../types/types";
+import {  Status, Task, TaskCreate, User } from "../types/types";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useSaveEntity } from "../hooks/useSaveEntity";
 import { GET_PROJECT_TASKS } from "../graphql/querys";
@@ -17,7 +17,7 @@ import { SubmitButton } from "./SubmitButton";
 interface Props {
     create: boolean, // not goes here
     onEdit?: () => void
-    status: string
+    status: Status
     task?: Task | TaskCreate
     projectMembers?: User[]
 }
@@ -26,19 +26,21 @@ export interface InputEditable  {
     inputIsEditable: boolean
 }
 export type SetInputEditable = React.Dispatch<React.SetStateAction<InputEditable>>
+
 export const KanbanCardEditable = ({create, status, onEdit, projectMembers, task}:Props) => {
     // const cleanedLabels = labels.map(({ __typename, ...rest }) => rest);
     const {id, title, description, labels, timeline, priority, projectId, members, userIds} = task || {};
     const containerRef = useRef<HTMLDivElement>(null);
 
     const initialState: TaskCreate = {
-        id: id || '',
+        id: id || 'temp-id',
         title: title || '',
         description: description || '',
         timeline: timeline || '',
-        priority: priority,
+        priority: priority || null,
         labels: labels || [],
         status: status,
+        indexPosition: parseFloat(Date.now().toString()),
         projectId: projectId || '64776d5011f6af1e77f4e984',
         members: members || [],
         userIds: userIds || []
@@ -54,11 +56,13 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, task
     const mutationSchemaStatus = create ? CREATE_TASK : UPDATE_TASK;
     const projectTaskSchema = GET_PROJECT_TASKS;
     const saveEntity = useSaveEntity(mutationSchemaStatus, projectTaskSchema);
-
-
+    
     const updateInformation = (taskData: Task | TaskCreate) => {
         // before a validations must be passed sucessfully
-        saveEntity(taskData).finally(()=> onEdit && onEdit())
+        const optimisticResponse = {...taskData, __typename: "Task"}
+        onEdit && onEdit()
+        saveEntity(taskData, optimisticResponse).finally(()=> onEdit && onEdit())
+  
     }
 
     const changeEditingInput = (inputName: string) => {
@@ -108,7 +112,7 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, task
 
             <PriorityField
             handleInputChange={ handleInputChange }
-            valueSelected={ taskData.priority }
+            valueSelected={ 'HIGH' || 'MODERATE' || 'LOW' }
             />
 
             <MembersField

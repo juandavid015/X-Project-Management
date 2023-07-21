@@ -11,21 +11,15 @@ import { useSaveEntity } from "../hooks/useSaveEntity";
 import { MOVE_TASK } from "../graphql/mutations";
 import { useDragTask } from "../hooks/useDragTask";
 
-export type TaskSkeleton = {
-    status: 'dragging'
-    indexPosition: number
-}
 export type TaskColumn = {
     [key: string]: Task[]
 }
-
 export type TaskColumns = TaskColumn[]
-
 export type ProjectStatus = Status[]
+
+
 export const Kanban = () => {
     // labels must be a propertie from the project instance
-
-  
     const projectStatus: ProjectStatus = ['PENDING', 'IN_PROGRESS', 'REVIEW', 'COMPLETED'];
     
     const {loading, error, data} = useQuery(GET_PROJECT_TASKS, {
@@ -35,12 +29,12 @@ export const Kanban = () => {
     })
 
     const client = useApolloClient();
-
     // Manually read the data from the cache
     let projectMembers = client.readQuery({
       query: GET_PROJECT_MEMBERS,
       variables: { projectId: '64776d5011f6af1e77f4e984' },
     });
+
     projectMembers = projectMembers?.getProject?.members;
     const [creatingNewCard, setCreatingNewCard] = useState({
         creating: false,
@@ -51,24 +45,24 @@ export const Kanban = () => {
     const saveEntity = useSaveEntity(MOVE_TASK, GET_PROJECT_TASKS)
     let tasks = data?.getProjectTasks
     
-    tasks = tasks?.filter((task: Task) => task.projectId !== null)
-    let taskCols: TaskColumns = projectStatus.map(status => {
+ 
+    let tasksOrganizedInColumns: TaskColumns = projectStatus.map(status => {
         let result: TaskColumn = {};
         result[status] = tasks?.filter((task: Task) => task.status === status)
         .sort((a:Task, b: Task) => (a.indexPosition - b.indexPosition)); 
         return result
         
     })
-    const [taskColumns, setTaskColumns] = useState(taskCols);
-
-    const { dragOverHandler, dragStartHandler, dropHandler, taskDragged, skeletonStyles} = useDragTask({
+    const [taskColumns, setTaskColumns] = useState(tasksOrganizedInColumns);
+    
+    const { dragOverHandler, dragStartHandler, dropHandler, taskDragged, skeletonStyles, dragEnterHandler } = useDragTask({
         reOrdering: saveEntity,
         mockedData: taskColumns,
         setMockedData: setTaskColumns
     });
 
     useEffect(()=> {
-        setTaskColumns(taskCols)
+        setTaskColumns(tasksOrganizedInColumns)
     }, [data])
     
     
@@ -78,8 +72,7 @@ export const Kanban = () => {
         // Handle other errors
         return <p>Error: {error.message}</p>;
       }
-    
-   
+
     return (
         <div className={`grid 
          gap-x-8 gap-y-4 `} style={{gridTemplateColumns: `repeat(${projectStatus.length},minmax(238px, auto))`}} 
@@ -94,8 +87,7 @@ export const Kanban = () => {
                             <div className="dropzone flex flex-col gap-y-2 pb-[100px]" 
                             onDrop={(e: React.DragEvent) => dropHandler(e, status, indexStatus)} 
                             onDragOver={(e:React.DragEvent)=> dragOverHandler(e, indexStatus, status)}
-                            
-                           
+                            onDragEnter={dragEnterHandler}
                             >
                             {
                                 taskColumns[indexStatus][status]?.map((task, index: number) => {
@@ -122,11 +114,8 @@ export const Kanban = () => {
                                             onEdit= {()=> setCreatingNewCard({creating: true, creatingOn: '', editingOnCard: ''})}
                                              />
                                         )
-                                      
-                                   
                                 })
                             }
-                           
                             {
                                 creatingNewCard.creating && creatingNewCard.creatingOn === status && (
                                     <KanbanCardEditable
@@ -139,12 +128,12 @@ export const Kanban = () => {
                                 )
                             }
 
-                            <button onClick={()=> setCreatingNewCard({creating: true, creatingOn: status, editingOnCard: ''})} title="Add new task"
-                            className="border border-gray rounded-full p-[5px] mx-auto my-2 hidden
-                            group-hover/add:block ">
-                                <AddIcon className="h-[10px] fill-gray"/>
-                      
-                            </button>
+                                <button onClick={()=> setCreatingNewCard({creating: true, creatingOn: status, editingOnCard: ''})} title="Add new task"
+                                className="border border-gray rounded-full p-[5px] mx-auto my-2 hidden
+                                group-hover/add:block ">
+                                    <AddIcon className="h-[10px] fill-gray"/>
+                        
+                                </button>
                             </div>
                         </div>
                     )
