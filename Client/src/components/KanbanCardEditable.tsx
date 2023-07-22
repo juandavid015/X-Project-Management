@@ -112,7 +112,7 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, task
 
             <PriorityField
             handleInputChange={ handleInputChange }
-            valueSelected={ 'HIGH' || 'MODERATE' || 'LOW' }
+            valueSelected={ taskData.priority }
             />
 
             <MembersField
