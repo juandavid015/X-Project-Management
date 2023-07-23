@@ -22,6 +22,7 @@ export const InviteProjectMember = ({projectId, reference, onCancel}: InviteProj
     const saveEntity = useSaveEntity(ASSIGN_PROJECT_MEMBER, GET_PROJECT_MEMBERS)
     const handleClick = async ()=> {
         await saveEntity(data).finally(()=> {
+            console.log('Invited member')
         })
     }
 

@@ -10,7 +10,7 @@ interface Props {
         propertyName: keyof Task
       ) => void,
     valueSelected: string | null,
-    [key:string]: any,
+    [key:string]: unknown,
 }
 
 const priorities = ['LOW', 'MODERATE', 'HIGH'] // make this not be hardcoded

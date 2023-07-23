@@ -43,11 +43,11 @@ export const Kanban = () => {
     });
     
     const saveEntity = useSaveEntity(MOVE_TASK, GET_PROJECT_TASKS)
-    let tasks = data?.getProjectTasks
+    const tasks = data?.getProjectTasks
     
  
-    let tasksOrganizedInColumns: TaskColumns = projectStatus.map(status => {
-        let result: TaskColumn = {};
+    const tasksOrganizedInColumns: TaskColumns = projectStatus.map(status => {
+        const result: TaskColumn = {};
         result[status] = tasks?.filter((task: Task) => task.status === status)
         .sort((a:Task, b: Task) => (a.indexPosition - b.indexPosition)); 
         return result

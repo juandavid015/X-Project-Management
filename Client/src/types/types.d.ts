@@ -23,7 +23,7 @@ export interface Task {
     priority: Priority,
     projectId?: string,
     members: User[] | [],
-    userIds: String[] | [],
+    userIds: string[] | [],
     indexPosition: number
 }
 

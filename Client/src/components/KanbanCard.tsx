@@ -17,12 +17,12 @@ interface Props extends Task {
     skeletonStyles: TaskSkeletonStyles
 }
 
-export const KanbanCard = ({create, onEdit, onDragStart, taskDragged, skeletonStyles, ...task}: Props) => {
+export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ...task}: Props) => {
 
-    let {title, description, labels, priority, timeline, members, indexPosition, id} = task
-    let timelineString = new Date(timeline || '');
-    let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    let formattedTimeline = timeline && timelineString.toLocaleDateString(undefined, options as Intl.DateTimeFormatOptions);
+    const {title, description, labels, priority, timeline, members, indexPosition, id} = task
+    const timelineString = new Date(timeline || '');
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedTimeline = timeline && timelineString.toLocaleDateString(undefined, options as Intl.DateTimeFormatOptions);
     const taskIsBeingDragged = taskDragged && taskDragged.isDragging && taskDragged.id === id;
 
     return (

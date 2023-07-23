@@ -7,12 +7,12 @@ import { useClickOutside } from "../hooks/useClickOutside";
 import { useDeleteEntity } from "../hooks/useDeleteEntity";
 import { GET_PROJECT_TASKS } from "../graphql/querys";
 
-interface Props {
+interface KanbanCardOptionsProps {
     task: TaskCreate,
-    duplicate: (task: Task)=> void;
-    [key:string] : any
+    duplicate?: (task: Task)=> void;
+    [key:string] : unknown
 }
-export const KanbanCardOptions = ({task, duplicate, ...rest}: Props) => {
+export const KanbanCardOptions = ({task, ...rest}: KanbanCardOptionsProps) => {
 
     const containerRef = useRef<HTMLUListElement>(null);
     const {id} = task || {};

@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { Task, TaskCreate } from "../types/types"
+import { Task, TaskCreate, User } from "../types/types"
 import { AssignMember } from "./AssignMember"
 import { Members } from "./Members"
 import { SearchMembers } from "./SearchMembers"
@@ -14,7 +14,9 @@ interface MembersFieldProps {
         index: number,
         propertyName: keyof Task
       ) => void,
-    [key:string]: any,
+    [key:string]: unknown,
+    members: User[],
+    projectMembers: User[],
     setFormData: SetFormData<TaskCreate>
     onFinish?: ()=> void
 }

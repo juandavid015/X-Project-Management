@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { Task, TaskCreate } from "../types/types"
+import { Task, TaskCreate, User } from "../types/types"
 import { AssignMember } from "./AssignMember"
 import { Members } from "./Members"
 import { useClickOutside } from "../hooks/useClickOutside"
@@ -14,13 +14,15 @@ interface ProjectMembersProps {
         index: number,
         propertyName: keyof Task
       ) => void,
-    [key:string]: any,
+    [key:string]: unknown,
+    members: User[]
     setFormData?: SetFormData<TaskCreate>
-    onFinish?: ()=> void
+    onFinish?: ()=> void,
+    projectId: string
 }
 
 
-export const ProjectMembers = ({members}:ProjectMembersProps) => {
+export const ProjectMembers = ({members, projectId}:ProjectMembersProps) => {
 
     const [openedSearch , setOpenedSearch] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -42,7 +44,7 @@ export const ProjectMembers = ({members}:ProjectMembersProps) => {
             {   
                 openedSearch && 
                 <InviteProjectMember
-                projectId={members.projectId}
+                projectId={projectId}
                 reference={containerRef}
                 onCancel={()=> setOpenedSearch(false)}
                 />

@@ -1,4 +1,4 @@
-import { DocumentNode, StoreObject, gql, useMutation } from "@apollo/client"
+import { DocumentNode, OperationVariables, StoreObject, gql, useMutation } from "@apollo/client"
 import { FieldNode, OperationDefinitionNode } from "graphql";
 
 export type EntityData<T> = T 
@@ -37,7 +37,7 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
     // console.log(queryDocumentNode)
     
 
-    const saveEntity = async (entityData: EntityData<any>, optimisticData?: EntityData<any>) => {
+    const saveEntity = async (entityData: EntityData<OperationVariables>, optimisticData?: EntityData<OperationVariables>) => {
   
       try {
         // console.log('E',entityName,  entityData, optimisticData)

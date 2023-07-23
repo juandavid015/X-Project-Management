@@ -5,7 +5,9 @@ import { Task, TaskCreate, User } from "../types/types"
 import { UserPreview } from "./UserPreview"
 
 interface SearchMembersProp {
-    [key: string] : any
+    [key: string] : unknown
+    projectMembers: User[],
+    members: User[]
     reference: React.Ref<HTMLDivElement>
     handleInputChange: (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -20,15 +22,15 @@ interface SearchMembersProp {
 export const SearchMembers = ({reference, projectMembers, members, setFormData, onFinish}: SearchMembersProp) => {
   
     
-    const handleChange =(e: React.ChangeEvent<HTMLInputElement>, index: number, member: any)=>  {
+    const handleChange =(e: React.ChangeEvent<HTMLInputElement>, index: number, member: User)=>  {
         const { checked, name } = e.target;
 
 
         if(checked) {
            
             setFormData((prevTask) => {
-                let updatedUserIds = [...prevTask['userIds']]
-                let updatedMembers = [...prevTask['members']]
+                const updatedUserIds = [...prevTask['userIds']]
+                const updatedMembers = [...prevTask['members']]
                 updatedMembers.push(projectMembers[index]);
                 updatedUserIds.push(projectMembers[index].id)
                 return {...prevTask, [name]: updatedMembers, userIds: updatedUserIds}

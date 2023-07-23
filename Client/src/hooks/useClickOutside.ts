@@ -22,5 +22,5 @@ export const useClickOutside = ({elementRef, onClickOutside}: Props) => {
 
         }
  
-     },[])
+     },[elementRef, onClickOutside])
 }

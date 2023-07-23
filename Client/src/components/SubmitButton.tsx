@@ -1,10 +1,10 @@
 import { CheckIcon } from "../assets/icons/Icons"
 
-interface SubmitButton {
+interface SubmitButtonProps {
     onSubmit: ()=> void
 }
 
-export const SubmitButton = ({onSubmit}:SubmitButton) => {
+export const SubmitButton = ({onSubmit}:SubmitButtonProps) => {
     return (
         <button onClick={onSubmit}
         className="mt-1 border border-dark text-dark bg-white font-bold rounded-md py-1 px-4 

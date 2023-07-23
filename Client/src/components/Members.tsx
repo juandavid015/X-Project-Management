@@ -1,10 +1,11 @@
 
+import { User } from "../types/types";
 import { UserPreview } from "./UserPreview";
-import { User } from "@auth0/auth0-react";
+
 
 interface MembersProps {
     members?: User[],
-    [key: string] : any
+    [key: string] : unknown
     height: string
     width: string
 }
@@ -19,7 +20,7 @@ export const Members = ({members, height, width}: MembersProps) => {
         <div className={` flex border-r border-white-gray w-fit ${height ? height : 'h-[30px]'}`} >
 
         {
-            members?.map((user:any, index:any) => {
+            members?.map((user:User, index:number) => {
                 if(index <= 2) {
                     return (
                         <UserPreview expanded={false} name={user.name} image={user.image} key={index + 'mem'} 

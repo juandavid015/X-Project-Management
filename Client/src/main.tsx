@@ -36,7 +36,7 @@ const token = localStorage.getItem('token');
 const typenameParseMiddleware = new ApolloLink((operation, forward) => {
   // idea taked from https://github.com/apollographql/apollo-client/issues/1913
   if (operation.variables) {
-    const removeTypenameFromVariables = (variables: any) => {
+    const removeTypenameFromVariables = (variables: Record<string, string>) => {
       return JSON.parse(JSON.stringify(variables), (key, value) => {
         return key === '__typename' ? undefined : value;
       });

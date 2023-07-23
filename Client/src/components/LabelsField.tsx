@@ -14,7 +14,7 @@ interface LabelsFieldProps {
     updateInformation: (taskData: Task | TaskCreate) => void
 }
 
-export const LabelsField = ({taskData, inputEditable, handleInputChange, setTaskData, setInputEditable, updateInformation}:LabelsFieldProps) => {
+export const LabelsField = ({taskData, inputEditable, handleInputChange, setTaskData, setInputEditable, }:LabelsFieldProps) => {
 
     const addNewLabelHandler = () => {
         addNewLabel(setTaskData as TaskSetter, setInputEditable);
@@ -58,7 +58,7 @@ export const LabelsField = ({taskData, inputEditable, handleInputChange, setTask
                 
                 <KanbanCardOptions
                 task={taskData}
-                duplicate={(taskData: Task)=> updateInformation(taskData)}
+                // duplicate={(taskData: Task)=> updateInformation(taskData)}
                 className={'absolute left-[calc(100%-1rem)] z-10'}/>
             </div>
     )

@@ -1,12 +1,12 @@
 import { AddIcon } from "../assets/icons/Icons"
 
 
-interface KanbanHeader {
+interface KanbanHeaderProps {
     status: string,
     createNewTask: ()=> void
 }
 
-export const KanbanHeader = ({status, createNewTask}:KanbanHeader) => {
+export const KanbanHeader = ({status, createNewTask}:KanbanHeaderProps) => {
     return (
         <div className="bg-white shadow-white-gray shadow-md2 rounded-md px-[16px] py-[10px]
          flex flex-row items-center gap-2">

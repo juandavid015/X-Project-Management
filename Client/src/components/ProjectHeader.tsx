@@ -3,7 +3,7 @@ import { GET_PROJECT_MEMBERS } from "../graphql/querys";
 import { ProjectMembers } from "./ProjectMembers";
 
 export const ProjectHeader = () => {
-    let {loading, error, data} = useQuery(GET_PROJECT_MEMBERS, {
+    const {loading, error, data} = useQuery(GET_PROJECT_MEMBERS, {
         variables: {projectId: '64776d5011f6af1e77f4e984'}
     });
 
@@ -22,8 +22,8 @@ export const ProjectHeader = () => {
    
     if (loading) return (<p>Loading...</p>)
     if (error)  return (<p>Error</p>)
-    data = data?.getProject;
-    let projectMembers = data?.members
+    const project = data?.getProject;
+    const projectMembers = project?.members
 
     return (
         <header className="flex items-center justify-between font-bold text-dark-md">
@@ -44,9 +44,8 @@ export const ProjectHeader = () => {
                     </ul>
                 </div>
                 <ProjectMembers 
-                projectMembers={projectMembers}
                 members={projectMembers}
-              
+                projectId= {project.id}
                 />
                
        

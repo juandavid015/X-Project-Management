@@ -1,4 +1,4 @@
-import { AddIcon, UserIcon } from "../assets/icons/Icons"
+import {  UserIcon } from "../assets/icons/Icons"
 
 
 interface AssignMemberProps {
@@ -8,7 +8,7 @@ interface AssignMemberProps {
     
 }
 
-export const AssignMember = ({openSearch, height, width}: AssignMemberProps) => {
+export const AssignMember = ({openSearch}: AssignMemberProps) => {
     // const [addMemberToProject, {data, loading, error}] = useMutation(ADD_MEMBER_TO_PROJECT);
     
     // const assignMember = () => {

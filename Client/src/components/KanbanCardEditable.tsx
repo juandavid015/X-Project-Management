@@ -19,7 +19,7 @@ interface Props {
     onEdit?: () => void
     status: Status
     task?: Task | TaskCreate
-    projectMembers?: User[]
+    projectMembers: User[]
 }
 export interface InputEditable  {
     inputName: string,

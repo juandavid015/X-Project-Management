@@ -1,12 +1,14 @@
 
 
-export interface UserPreview {
+export type UserPreviewProps = {
     expanded: boolean,
     width?: string,
-    height?: string
-    [key:string] : any
-}
-export const UserPreview = ({expanded, name, image, height, width , ...rest}: UserPreview) => {
+    height?: string,
+    name: string,
+    image: string,
+    [key:string]: unknown
+} 
+export const UserPreview = ({expanded, name, image, height, width , ...rest}: UserPreviewProps) => {
     return (
         expanded ? 
         <div className={`relative flex-col `}  {...rest} title={name}>
