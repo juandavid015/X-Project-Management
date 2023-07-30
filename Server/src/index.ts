@@ -1,448 +1,73 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { getNextId, prisma } from './db.js';
 import { GraphQLError } from 'graphql';
 import {validateToken} from './utils/validateToken.js';
+import { UserDataSource, generateUserModel } from './models/User.js';
+import { TaskDataSource, generateTaskModel } from './models/Task.js';
+import { ProjectDataSource, generateProjectModel } from './models/Project.js';
+import { projectResolvers } from './resolvers/projectResolvers.js';
+import { taskResolvers } from './resolvers/taskResolvers.js';
+import { userResolvers } from './resolvers/userResolvers.js';
+import { userTypeDefs } from './typeDefs/userTypeDefs.js';
+import { projectTypeDefs } from './typeDefs/projectTypeDefs.js';
+import { taskTypeDefs } from './typeDefs/taskTypeDefs.js';
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
 
 const typeDefs = `#graphql
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
+    # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
 
-  # Type defines the queryable fields for every book in our data source.
-
-  enum AllowedStatus {
-    PENDING
-    IN_PROGRESS 
-    REVIEW 
-    COMPLETED 
-  }
-  enum Priority {
-    LOW 
-    MODERATE
-    HIGH
-  }
-  input UserInput {
-    id: String!,
-    email: String!,
-    name: String!,
-    image: String
-  }
-  type User {
-    id: String!,
-    email: String!,
-    name: String!,
-    image: String
-  }
-
-  type Project {
-    id: String!,
-    userIds: [String]
-    title: String!,
-    tasks: [Task],
-    members: [User],
-  }
-
-  input LabelInput {
-    name: String!,
-    color: String
-  }
-  type Label {
-    name: String!,
-    color: String
-  }
-  type Task {
-    id: String!
-    title: String!,
-    description: String,
-    status: AllowedStatus,
-    labels: [Label],
-    priority: Priority,
-    timeline: String
-    members: [User]
-    userIds: [String]
-    indexPosition: Float!
-  }
-
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each.
-
-  type Query {
-    getAllUsers: [User]
-    getAllProjects: [Project]
-    getProjectTasks(projectId: String!): [Task]
-    getProject(projectId: String!): Project
-  }
-
-  type Mutation {
-    createUser(
-      email: String!,
-      name: String!,
-      image: String
-    ): User
-
-    createProject(
-      title: String
-    ): Project
-
-    createTask(
-      id: String
-      title: String,
-      description: String,
-      status: AllowedStatus,
-      labels: [LabelInput],
-      priority: Priority,
-      timeline: String,
-      projectId: String,
-      userIds: [String]
-    ): Task
-
-    updateTask (
-      id: String!,
-      userIds: [String],
-      title: String,
-      description: String,
-      status: AllowedStatus,
-      labels: [LabelInput],
-      priority: Priority,
-      timeline: String,
-      projectId: String,
-    ): Task
-
-    removeTask (
-      id: String!
-    ): Task
-
-    moveTask (
-      actualTaskId: String!
-      previousTaskPosition: Float
-      actualTaskPosition: Float
-      nextTaskPosition: Float
-      newStatus: AllowedStatus
-    ): Task
+    # Type defines the queryable fields for every book in our data source.
+        ${userTypeDefs.type}
+        ${projectTypeDefs.type}
+        ${taskTypeDefs.type}
 
 
-    updateProject(
-      userIds: [String]!
-      projectId: String!
-    ): Project
+    # The "Query" type is special: it lists all of the available queries that
+    # clients can execute, along with the return type for each.
 
-    assignMemberToProject(
-      projectId: String!
-      userEmail: String!
-    ): Project
+    type Query {
+        ${userTypeDefs.query}
+        ${projectTypeDefs.query}
+        ${taskTypeDefs.query}
+    }
 
-    assignMemberToTask(
-      taskId: String
-      userId: String
-    ): Task
-  }
+    type Mutation {
+        ${userTypeDefs.mutation}
+        ${projectTypeDefs.mutation}
+        ${taskTypeDefs.mutation}
+    }
 `;
-// Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves books from the "books" array above.
-interface createUser {
-    email: string,
-    name: string,
-    image?: string
-}
 
+// Resolvers define how to fetch the types defined in your schema.
 const resolvers = {
     Query: {
-      getAllUsers: async () => await prisma.user.findMany(),
-      getAllProjects: async (withMembers: Boolean) => await prisma.project.findMany({include: {members: true}}),
-      getProjectTasks: async (root: any, args: any, context) => {
-        // throw new GraphQLError('Invalid user credentials', {
-        //   extensions: {code: 'UNAUTHENTICATED', }
-        // })
-         return await prisma.task.findMany({
-          where: {
-            projectId: args.projectId
-           },
-           include: {
-            members: true
-           },
-           orderBy: [
-            {indexPosition: 'asc'}
-           ]
-          })
-      },
-      getProject: async (root: any, args: any, context) => {
-        return await prisma.project.findUnique({
-          where: {
-            id: args.projectId
-          },
-          include: {
-            members: true
-          }
-        })
-      }
+        ...userResolvers.Query, 
+        ...projectResolvers.Query, 
+        ...taskResolvers.Query
     },
-
     Mutation: {
-        createUser: async (root: any, args: createUser) => await prisma.user.create({data: {email: args.email, name: args.name, image: args.image}}),
-        createProject: async(root: any, args: any) => await prisma.project.create({data: {...args}}),
-        createTask: async (root: any, args: any) => {
-        let { projectId, userIds, id, ...taskData } = args
-
-     
-          return await prisma.task.create({data: {
-            indexPosition: await getNextId(),
-            ...taskData,
-            project: {
-              connect: {id: projectId}
-            },
-            members: {
-              connect: userIds.map((id: number) => ({id}))
-            },
-            
-          }, 
-          include: {
-            members: true
-          }
-        })
-
-        },
-        updateTask: async (root: any, args: any) => {
-          const { id, userIds, ...taskData } = args;
-          const data = { ...taskData };
-        
-          if (userIds) {
-            const task = await prisma.task.findUnique({
-              where: {
-                id: id,
-              },
-              include: {
-                members: true,
-              },
-            });
-        
-            const existingMembers = task.members.map((member) => member.id);
-        
-            const membersToAdd = userIds.filter((userId: string) => !existingMembers.includes(userId));
-            const membersToRemove = existingMembers.filter((memberId) => !userIds.includes(memberId));
-        
-            data.members = {
-              connect: membersToAdd.map((userId: string) => ({ id: userId })),
-              disconnect: membersToRemove.map((userId) => ({ id: userId })),
-            };
-          }
-        
-          const updatedTask = await prisma.task.update({
-            where: {
-              id: id,
-            },
-            data: data,
-            include: {
-              members: true,
-            },
-          });
-        
-          return updatedTask;
-        },
-
-        removeTask: async(root: any, args: any) => {
-          const {id} = args;
-          const deletedTask = await prisma.task.delete({
-            where: {
-              id: id
-            }
-          })
-
-          return deletedTask;
-        },
-        moveTask: async(root:any, args: any) => {
-          const {previousTaskPosition, nextTaskPosition, actualTaskPosition, actualTaskId, newStatus} = args;
-          let task = await prisma.task.findUnique({where: {id: actualTaskId}})
-          let targetTaskPosition = task.indexPosition;
-
-          let newActualTaskPosition:number;
-  
-          if ((previousTaskPosition && actualTaskPosition && newActualTaskPosition) && targetTaskPosition === previousTaskPosition) {
-            newActualTaskPosition = (actualTaskPosition + (actualTaskPosition + 0.002 ))/ 2
-          } else if ((actualTaskPosition && previousTaskPosition && nextTaskPosition) && targetTaskPosition !== previousTaskPosition) {
-            newActualTaskPosition = (previousTaskPosition + nextTaskPosition) / 2
-          } else if(actualTaskPosition && !nextTaskPosition && !previousTaskPosition) {
-            newActualTaskPosition = actualTaskPosition - 1;
-          } else if (actualTaskPosition && !previousTaskPosition && nextTaskPosition ) {
-            newActualTaskPosition = actualTaskPosition - 1;
-          } else if ((actualTaskPosition && !nextTaskPosition && previousTaskPosition) && targetTaskPosition === previousTaskPosition) {
-            newActualTaskPosition = await getNextId();  
-          } else if ((actualTaskPosition && !nextTaskPosition && previousTaskPosition && targetTaskPosition !== previousTaskPosition)) {
-            newActualTaskPosition = ((previousTaskPosition + 0.003 )+ actualTaskPosition) / 2;
-          } else if (!actualTaskPosition) {
-            newActualTaskPosition = await getNextId();
-          }
-
-          if(newActualTaskPosition === actualTaskPosition) {
-            newActualTaskPosition -= 0.001
-          }
-          const updatedTask = await prisma.task.update({
-            where: { id: actualTaskId },
-            data: { indexPosition: newActualTaskPosition, status: newStatus },
-            include: { members: true }
-          })
-
-          return updatedTask;
-        },
-
-        // moveTask: async(root: any, args: any) => {
-        //   const { actualTaskId, nextTaskId, newStatus } = args
-
-        //   const actualTask = actualTaskId && await prisma.task.findUnique({
-        //     where: { id: actualTaskId}
-        //   })
-        //   const targetTask = nextTaskId && await prisma.task.findUnique({
-        //     where: { id: nextTaskId}
-        //   })
-
-        //   if(actualTask && targetTask) {
-        //     const actualTaskPosition = actualTask.indexPosition;
-
-        //     const updatedTask = await prisma.task.update({
-        //       where: { id: actualTaskId },
-        //       data: { indexPosition: targetTask.indexPosition, status: newStatus },
-        //       include: { members: true }
-        //     })
-
-        //     await prisma.task.update({
-        //       where: { id: nextTaskId },
-        //       data: { indexPosition: actualTaskPosition },
-        //       include: { members: true }
-        //     })
-
-        //     return updatedTask
-
-        //   } else if(actualTask && !targetTask) {
-
-        //     return await prisma.task.update({
-        //       where: { id: actualTaskId},
-        //       data: { status: newStatus},
-        //       include: { members: true }
-        //     })
-        //   } 
-
-        //   return await prisma.task.findUnique({
-        //     where: { id: actualTaskId},
-        //     include: {members: true}
-        //   })
-        // },
- 
-        updateProject: async (root: any, args: any) => {
-          let { projectId, userIds, ...projectData} = args
-
-          if(userIds){
-            const project = await prisma.project.findUnique({
-              where: {
-                id: projectId
-              }, 
-              include: {
-                members: true
-              }
-            });
-
-            const existingMembers = project.members.map((member) => member.id);
-        
-            const membersToAdd = userIds.filter((userId: string) => !existingMembers.includes(userId));
-            const membersToRemove = existingMembers.filter((memberId) => !userIds.includes(memberId));
-        
-            projectData.members = {
-              connect: membersToAdd.map((userId: string) => ({ id: userId })),
-              disconnect: membersToRemove.map((userId) => ({ id: userId })),
-          };
-          }
-          
-          
-          const updatedProject = await prisma.project.update({
-            where: {
-              id: projectId,
-            },
-            data: projectData,
-            include: {
-              members: true,
-            },
-          });
-        
-          return updatedProject;
-        },
-
-        assignMemberToProject: async (root: any, args: any) => {
-
-          let {projectId, userEmail} = args
-          let updatedProject;
-          const userToAssign = await prisma.user.findUnique({
-            where: {
-              email: userEmail
-            }
-          })
-          if (userToAssign) {
-            updatedProject = await prisma.project.update({
-              where: {
-                id: projectId,
-              },
-              data: {
-                members: {
-                  connect: {email: userEmail}
-                },
-              },
-              
-              include: {
-                members: true,
-              },
-            });
-
-
-          } 
-
-          return updatedProject
-  
-        },
-
-        assignMemberToTask: async (root: any, args: any) => {
-          let {taskId, userId, ...taskData} = args
-
-          let memberAssigned = await prisma.task.update({
-            where: {
-              id: taskId
-            }, 
-            data: {
-              ...taskData,
-              members: {
-                connect: {id: userId}
-              }
-            },
-            include: {
-              members: true
-            }
-          })
-
-          return memberAssigned
-        }
-        
-    },
-
-  };
+        ...userResolvers.Mutation, 
+        ... projectResolvers.Mutation, 
+        ...taskResolvers.Mutation
+    }
+}
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
-interface MyContext {
+export interface MyContext {
   userIsLoggedIn: boolean,
   "project code": boolean
+  models: {
+    User: UserDataSource,
+    Project: ProjectDataSource,
+    Task: TaskDataSource
+  }
 }
 const server = new ApolloServer<MyContext>({
     typeDefs,
     resolvers,
-    // formatError: (error) => {
-    //   if (error.extensions.code === 'UNAUTHENTICATED') {
-    //     // Return a 401 status code for UNAUTHENTICATED errors
-    //     return new GraphQLError('Invalid user credentials', null, null, null, null, null, {
-    //       code: 'UNAUTHENTICATED',
-    //       statusCode: 401,
-    //     });
-    //   }
-    //   // For other errors, return the default formatted error
-    //   return error;
-    // },
   });
 
   // Passing an ApolloServer instance to the `startStandaloneServer` function:
@@ -453,7 +78,6 @@ const server = new ApolloServer<MyContext>({
  
     context: async ({req})=> {
       // The user authentication will be handled by AUth0 Google, which says if the user has valid credentials
-      
       try {
         const token = req.headers.authorization || '';
     
@@ -465,7 +89,7 @@ const server = new ApolloServer<MyContext>({
         const decodedAccesToken = await validateToken(token);
         // const userIsAuthenticated = await validateToken(token).then(success =>  true).catch(fail => false)
         const userIsAuthenticated = decodedAccesToken ? true : false
-        console.log('is', userIsAuthenticated)
+        console.log('is', userIsAuthenticated, decodedAccesToken)
 
         if (!userIsAuthenticated && !userHasProjectCode) {
           throw new GraphQLError('Invalid user credentials', {
@@ -474,7 +98,12 @@ const server = new ApolloServer<MyContext>({
         } else {
           return {
             userIsLoggedIn: userIsAuthenticated,
-            "project code": userHasProjectCode
+            "project code": userHasProjectCode,
+            models: {
+              User: generateUserModel({userIsAuthenticated}),
+              Task: generateTaskModel({userIsAuthenticated}),
+              Project: generateProjectModel({userIsAuthenticated})
+            }
            }
         }
       } catch (error) {
@@ -483,9 +112,8 @@ const server = new ApolloServer<MyContext>({
           extensions: {code: 'UNAUTHENTICATED', http: { status: 401 }}
         })
       }
-      
 
-      },
+    },
     
     listen: { port: 4000 },
   });
