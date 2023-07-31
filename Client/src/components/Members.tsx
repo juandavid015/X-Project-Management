@@ -17,7 +17,7 @@ export const Members = ({members, height, width}: MembersProps) => {
     
 
     return(
-        <div className={` flex border-r border-white-gray w-fit ${height ? height : 'h-[30px]'}`} >
+        <div className={` flex  w-fit ${height ? height : 'h-[30px]'}`} >
 
         {
             members?.map((user:User, index:number) => {

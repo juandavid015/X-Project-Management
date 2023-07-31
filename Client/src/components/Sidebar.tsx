@@ -4,6 +4,7 @@ import Logo from '../assets/Brand_Logo.png'
 import {useAuth0} from '@auth0/auth0-react';
 import { LogoutButton } from './LogoutButton';
 import { LoginButton } from './LoginButton';
+import { Link } from 'react-router-dom';
 export const Sidebar = () => {
 
     const {isAuthenticated} = useAuth0();
@@ -38,67 +39,72 @@ export const Sidebar = () => {
                 </div>
                     <ul className="flex flex-col gap-10">
                         <li>
-                            <a className="flex gap-2 items-center">
+                            <Link to={`projects`}
+                            className="flex gap-2 items-center">
                                 <span>
                                     <ProjectsIcon className="h-[20px]"/>
                                 </span>
                                 <span className={`${!expand ? 'invisible opacity-0': 'visible opacity-100'} transition-all duration-700`}>
                                     Projects
                                 </span>
-                             
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a className="flex gap-2 items-center"> 
+                            <Link to={'notifications'} 
+                            className="flex gap-2 items-center"> 
                                 <span>
                                     <NotificationsIcon className={`h-[20px] fill-electric-blue`}/>
                                 </span>
                                 <span className={`${!expand ? 'invisible opacity-0': 'visible opacity-100'} transition-all duration-700`}>
                                     Notifications
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a className="flex gap-2 items-center"> 
+                            <Link to={'chats'} 
+                            className="flex gap-2 items-center"> 
                                 <span>
                                     <ChatIcon className={`h-[20px] fill-electric-blue`}/>
                                 </span>
                                 <span className={`${!expand ? 'invisible opacity-0': 'visible opacity-100'} transition-all duration-700`}>
                                     Chat
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a className="flex gap-2 items-center"> 
+                            <Link to={'goals'} 
+                            className="flex gap-2 items-center"> 
                                 <span>
                                     <GoalsIcon className={`h-[20px] fill-electric-blue`}/>
                                 </span>
                                 <span className={`${!expand ? 'invisible opacity-0': 'visible opacity-100'} transition-all duration-700`}>
                                     Goals
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a className="flex gap-2 items-center"> 
+                            <Link to={'spaces'} 
+                            className="flex gap-2 items-center"> 
                                 <span>
                                     <TeamIcon className={`h-[20px] fill-electric-blue`}/>
                                 </span>
                                 <span className={`${!expand ? 'invisible opacity-0': 'visible opacity-100'} transition-all duration-700`}>
-                                    Team
+                                    Spaces
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                     <ul className="flex flex-col gap-10">
                         <li>
-                            <a className="flex gap-2 items-center"> 
+                            <Link to={'settings'} 
+                            className="flex gap-2 items-center"> 
                                 <span>
                                     <SettingsIcon className={`h-[20px] fill-electric-blue`}/>
                                 </span>
                                 <span className={`${!expand ? 'invisible opacity-0': 'visible opacity-100'} transition-all duration-700`}>
                                     Settings
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         {
                             isAuthenticated ? 

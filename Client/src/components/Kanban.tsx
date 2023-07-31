@@ -10,6 +10,7 @@ import { AddIcon } from "../assets/icons/Icons";
 import { useSaveEntity } from "../hooks/useSaveEntity";
 import { MOVE_TASK } from "../graphql/mutations";
 import { useDragTask } from "../hooks/useDragTask";
+import { useParams } from "react-router-dom";
 
 export type TaskColumn = {
     [key: string]: Task[]
@@ -21,9 +22,9 @@ export type ProjectStatus = Status[]
 export const Kanban = () => {
     // labels must be a propertie from the project instance
     const projectStatus: ProjectStatus = ['PENDING', 'IN_PROGRESS', 'REVIEW', 'COMPLETED'];
-    
+    const { projectId } = useParams();
     const {loading, error, data} = useQuery(GET_PROJECT_TASKS, {
-        variables: {projectId: '64776d5011f6af1e77f4e984'},
+        variables: {projectId: projectId},
         errorPolicy: 'none'
         // onError: error => console.log(error.networkError.result.errors),
     })
@@ -32,7 +33,7 @@ export const Kanban = () => {
     // Manually read the data from the cache
     let projectMembers = client.readQuery({
       query: GET_PROJECT_MEMBERS,
-      variables: { projectId: '64776d5011f6af1e77f4e984' },
+      variables: { projectId: projectId },
     });
 
     projectMembers = projectMembers?.getProject?.members;
@@ -107,6 +108,7 @@ export const Kanban = () => {
                                         (
                                             <KanbanCardEditable
                                             projectMembers={projectMembers}
+                                            projectId={projectId ||  ''}
                                             task={task}
                                             key={index}
                                             status={status}
@@ -119,6 +121,7 @@ export const Kanban = () => {
                             {
                                 creatingNewCard.creating && creatingNewCard.creatingOn === status && (
                                     <KanbanCardEditable
+                                    projectId={projectId || ''}
                                     projectMembers={projectMembers}
                                     key={indexStatus}
                                     status={status}

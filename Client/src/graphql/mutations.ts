@@ -80,7 +80,18 @@ export const CREATE_TASK = gql`
         }
     }
 `
-
+export const CREATE_PROJECT = gql`
+    mutation CreateProject ($userId: String! $tile: String) {
+        createProject(
+            userId: $userId
+            title: $title
+        ) {
+            id
+            title
+            members
+        }
+    }
+`
 export const DELETE_TASK = gql`
     mutation RemoveTask ($id: String!) {
         removeTask(id: $id) {

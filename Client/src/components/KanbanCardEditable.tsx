@@ -20,6 +20,7 @@ interface Props {
     status: Status
     task?: Task | TaskCreate
     projectMembers: User[]
+    projectId: string
 }
 export interface InputEditable  {
     inputName: string,
@@ -27,9 +28,9 @@ export interface InputEditable  {
 }
 export type SetInputEditable = React.Dispatch<React.SetStateAction<InputEditable>>
 
-export const KanbanCardEditable = ({create, status, onEdit, projectMembers, task}:Props) => {
+export const KanbanCardEditable = ({create, status, onEdit, projectMembers, projectId, task}:Props) => {
     // const cleanedLabels = labels.map(({ __typename, ...rest }) => rest);
-    const {id, title, description, labels, timeline, priority, projectId, members, userIds} = task || {};
+    const {id, title, description, labels, timeline, priority, members, userIds} = task || {};
     const containerRef = useRef<HTMLDivElement>(null);
 
     const initialState: TaskCreate = {
@@ -41,7 +42,7 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, task
         labels: labels || [],
         status: status,
         indexPosition: parseFloat(Date.now().toString()),
-        projectId: projectId || '64776d5011f6af1e77f4e984',
+        projectId: projectId,
         members: members || [],
         userIds: userIds || []
       };

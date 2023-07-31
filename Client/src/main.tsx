@@ -4,12 +4,8 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, ApolloLink, from,} from '@apollo/client';
-import { Auth0Provider } from '@auth0/auth0-react';
 import { onError } from "@apollo/client/link/error";
 //This must be on .env file
-const domain = 'dev-lmxqx7b47rlxp7f7.us.auth0.com';
-const clientId = 'D7ua33bZSRVkRI0GSoPRfqZoFWOz8Tau';
-const audience = 'https://xmanagement.com';
 
 const errorLink = onError(({ graphQLErrors, networkError}) => {
   if (graphQLErrors)
@@ -54,13 +50,7 @@ const client = new ApolloClient({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <Auth0Provider 
-      domain={domain}
-      clientId={clientId}
-      authorizationParams={{redirect_uri: window.location.origin, audience: audience}}
-      >
         <App />
-      </Auth0Provider>
     </ApolloProvider>
   </React.StrictMode>,
 )

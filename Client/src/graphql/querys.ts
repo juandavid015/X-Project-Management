@@ -1,5 +1,15 @@
 import { gql } from "@apollo/client";
 
+export const LOGIN_USER = gql`
+    mutation LoginUser {
+        loginUser {
+            id
+            name
+            email
+            image
+        }
+    }
+`
 export const GET_PROJECT_TASKS = gql`
     query GetProjectTasks($projectId: String!) {
         getProjectTasks(projectId: $projectId) {
@@ -24,7 +34,35 @@ export const GET_PROJECT_TASKS = gql`
         }
     }
 `
-
+export const GET_PROJECTS = gql`
+    query GetProjects($userId: String!) {
+        getAllProjects(userId: $userId) {
+            id
+            title
+            members {
+                id
+                email
+                name
+                image
+            }
+        }
+    }
+`
+export const GET_PROJECT = gql`
+    query GetProject($projectId: String!) {
+        getProject(projectId:$projectId) {
+            id
+            userIds
+            title
+            members {
+                id
+                email
+                name
+                image
+            }
+        }
+    }
+`
 export const GET_PROJECT_MEMBERS = gql`
     query GetProjectMembers($projectId: String!) {
         getProject(projectId: $projectId) {
