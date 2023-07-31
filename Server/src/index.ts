@@ -56,8 +56,15 @@ const resolvers = {
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
+export type UserAuthenticated = {
+  name: string,
+  email: string,
+  image: string, 
+  emailIsVerified: boolean
+}
 export interface MyContext {
   userIsLoggedIn: boolean,
+  userAuthenticated: UserAuthenticated
   "project code": boolean
   models: {
     User: UserDataSource,
@@ -85,10 +92,10 @@ const server = new ApolloServer<MyContext>({
 
         const projectCode = '';
         const userHasProjectCode = projectCode.length > 0;
-    
         const decodedAccesToken = await validateToken(token);
         // const userIsAuthenticated = await validateToken(token).then(success =>  true).catch(fail => false)
         const userIsAuthenticated = decodedAccesToken ? true : false
+
         console.log('is', userIsAuthenticated, decodedAccesToken)
 
         if (!userIsAuthenticated && !userHasProjectCode) {
@@ -96,11 +103,14 @@ const server = new ApolloServer<MyContext>({
             extensions: {code: 'UNAUTHENTICATED', http: { status: 401 },}
           })
         } else {
+          const {name, email, image, emailIsVerified} = decodedAccesToken as UserAuthenticated
+          const userAuthenticated = {name, email, image, emailIsVerified} 
           return {
             userIsLoggedIn: userIsAuthenticated,
+            userAuthenticated: userAuthenticated,
             "project code": userHasProjectCode,
             models: {
-              User: generateUserModel({userIsAuthenticated}),
+              User: generateUserModel(userAuthenticated),
               Task: generateTaskModel({userIsAuthenticated}),
               Project: generateProjectModel({userIsAuthenticated})
             }

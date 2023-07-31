@@ -8,6 +8,8 @@ export interface MemberConnectDisconnect {
 export type CreateUserArgs = Pick<User, 'email' | 'image' |'name'>
 
 export type CreateUser = (parent: unknown, args: CreateUserArgs, context: any)=> Promise<User>
+
+export type LoginUserArgs = undefined
 export type GetAllUsersArgs = null
 
 // TASK RESOLVER TYPES
@@ -39,9 +41,13 @@ export type AssignMemberToTaskArgs = Task & Pick<User ,'id'> & {
 export type GetProjectArgs = Pick<Project, 'id'> & {
     projectId: Project['id']
 }
-export type GetAllProjectArgs = undefined
+export type GetAllProjectArgs = {
+    userId: User['id']
+}
 
-export type CreateProjectArgs = Project
+export type CreateProjectArgs = Project & {
+    userId: User['id']
+}
 
 export type UpdateProjectArgs = Project & {
     projectId: Project['id']

@@ -16,5 +16,7 @@ export const userTypeDefs = {
             name: String!,
             image: String
         ): User
+        
+        loginUser: User
     `
 }

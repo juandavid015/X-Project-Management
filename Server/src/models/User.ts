@@ -1,24 +1,57 @@
 
 import { prisma } from "../db";
 import { User } from "@prisma/client";
-import { CreateUserArgs, GetAllUsersArgs } from "../types/types";
+import { CreateUserArgs, GetAllUsersArgs, LoginUserArgs } from "../types/types";
+import { UserAuthenticated } from "..";
 
 
 type CreateUser = (parent?: unknown, args?: CreateUserArgs)=> Promise<User>
 type GetAllUsers = (parent: unknown, args: GetAllUsersArgs)=> Promise<User[]>
+type LoginUser = (parent: unknown, args: LoginUserArgs) => Promise<User>
 
 export interface UserDataSource {
     createUser: CreateUser,
-    getAllUsers: GetAllUsers
+    getAllUsers: GetAllUsers,
+    loginUser: LoginUser
 }
-export const generateUserModel = ({userIsAuthenticated}): UserDataSource => ({
+
+export const generateUserModel = (userAuthenticated: UserAuthenticated): UserDataSource => ({
     createUser: async (_, args) => {
-        if(!userIsAuthenticated) {
-            return null
-        } else {
-            return await prisma.user.create({data: {email: args.email, name: args.name, image: args.image}})
-        }
+        const createdUser = await prisma.user.create({
+            data: {email: args.email, name: args.name, image: args.image}
+        });
+
+        return createdUser
         
     },
-    getAllUsers: async () => await prisma.user.findMany(),
+    getAllUsers: async () => {
+        const users = await prisma.user.findMany()
+        return users
+    },
+
+    loginUser: async() => {
+
+        const {email, name, image} = userAuthenticated
+
+        const user = await prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })  
+
+        if(user) {
+            return user
+
+        } else {
+            let userCreated = await prisma.user.create({
+                data: {
+                    email: email,
+                    name: name,
+                    image: image
+                }
+            })
+            return userCreated
+        }
+
+    }
 })

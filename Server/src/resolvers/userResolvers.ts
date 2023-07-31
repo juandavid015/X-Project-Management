@@ -1,6 +1,5 @@
-import { User } from "@prisma/client"
 import { MyContext } from "..";
-import { CreateUser, CreateUserArgs, GetAllUsersArgs } from "../types/types";
+import { CreateUserArgs, GetAllUsersArgs, LoginUserArgs } from "../types/types";
 
 
 // export type UserResolvers = {
@@ -20,6 +19,9 @@ export const userResolvers = {
     }, 
     Mutation: {
         // USER
+        loginUser: (parent: unknown, args: LoginUserArgs, context: MyContext) => 
+        context.models.User.loginUser(parent, args),
+
         createUser: (parent: unknown, args: CreateUserArgs, context: MyContext) => 
         context.models.User.createUser(parent, args),
     }

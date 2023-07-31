@@ -23,18 +23,39 @@ export const generateProjectModel = ({userIsAuthenticated}):ProjectDataSource =>
         }
         })
     },
-    getAllProjects: async () => {
+    getAllProjects: async (_, args) => {
+      const {userId} = args;
         return await prisma.project.findMany({
+          where: {
+            members: {
+              some: {
+                id: {
+                  equals: userId
+                }
+              }
+            }
+          },
             include: {
-                members: true, 
+                members: true,
                 tasks: true
             }
         })
     },
     createProject: async (_, args) => {
+        const {userId, ...projectData} = args
+
         return await prisma.project.create({
-            data: {...args}
-        })
+            data: {
+                ...projectData,
+                members: {
+                    connect: {id: userId}
+                }
+            },
+            include: {
+                members: true
+            }
+        }, )
+        
     },
     updateProject: async (_, args) => {
         let { projectId, userIds, ...projectData}: {

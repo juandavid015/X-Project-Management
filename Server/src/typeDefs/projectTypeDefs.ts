@@ -9,11 +9,12 @@ export const projectTypeDefs = {
         }
     `, 
     query: `
-        getAllProjects: [Project]
+        getAllProjects(userId: String!): [Project]
         getProject(projectId: String!): Project
     `,
     mutation: `
         createProject(
+            userId: String!
             title: String
         ): Project
 
