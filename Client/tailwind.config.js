@@ -23,7 +23,11 @@ export default {
       },
       boxShadow: {
         "md2": "0 0 8px"
-      }
+      },
+      fontFamily: {
+        sans: ['Heebo', 'Arial', 'sans-serif'],
+        heading: ['Righteous', 'Georgia', 'serif'], // Use your preferred font for headers here
+      },
     },
   },
   plugins: [],
