@@ -81,14 +81,24 @@ export const CREATE_TASK = gql`
     }
 `
 export const CREATE_PROJECT = gql`
-    mutation CreateProject ($userId: String! $tile: String) {
+    mutation CreateProject($userId: String!, $title: String!, $description: String, $label: String) {
         createProject(
             userId: $userId
             title: $title
+            description: $description
+            label: $label
         ) {
             id
             title
-            members
+            description
+            label
+            userIds
+            members {
+                id
+                email,
+                name,
+                image
+            }
         }
     }
 `

@@ -39,6 +39,8 @@ export const GET_PROJECTS = gql`
         getAllProjects(userId: $userId) {
             id
             title
+            description
+            label
             members {
                 id
                 email
@@ -54,6 +56,8 @@ export const GET_PROJECT = gql`
             id
             userIds
             title
+            description
+            label
             members {
                 id
                 email

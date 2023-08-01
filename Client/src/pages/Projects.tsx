@@ -3,6 +3,10 @@ import { Members } from "../components/Members";
 import { GET_PROJECTS } from "../graphql/querys";
 import { Link } from "react-router-dom";
 import { Project } from "../types/types";
+import { AddIcon } from "../assets/icons/Icons";
+import { useModal } from "../hooks/useModal";
+import ModalCreateProject from "../components/ModalCreateProject";
+import FormCreateProject from "../components/FormCreateProject";
 
 
 // const sampleProjects = [
@@ -56,7 +60,7 @@ const Projects = () => {
         }
     });
 
-
+    const {openModal, closeModal, isActive} = useModal();
 
     if(loading) return (
         <div>Loding...</div>
@@ -64,50 +68,69 @@ const Projects = () => {
     const projects: Project[] = data.getAllProjects
 
     return (
-        <div className="p-8 flex flex-col gap-8 w-full">
-            <h1 className="font-heading text-3xl pr-8 border-r border-gray inline w-fit
-            ">
-                Projects
-            </h1>
-            <div className="flex gap-4">
-                {
-                    projects?.map(project => {
-                        return (
-                            <div className="max-w-[270px] w-full flex-1 bg-white p-8
-                            flex flex-col gap-2">
-                                <Link to={project.id} className="w-full">
-                                    <h2 className="font-heading text-xl
-                                    line-clamp-3">
-                                        {project.title}
-                                    </h2>
-                                    {/* <span className="text-dark-purple-md font-bold">
-                                        {project.tag}
-                                    </span> */}
-                                    {/* <p className="line-clamp-3">
-                                        {project.description}
-                                    </p> */}
-                                    <div className="mt-auto flex flex-row justify-between ">
-                                        <Members
-                                        members={project.members}
-                                        height='h-[30px]'
-                                        width="w-[30px]"
-                                        />
-                                        {/* <div className="flex flex-col">
-                                            <span className="text-dark-purple-md font-bold">
-                                                Completed 
-                                            </span>
-                                            <span className="text-dark-purple-md font-bold">
-                                                {project.tasksProgress.completed}/{project.tasksProgress.total}
-                                            </span>
-                                        </div> */}
-                                    </div>
-                                </Link>
-                            </div>
-                        )
-                    })
-                }
+        <>
+            {
+                isActive && 
+                <ModalCreateProject closeModal={closeModal}>
+                    <FormCreateProject />
+                </ModalCreateProject>
+            }
+            <div className="p-8 flex flex-col gap-8 w-full">
+                <div className="flex gap-4">
+                    <h1 className="font-heading text-3xl pr-8 border-r border-gray inline w-fit
+                    ">
+                        Projects
+                    </h1>
+                    <button onClick={openModal} 
+                    className="font-sans font-medium text-white/80 
+                    hover:text-white hover:fill-white-gray fill-white-gray/80
+                    flex items-center gap-3 bg-electric-blue py-2 px-4 rounded-full">
+                        <AddIcon className="h-[16px] "/>
+                        <span>
+                            Create new project
+                        </span>
+                    </button>
+                </div>
+                <div className="flex gap-4 flex-wrap">
+                    {
+                        projects?.map((project) => {
+                            return (
+                                <div className="max-w-[270px] w-full bg-white p-8
+                                flex  flex-col gap-2 text-base" key={project.id}>
+                                    <Link to={project.id} className="w-full">
+                                        <h2 className="font-heading text-xl
+                                        line-clamp-3">
+                                            {project.title}
+                                        </h2>
+                                        <span className="text-dark-purple-md font-bold">
+                                            {project.label}
+                                        </span>
+                                        <p className="line-clamp-3">
+                                            {project.description}
+                                        </p>
+                                        <div className="mt-auto flex flex-row justify-between ">
+                                            <Members
+                                            members={project.members}
+                                            height='h-[30px]'
+                                            width="w-[30px]"
+                                            />
+                                            {/* <div className="flex flex-col">
+                                                <span className="text-dark-purple-md font-bold">
+                                                    Completed 
+                                                </span>
+                                                <span className="text-dark-purple-md font-bold">
+                                                    {project.tasksProgress.completed}/{project.tasksProgress.total}
+                                                </span>
+                                            </div> */}
+                                        </div>
+                                    </Link>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
             </div>
-        </div>
+        </>
     )
 };
 

@@ -18,6 +18,8 @@ export interface Project {
     id: string,
     title: string,
     members: User[]
+    label?: string
+    description?: string
 }
 
 export interface Task {
