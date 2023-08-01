@@ -3,9 +3,11 @@ export const projectTypeDefs = {
         type Project {
             id: String!,
             userIds: [String]
-            title: String!,
-            tasks: [Task],
-            members: [User],
+            description: String
+            label: String
+            title: String!
+            tasks: [Task]
+            members: [User]
         }
     `, 
     query: `
@@ -15,7 +17,9 @@ export const projectTypeDefs = {
     mutation: `
         createProject(
             userId: String!
-            title: String
+            title: String!
+            description: String
+            label: String
         ): Project
 
         updateProject(

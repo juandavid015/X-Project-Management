@@ -31,6 +31,8 @@ model User {
 model Project {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   title String @unique
+  description String?
+  label String?
   tasks Task[]
   userIds String[] @db.ObjectId
   members User[] @relation(fields: [userIds], references: [id])
