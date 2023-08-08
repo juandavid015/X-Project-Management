@@ -1,10 +1,11 @@
-import { Kanban } from "./Kanban"
+import { Outlet } from "react-router-dom"
 
 export const ProjectView = () => {
-    // This project view will functionally work rendering conditionally.
+    // The outlet render the view/ui or childrens of the present parent route "Project"
+    // depending on the current pathname
     return (
-        <div>
-            <Kanban />
+        <div className="h-full ">
+            <Outlet />
         </div>
     )
 }

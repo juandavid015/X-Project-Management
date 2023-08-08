@@ -13,7 +13,7 @@ export default {
         "dark-purple-md": "rgba(53, 25, 134, 0.6)",
         "gray": "#CBCBCB",
         "red-warning": "#D00000",
-        "blue-bright": "#1731c4",
+        "blue-bright": "#3D68FE",
         "yellow-gold": "#efa32a",
       },
       gridTemplateColumns: {
