@@ -1,10 +1,11 @@
 import { useQuery } from "@apollo/client";
 import { GET_PROJECT } from "../graphql/querys";
 import { ProjectMembers } from "./ProjectMembers";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { Project } from "../types/types";
 
-export const ProjectHeader = () => {
+export const 
+ProjectHeader = () => {
     
     const { projectId } = useParams();
     const {loading, error, data } = useQuery(GET_PROJECT, {
@@ -31,9 +32,9 @@ export const ProjectHeader = () => {
 
 
     return (
-        <header className="flex items-center justify-between font-bold text-dark-md">
+        <header className="max-w-[1048px] flex items-center justify-between font-medium text-dark-md">
             <h1 className="font-heading inline pr-4 text-xl font-bold 
-            border-r border-black">
+            border-r border-gray">
                 {project.title}
             </h1>
      
@@ -42,10 +43,50 @@ export const ProjectHeader = () => {
                         Views
                     </span>
                     <ul className="flex gap-4">
-                        <li>Kanban</li>
-                        <li>List</li>
-                        <li>Gantt</li>
-                        <li>Calendar</li>
+                        <li>
+                            <NavLink to={'tasks/kanban'}
+                            className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue border-b border-white-gray'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}>
+                                Kanban
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to={'tasks/list'}
+                            className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue border-b border-white-gray'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}>
+                                List
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to={'tasks/gantt'}
+                            className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue border-b border-white-gray'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}>
+                                Gantt
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to={'tasks/calendar'}
+                            className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue border-b border-white-gray'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}>
+                                Calendar
+                            </NavLink>
+                        </li>
                     </ul>
                 </div>
                 <ProjectMembers 

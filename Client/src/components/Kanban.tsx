@@ -11,6 +11,7 @@ import { useSaveEntity } from "../hooks/useSaveEntity";
 import { MOVE_TASK } from "../graphql/mutations";
 import { useDragTask } from "../hooks/useDragTask";
 import { useParams } from "react-router-dom";
+import { handleErrorResponse } from "../helpers/errorHelpers";
 
 export type TaskColumn = {
     [key: string]: Task[]
@@ -25,7 +26,7 @@ export const Kanban = () => {
     const { projectId } = useParams();
     const {loading, error, data} = useQuery(GET_PROJECT_TASKS, {
         variables: {projectId: projectId},
-        errorPolicy: 'none'
+        errorPolicy: 'all'
         // onError: error => console.log(error.networkError.result.errors),
     })
 
@@ -66,16 +67,14 @@ export const Kanban = () => {
         setTaskColumns(tasksOrganizedInColumns)
     }, [data])
     
-    
 
     if (loading) return <p>Loading...</p>;
-    if (error) {    
-        // Handle other errors
-        return <p>Error: {error.message}</p>;
-      }
+    if (error ) {    
+        handleErrorResponse(error);
+    }
 
     return (
-        <div className={`grid 
+        <div className={`max-w-[1048px] grid 
          gap-x-8 gap-y-4 `} style={{gridTemplateColumns: `repeat(${projectStatus.length},minmax(238px, auto))`}} 
          > 
             {
