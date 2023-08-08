@@ -1,22 +1,21 @@
-import { handleErrorResponse } from "../helpers/errorHelpers";
+import { handleErrorResponse } from "../helpers/errorHelpers"
 
-const Goals = () => {
-    const goals = null
-    if (!goals) {
+const ProjectDiscussions = () => {
+    const discussionsData = null
+    if (!discussionsData) {
         //simulate error response for in-developement feature
         const error = {
             status: 404, 
             statusText: 'Service unavailable',
             message: 'is an in-developement feature and will be released soon in upcoming updates.',
-            data: {featureName: 'goals'}
+            data: {featureName: 'discussions'}
         }
         handleErrorResponse(error)
     }
     return (
         <div>
-            Goals
+            Discussions
         </div>
     )
-};
-
-export default Goals;
+}
+export default ProjectDiscussions;

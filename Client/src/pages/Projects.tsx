@@ -7,6 +7,7 @@ import { AddIcon } from "../assets/icons/Icons";
 import { useModal } from "../hooks/useModal";
 import ModalCreateProject from "../components/ModalCreateProject";
 import FormCreateProject from "../components/FormCreateProject";
+import { handleErrorResponse } from "../helpers/errorHelpers";
 
 
 // const sampleProjects = [
@@ -54,7 +55,7 @@ import FormCreateProject from "../components/FormCreateProject";
 //     }
 // ]
 const Projects = () => {
-    const {loading, data} = useQuery(GET_PROJECTS, {
+    const {loading, data, error} = useQuery(GET_PROJECTS, {
         variables: {
             userId: "64c5cfe02f64b23b4eb88917"
         }
@@ -65,6 +66,9 @@ const Projects = () => {
     if(loading) return (
         <div>Loding...</div>
     )
+    if (error ) {    
+        handleErrorResponse(error);
+    }
     const projects: Project[] = data.getAllProjects
 
     return (
