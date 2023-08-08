@@ -1,31 +1,69 @@
+import { NavLink} from "react-router-dom"
+
 export const ProjectSubMenu = () => {
+  
     return (
-        <div className="py-2 border-b border-white-gray text-dark-med font-bold">
+        <div className="max-w-[1048px] py-2 border-b border-white-gray text-dark-med font-medium">
             <ul className="flex gap-4">
                 <li>
-                    <a>
+                    <NavLink to={'tasks'} 
+                    className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}
+                    >
                         Tasks   
-                    </a>
+                    </NavLink>
                 </li>
                 <li>
-                    <a>
+                    <NavLink to={'discussions'} 
+                    className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}
+                    >
                         Discussions
-                    </a>
+                    </NavLink>
                 </li>
                 <li>
-                    <a>
+                    <NavLink to={"timeline"} 
+                    className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}
+                    >
                         Timeline
-                    </a>
+                    </NavLink>
                 </li>
                 <li>
-                    <a>
+                    <NavLink to={"files"} 
+                    className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}
+                    >
                         Files
-                    </a>
+                    </NavLink>
                 </li>
                 <li>
-                    <a>
+                    <NavLink to={"overview"} 
+                    className={({isActive, isPending}) => 
+                            isActive 
+                            ? 'text-electric-blue'
+                            : isPending 
+                            ? 'text-red-warning'
+                            : ''}
+                    >
                         Overview
-                    </a>
+                    </NavLink>
                 </li>
             </ul>
         </div>
