@@ -1,12 +1,12 @@
 import { useQuery } from "@apollo/client";
-import { Members } from "../components/Members";
+import { Members } from "../components/ui/Members";
 import { GET_PROJECTS } from "../graphql/querys";
 import { Link } from "react-router-dom";
 import { Project } from "../types/types";
 import { AddIcon } from "../assets/icons/Icons";
 import { useModal } from "../hooks/useModal";
-import ModalCreateProject from "../components/ModalCreateProject";
-import FormCreateProject from "../components/FormCreateProject";
+import ModalCreateProject from "../components/modal/ModalCreateProject";
+import FormCreateProject from "../components/form/FormCreateProject";
 import { handleErrorResponse } from "../helpers/errorHelpers";
 
 

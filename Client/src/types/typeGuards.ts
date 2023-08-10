@@ -1,4 +1,4 @@
-import { CustomErrorResponse } from "../components/ErrorPage";
+import { CustomErrorResponse } from "../components/error/ErrorPage";
 
 export function isCustomErrorResponse (obj: unknown): obj is CustomErrorResponse{
     if (obj) {

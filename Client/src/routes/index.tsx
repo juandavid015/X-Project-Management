@@ -1,7 +1,7 @@
 
 import { createBrowserRouter } from "react-router-dom";
 import Root from "./root";
-import { Project } from "../components/Project";
+import { Project } from "../pages/Project";
 import Projects from "../pages/Projects";
 import Notifications from "../pages/Notifications";
 import Spaces from "../pages/Spaces";
@@ -9,17 +9,17 @@ import Goals from "../pages/Goals";
 import Chats from "../pages/Chats";
 import PostLogin from "../pages/PostLogin";
 import Auth0ProviderWithNavigate from "../providers/Auth0ProviderWithNavigate";
-import ErrorPage from "../components/ErrorPage";
-import NotFoundPage from "../components/NotFoundPage";
-import ProjectDiscussions from "../components/ProjectDiscussions";
-import { Kanban } from "../components/Kanban";
-import ProjectTimeline from "../components/ProjectTimeline";
-import ProjectOverview from "../components/ProjectOverview";
-import ProjectFiles from "../components/ProjectFiles";
-import List from "../components/List";
-import Calendar from "../components/Calendar";
-import Gantt from "../components/Gantt";
-import Tasks from "../components/Tasks";
+import ErrorPage from "../components/error/ErrorPage";
+import NotFoundPage from "../pages/NotFoundPage";
+import ProjectDiscussions from "../components/project/ProjectDiscussions";
+import { Kanban } from "../components/kanban/Kanban";
+import ProjectTimeline from "../components/project/ProjectTimeline";
+import ProjectOverview from "../components/project/ProjectOverview";
+import ProjectFiles from "../components/project/ProjectFiles";
+import List from "../components/project/List";
+import Calendar from "../components/project/Calendar";
+import Gantt from "../components/project/Gantt";
+import Tasks from "../components/project/Tasks";
 
 export const router = createBrowserRouter([
     {

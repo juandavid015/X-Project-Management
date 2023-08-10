@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { TaskColumns,  } from '../components/Kanban';
+import { TaskColumns,  } from '../components/kanban/Kanban';
 import { Status, Task } from '../types/types';
 
 type TaskDragInfo = {
