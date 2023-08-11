@@ -1,6 +1,6 @@
 import {useAuth0} from '@auth0/auth0-react';
 
-export const LoginButton = () => {
+export const LoginButton = ({...rest}) => {
   
     const { loginWithRedirect } = useAuth0();
     const handleLogin = async () => {
@@ -12,6 +12,6 @@ export const LoginButton = () => {
 
     }
     return (
-        <button onClick={() => handleLogin()}>Log In</button>
+        <button onClick={() => handleLogin()} {...rest}>Log In</button>
     )
 }

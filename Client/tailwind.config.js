@@ -15,6 +15,7 @@ export default {
         "red-warning": "#D00000",
         "blue-bright": "#3D68FE",
         "yellow-gold": "#efa32a",
+        "purple": "#8C52FF"
       },
       gridTemplateColumns: {
         'kanban': 'repeat(4, 238px)',

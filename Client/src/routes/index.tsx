@@ -20,6 +20,8 @@ import List from "../components/project/List";
 import Calendar from "../components/project/Calendar";
 import Gantt from "../components/project/Gantt";
 import Tasks from "../components/project/Tasks";
+import ProtectedRoute from "../components/authentication/ProtectedRoute";
+import Settings from "../pages/Settings";
 
 export const router = createBrowserRouter([
     {
@@ -63,15 +65,17 @@ export const router = createBrowserRouter([
                                                     },
                                                     {
                                                         path: "list",
-                                                        element: <List />
+                                                        element: <ProtectedRoute children={<List />} />
+                                                        // List will be public once the feature is ready
                                                     },
                                                     {
                                                         path: "calendar",
-                                                        element: <Calendar />
+                                                        element: <ProtectedRoute children={<Calendar />} />
+                                                        // Calendar will be public once the feature is ready
                                                     },
                                                     {
                                                         path: "gantt",
-                                                        element: <Gantt />
+                                                        element: <ProtectedRoute children={<Gantt />} />
                                                     },
                                                 ]
                                             },
@@ -81,19 +85,19 @@ export const router = createBrowserRouter([
                                             },
                                             {
                                                 path: "discussions",
-                                                element: <ProjectDiscussions />
+                                                element: <ProtectedRoute children={<ProjectDiscussions />} />
                                             },
                                             {
                                                 path: "timeline",
-                                                element: <ProjectTimeline />
+                                                element: <ProtectedRoute children={<ProjectTimeline />} />
                                             },
                                             {
                                                 path: "overview",
-                                                element: <ProjectOverview />
+                                                element: <ProtectedRoute children={<ProjectOverview />} />
                                             },
                                             {
                                                 path: "files",
-                                                element: <ProjectFiles />
+                                                element: <ProtectedRoute children={<ProjectFiles />} />
                                             }
                                         ]
                                     }
@@ -101,26 +105,34 @@ export const router = createBrowserRouter([
                   
                                 
                             },
+                            
+                    
                             {
                                 path: "notifications",
-                                element: <Notifications />
+                                element: <ProtectedRoute children={<Notifications />} />
                             },
                             {
                                 path: "spaces",
-                                element: <Spaces />
+                                element: <ProtectedRoute children={<Spaces />} />
                             },
                             {
                                 path: "goals",
-                                element: <Goals />
+                                element: <ProtectedRoute children={<Goals />} />
                             },
                             {
                                 path: "chats",
-                                element: <Chats />
+                                element: <ProtectedRoute children={<Chats />} />
+                            },
+                            {
+                                path: "settings",
+                                element: <ProtectedRoute children={<Settings />} />
                             },
                             {
                                 path: '*',
                                 element: <NotFoundPage />
                             }
+                        
+                            
                         ]
                     }
                 ]

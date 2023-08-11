@@ -11,6 +11,7 @@ import ErrorLayoutDefault from "./ErrorLayoutDefault";
 import ErrorLayoutUnavailable from "./ErrorLayoutUnavailable";
 import { getErrorResponseBody } from "../../helpers/errorHelpers";
 import { useState, useEffect } from 'react'
+import ErrorLayoutUnauthenticated from "./ErrorLayoutUnauthenticated";
 export const ErrorPage = () => {
 
     const error = useRouteError()
@@ -65,6 +66,12 @@ export const ErrorPage = () => {
                     extraInfo={extraInfo}
                     featureName={data?.featureName}
                     />: 
+                    isCustomErrorResponse(error) && error.status === 401 ?
+                    <ErrorLayoutUnauthenticated
+                    title={error.statusText}
+                    message={message}
+                    extraInfo={extraInfo}
+                    />:
                     isCustomErrorResponse(error) ?
                     <ErrorLayoutCustom 
                     title={error.statusText} 
