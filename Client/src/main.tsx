@@ -21,10 +21,14 @@ const errorLink = onError(({ graphQLErrors, networkError}) => {
 const httpLink = new HttpLink({ uri: 'http://localhost:4000/' })
 const authMiddleware = new ApolloLink((operation, forward) => {
   // add the authorization to the headers
-const token = localStorage.getItem('token');
+let token = localStorage.getItem('token');
+let publicIdentifier = localStorage.getItem('public')
+token = token?.length ? `bearer ${token}` : "";
+publicIdentifier = publicIdentifier?.length ? `publicIdentifier ${publicIdentifier}` : "";
+
   operation.setContext({
     headers: {
-      authorization: token ? `${token}` : "",
+      authorization: token || publicIdentifier,
     },
   });
   return forward(operation);

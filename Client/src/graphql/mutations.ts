@@ -80,6 +80,27 @@ export const CREATE_TASK = gql`
         }
     }
 `
+
+export const CREATE_PUBLIC_PROJECT = gql`
+    mutation CreatePublicProject {
+        createPublicProject {
+            project {
+                id
+                title
+                description
+                label
+                userIds
+                members {
+                    id
+                    email,
+                    name,
+                    image
+                }
+            }
+            token
+        }
+    }
+`
 export const CREATE_PROJECT = gql`
     mutation CreateProject($userId: String!, $title: String!, $description: String, $label: String) {
         createProject(

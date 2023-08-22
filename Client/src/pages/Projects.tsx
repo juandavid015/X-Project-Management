@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Members } from "../components/ui/Members";
 import { GET_PROJECTS } from "../graphql/querys";
 import { Link } from "react-router-dom";
@@ -8,6 +8,8 @@ import { useModal } from "../hooks/useModal";
 import ModalCreateProject from "../components/modal/ModalCreateProject";
 import FormCreateProject from "../components/form/FormCreateProject";
 import { handleErrorResponse } from "../helpers/errorHelpers";
+import { CREATE_PUBLIC_PROJECT } from "../graphql/mutations";
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 // const sampleProjects = [
@@ -55,21 +57,40 @@ import { handleErrorResponse } from "../helpers/errorHelpers";
 //     }
 // ]
 const Projects = () => {
+    const { isAuthenticated } = useAuth0();
+    const hasPublicSpace = window.localStorage.getItem('public')?.length;
+    const [createPublicProject, {data: publicProject, loading: loadingPublicProject}] = useMutation(CREATE_PUBLIC_PROJECT);
     const {loading, data, error} = useQuery(GET_PROJECTS, {
+        skip: !isAuthenticated && !hasPublicSpace,
         variables: {
             userId: "64c5cfe02f64b23b4eb88917"
         }
     });
 
     const {openModal, closeModal, isActive} = useModal();
+    // Check if not user has been logged in, or a public space/project already exists.
+    if(!hasPublicSpace && !isAuthenticated) {
+        // Create a public project
+        createPublicProject().then(res => {
+             // store the public space identifier in the localstorage
+            const publicIdentifier = res.data?.createPublicProject?.token || ''
+            window.localStorage.setItem('public', publicIdentifier)
+        })
+    }
 
-    if(loading) return (
+    if(loadingPublicProject || loading) return (
         <div>Loding...</div>
     )
     if (error ) {    
         handleErrorResponse(error);
     }
-    const projects: Project[] = data.getAllProjects
+
+    // user didn't have public session or were logged in... use the public project recently created
+    // otherwise... the user is logged in, so use its related data.
+    const projects: Project[] = !isAuthenticated && !hasPublicSpace ? 
+    (publicProject && [publicProject?.createPublicProject.project]) 
+    : data?.getAllProjects
+
 
     return (
         <>
