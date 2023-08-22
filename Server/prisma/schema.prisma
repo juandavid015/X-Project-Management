@@ -36,6 +36,7 @@ model Project {
   tasks Task[]
   userIds String[] @db.ObjectId
   members User[] @relation(fields: [userIds], references: [id])
+  token String?
 }
 model Task {
   id String @id @default(auto()) @map("_id") @db.ObjectId

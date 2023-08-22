@@ -2,16 +2,23 @@ import { Project } from "@prisma/client";
 import { prisma } from "../db";
 import { AssignMemberToProjectArgs, CreateProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types";
 import { MemberConnectDisconnect } from "../types/types"
-;
+import { createPublicToken } from "../utils/validateToken";
+import { generateRandomUsername } from "../utils/randomNames";
+
+export type PublicProject = {
+  project: Project,
+  token: string
+}
 export interface ProjectDataSource {
     getProjectById: (parent: unknown, args: GetProjectArgs) => Promise<Project>
     getAllProjects: (parent: unknown, args: GetAllProjectArgs) => Promise<Project[]>
     createProject: (parent: unknown, args: CreateProjectArgs) => Promise<Project>
+    createPublicProject: (parent: unknown, args: CreateProjectArgs) => Promise<PublicProject>
     updateProject: (parent: unknown, args: UpdateProjectArgs) => Promise<Project>
     assignMemberToProject: (parent: unknown, args: AssignMemberToProjectArgs) => Promise<Project>
 }
 
-export const generateProjectModel = ({userIsAuthenticated}):ProjectDataSource => ({
+export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess, userAuthenticated, userWithPartialAccess}):ProjectDataSource => ({
   
     getProjectById: async (_, args) => {
         return await prisma.project.findUnique({
@@ -24,8 +31,9 @@ export const generateProjectModel = ({userIsAuthenticated}):ProjectDataSource =>
         })
     },
     getAllProjects: async (_, args) => {
-      const {userId} = args;
-        return await prisma.project.findMany({
+        let userId = (userHasPartialAccess && userWithPartialAccess.id)  ||  args.userId
+      
+        let projects = await prisma.project.findMany({
           where: {
             members: {
               some: {
@@ -39,8 +47,40 @@ export const generateProjectModel = ({userIsAuthenticated}):ProjectDataSource =>
                 members: true,
                 tasks: true
             }
-        })
+        }, )
+
+        return projects
     },
+
+    createPublicProject: async (_, args) => {
+
+      if(!userHasPartialAccess && !userIsAuthenticated) {
+
+        let newPublicUser = await prisma.user.create({
+          data: {
+              name: generateRandomUsername(),
+              email: '',
+              image: 'https://images.pexels.com/photos/2822949/pexels-photo-2822949.jpeg?auto=compress&cs=tinysrgb&w=200'
+          }
+          })
+        let token = createPublicToken(newPublicUser)
+        let project = await prisma.project.create({
+          data: {
+              title: 'New public project',
+              description: 'This is a public project. Stored partially on your browser',
+              label: 'sample project',
+              token: token,
+              members: {
+              connect: {id: newPublicUser.id}
+              }
+          },
+        })
+  
+        return {project, token}
+
+      }
+  },
+
     createProject: async (_, args) => {
         const {userId, ...projectData} = args
 

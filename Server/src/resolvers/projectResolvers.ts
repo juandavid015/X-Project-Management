@@ -12,6 +12,9 @@ export const projectResolvers = {
     },
     Mutation: {
         // PROJECT
+        createPublicProject: (parent: unknown, args: CreateProjectArgs, context: MyContext) => 
+        context.models.Project.createPublicProject(parent, args),
+
         createProject: (parent: unknown, args: CreateProjectArgs, context: MyContext) => 
         context.models.Project.createProject(parent, args),
         

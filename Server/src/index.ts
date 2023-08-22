@@ -1,7 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { GraphQLError } from 'graphql';
-import {validateToken} from './utils/validateToken.js';
+import {validatePublicToken, validateToken} from './utils/validateToken.js';
 import { UserDataSource, generateUserModel } from './models/User.js';
 import { TaskDataSource, generateTaskModel } from './models/Task.js';
 import { ProjectDataSource, generateProjectModel } from './models/Project.js';
@@ -11,6 +10,7 @@ import { userResolvers } from './resolvers/userResolvers.js';
 import { userTypeDefs } from './typeDefs/userTypeDefs.js';
 import { projectTypeDefs } from './typeDefs/projectTypeDefs.js';
 import { taskTypeDefs } from './typeDefs/taskTypeDefs.js';
+import { authenticationAndAccessGuard } from './plugins/plugins.js';
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
@@ -57,72 +57,86 @@ const resolvers = {
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
 export type UserAuthenticated = {
-  name: string,
-  email: string,
-  image: string, 
-  emailIsVerified: boolean
+    id?: string,
+    name: string,
+    email: string,
+    image: string, 
+    emailIsVerified: boolean
 }
+export type UserWithPartialAccess = & UserAuthenticated 
 export interface MyContext {
-  userIsLoggedIn: boolean,
-  userAuthenticated: UserAuthenticated
-  "project code": boolean
-  models: {
-    User: UserDataSource,
-    Project: ProjectDataSource,
-    Task: TaskDataSource
-  }
+    userIsLoggedIn: boolean,
+    userAuthenticated: UserAuthenticated
+    userHasPartialAccess: boolean
+    userWithPartialAccess: UserWithPartialAccess
+    models: {
+        User: UserDataSource,
+        Project: ProjectDataSource,
+        Task: TaskDataSource
+    }
 }
 const server = new ApolloServer<MyContext>({
     typeDefs,
     resolvers,
+    plugins: [
+        authenticationAndAccessGuard
+    ]
   });
 
   // Passing an ApolloServer instance to the `startStandaloneServer` function:
   //  1. creates an Express app
   //  2. installs your ApolloServer instance as middleware
   //  3. prepares your app to handle incoming requests
-  const { url } = await startStandaloneServer(server, {
+const { url } = await startStandaloneServer(server, {
  
     context: async ({req})=> {
-      // The user authentication will be handled by AUth0 Google, which says if the user has valid credentials
-      try {
-        const token = req.headers.authorization || '';
-    
-        console.log(req.headers.authorization)
+    // The user authentication will be handled by AUth0 Google, which says if the user has valid credentials
+        let authorization = req.headers.authorization || null;
+        let token = authorization && authorization.startsWith('bearer') && authorization.split(' ')[1] ;
+        let identifier = authorization && authorization.startsWith('publicIdentifier') && authorization.split(' ')[1];
+        let projectCode = '';
+        let decodedAccesToken: unknown;
+        let userIsAuthenticated: boolean;
+        let userAuthenticated:UserAuthenticated;
+        let userWithPartialAccess: UserWithPartialAccess;
+        let userHasPartialAccess: boolean;
+        let decodedPublicAccessToken: unknown;
 
-        const projectCode = '';
-        const userHasProjectCode = projectCode.length > 0;
-        const decodedAccesToken = await validateToken(token);
-        // const userIsAuthenticated = await validateToken(token).then(success =>  true).catch(fail => false)
-        const userIsAuthenticated = decodedAccesToken ? true : false
+        // console.log(req.headers.authorization)
+        // console.log('REQ MIDLWR', identifier)
+        try {
+        
+            projectCode = '';
+            decodedPublicAccessToken = identifier && await validatePublicToken(identifier)
+            decodedAccesToken = token && await validateToken(token);
+            // const userIsAuthenticated = await validateToken(token).then(success =>  true).catch(fail => false)
+            userIsAuthenticated = decodedAccesToken ? true : false
+            userHasPartialAccess = decodedPublicAccessToken ? true : false
+            
 
-        console.log('is', userIsAuthenticated, decodedAccesToken)
+            const {id, name, email, image, emailIsVerified} = 
+            decodedAccesToken ? decodedAccesToken as UserAuthenticated:
+            decodedPublicAccessToken as UserWithPartialAccess
 
-        if (!userIsAuthenticated && !userHasProjectCode) {
-          throw new GraphQLError('Invalid user credentials', {
-            extensions: {code: 'UNAUTHENTICATED', http: { status: 401 },}
-          })
-        } else {
-          const {name, email, image, emailIsVerified} = decodedAccesToken as UserAuthenticated
-          const userAuthenticated = {name, email, image, emailIsVerified} 
-          return {
+            userAuthenticated = {name, email, image, emailIsVerified} 
+            userWithPartialAccess = {id, name, email, image, emailIsVerified} 
+            // console.log('is', userIsAuthenticated,  userHasPartialAccess, userWithPartialAccess )
+        } catch (error) {
+            console.error('Error on validating token',  error.message)
+        }
+
+        return {
             userIsLoggedIn: userIsAuthenticated,
             userAuthenticated: userAuthenticated,
-            "project code": userHasProjectCode,
+            userHasPartialAccess: userHasPartialAccess,
+            userWithPartialAccess: userWithPartialAccess,
             models: {
-              User: generateUserModel(userAuthenticated),
-              Task: generateTaskModel({userIsAuthenticated}),
-              Project: generateProjectModel({userIsAuthenticated})
+                User: generateUserModel(userAuthenticated),
+                Task: generateTaskModel({userIsAuthenticated}),
+                Project: generateProjectModel({userIsAuthenticated, userHasPartialAccess, userAuthenticated, userWithPartialAccess})
             }
-           }
+        
         }
-      } catch (error) {
-        console.log('error is', error.message)
-        throw new GraphQLError('Invalid user credentials', {
-          extensions: {code: 'UNAUTHENTICATED', http: { status: 401 }}
-        })
-      }
-
     },
     
     listen: { port: 4000 },

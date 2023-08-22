@@ -8,6 +8,11 @@ export const projectTypeDefs = {
             title: String!
             tasks: [Task]
             members: [User]
+            token: String
+        }
+        type PublicProject {
+            project: Project
+            token: String
         }
     `, 
     query: `
@@ -15,6 +20,7 @@ export const projectTypeDefs = {
         getProject(projectId: String!): Project
     `,
     mutation: `
+        createPublicProject: PublicProject
         createProject(
             userId: String!
             title: String!
