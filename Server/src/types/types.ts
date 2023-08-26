@@ -5,7 +5,7 @@ export interface MemberConnectDisconnect {
     disconnect?: { id: string }[];
   }
 // USER RESOLVER TYPES
-export type CreateUserArgs = Pick<User, 'email' | 'image' |'name'>
+export type CreateUserArgs = Pick<User, 'email' | 'image' |'name' | 'id'>
 
 export type CreateUser = (parent: unknown, args: CreateUserArgs, context: any)=> Promise<User>
 

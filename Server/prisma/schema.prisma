@@ -19,7 +19,7 @@ model Sequence {
    sequence_value Int
 }
 model User {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  id      String   @id @map("_id") @db.ObjectId
   email   String   @unique
   name    String?
   projectIds String[] @db.ObjectId

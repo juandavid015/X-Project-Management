@@ -4,6 +4,7 @@ import { AssignMemberToProjectArgs, CreateProjectArgs, GetAllProjectArgs, GetPro
 import { MemberConnectDisconnect } from "../types/types"
 import { createPublicToken } from "../utils/validateToken";
 import { generateRandomUsername } from "../utils/randomNames";
+import { ObjectId } from "mongodb";
 
 export type PublicProject = {
   project: Project,
@@ -55,12 +56,13 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
     createPublicProject: async (_, args) => {
 
       if(!userHasPartialAccess && !userIsAuthenticated) {
-
+        let userId = new ObjectId();
         let newPublicUser = await prisma.user.create({
           data: {
+              id: userId.toString(),
               name: generateRandomUsername(),
               email: '',
-              image: 'https://images.pexels.com/photos/2822949/pexels-photo-2822949.jpeg?auto=compress&cs=tinysrgb&w=200'
+              image: 'https://res.cloudinary.com/dut4cwhtd/image/upload/v1690849436/LOGO_puijrn.png'
           }
           })
         let token = createPublicToken(newPublicUser)
@@ -82,7 +84,8 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
   },
 
     createProject: async (_, args) => {
-        const {userId, ...projectData} = args
+        let {userId, ...projectData} = args;
+        userId = (userHasPartialAccess && userWithPartialAccess.id)  ||  args.userId;
 
         return await prisma.project.create({
             data: {

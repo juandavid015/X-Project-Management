@@ -61,6 +61,6 @@ export const validatePublicToken = (token: string) => {
 }
 
 export const createPublicToken = (payload: object) => {
-    const accessToken = sign(payload, process.env.TOKEN_SECRET,{expiresIn:'1d'})
+    const accessToken = sign(payload, process.env.TOKEN_SECRET)
     return accessToken
 }

@@ -118,7 +118,7 @@ const { url } = await startStandaloneServer(server, {
             decodedAccesToken ? decodedAccesToken as UserAuthenticated:
             decodedPublicAccessToken as UserWithPartialAccess
 
-            userAuthenticated = {name, email, image, emailIsVerified} 
+            userAuthenticated = {id, name, email, image, emailIsVerified} 
             userWithPartialAccess = {id, name, email, image, emailIsVerified} 
             // console.log('is', userIsAuthenticated,  userHasPartialAccess, userWithPartialAccess )
         } catch (error) {
