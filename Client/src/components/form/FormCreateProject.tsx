@@ -7,6 +7,7 @@ import NotificationCreateProject from './NotificationCreateProject';
 import { useSaveEntity } from '../../hooks/useSaveEntity';
 import { CREATE_PROJECT } from '../../graphql/mutations';
 import { GET_PROJECTS } from '../../graphql/querys';
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface ProjectState { 
     userId: string,
@@ -15,8 +16,10 @@ interface ProjectState {
     label: string
 }
 const FormCreateProject = () => {
+    const {user} = useAuth0();
+    const userId = user && user[`app_metadata`].id;
     const initialState = {
-        userId: "64c5cfe02f64b23b4eb88917",
+        userId: userId || '',
         title: "",
         description: "",
         label: ""

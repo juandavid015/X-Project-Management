@@ -60,7 +60,8 @@ import ProjectsList from "../components/projects/ProjectsList";
 const Projects = () => {
 
     const {openModal, closeModal, isActive} = useModal();
-    const { isAuthenticated } = useAuth0();
+    const { isAuthenticated, user, isLoading} = useAuth0();
+    const userId = user && user[`app_metadata`].id
     const hasPublicSpace = window.localStorage.getItem('public')?.length ? true: false;
 
     const [ createPublicProject, 
@@ -76,12 +77,14 @@ const Projects = () => {
         error
     } = useQuery( GET_PROJECTS, 
         {
-            skip: !isAuthenticated && !hasPublicSpace,
+            skip: (!isAuthenticated && !hasPublicSpace) ,
             variables: {
-                userId: "64c5cfe02f64b23b4eb88917"
+                userId: userId || ''
             }
         }
     );
+
+    console.log('USER', user)
  
     useRedirectPublicProject(createPublicProject, hasPublicSpace, isAuthenticated);
     
@@ -90,7 +93,7 @@ const Projects = () => {
         <Loading messagge="Wait, all is being set up for you..."/>
     )
 
-    if(loading) return (
+    if(loading || isLoading) return (
         <div>Loding...</div>
     )
 
