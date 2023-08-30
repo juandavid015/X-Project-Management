@@ -1,18 +1,17 @@
-export interface CustomErrorResponse {
-    status: number,
-    statusText: string,
-    message?: string
-    data?: Record<string, unknown>
-} 
+import { lazy } from 'react';
 import { useRouteError } from "react-router-dom";
 import { isCustomErrorResponse } from "../../types/typeGuards";
-import ErrorLayoutCustom from "./ErrorLayoutCustom";
-import ErrorLayoutDefault from "./ErrorLayoutDefault";
-import ErrorLayoutUnavailable from "./ErrorLayoutUnavailable";
 import { getErrorResponseBody } from "../../helpers/errorHelpers";
-import { useState, useEffect } from 'react'
-import ErrorLayoutUnauthenticated from "./ErrorLayoutUnauthenticated";
-export const ErrorPage = () => {
+import { useState, useEffect } from 'react';
+import { CustomErrorResponse } from '../../types/types';
+
+const ErrorLayoutCustom = lazy(()=> import("./ErrorLayoutCustom"));
+const ErrorLayoutDefault = lazy(()=> import("./ErrorLayoutDefault"));
+const ErrorLayoutUnavailable = lazy(()=> import("./ErrorLayoutUnavailable"));
+const ErrorLayoutUnauthenticated = lazy(()=> import("./ErrorLayoutUnauthenticated"));
+
+
+const ErrorPage = () => {
 
     const error = useRouteError()
     const [message, setMessage] = useState('');
@@ -53,7 +52,7 @@ export const ErrorPage = () => {
         return () => setLoading(false)
     },[message, error])
 
-    if (loading) return (<div className="min-h-screen w-full text-red-warning">Loading error...</div>)
+    if (loading) return null
     
     return (
         <div className="flex flex-col items-center justify-center w-full h-full m-auto">

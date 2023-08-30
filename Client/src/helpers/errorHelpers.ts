@@ -1,9 +1,10 @@
 import { ApolloError, isApolloError } from "@apollo/client";
 
-import { CustomErrorResponse } from "../components/error/ErrorPage";
+import {  } from "../components/error/ErrorPage";
 import { isCustomErrorResponse } from "../types/typeGuards";
 import { ChatIcon, DateIcon, DiscussionsIcon, DocumentIcon, GanttIcon, GoalsIcon, ListIcon, NotificationsIcon, OverviewIcon, TeamIcon, TimelineIcon } from "../assets/icons/Icons";
 import { json } from "react-router-dom";
+import { CustomErrorResponse } from "../types/types";
 
 export async function getErrorResponseBody(response: Response) {
   const clonedBody = response.clone().body

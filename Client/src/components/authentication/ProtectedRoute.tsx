@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import ErrorLayoutUnauthenticated from "../error/ErrorLayoutUnauthenticated";
+import Loading from "../ui/Loading";
 interface ProtectedRouteProps {
     children: React.ReactNode
 }
@@ -9,7 +10,7 @@ const ProtectedRoute = ({children}: ProtectedRouteProps) => {
     const {isLoading, isAuthenticated} = useAuth0();
 
     if(isLoading) {
-        return <div>Loading...</div>
+        return <div className=" flex items-center justify-center w-full overflow-hidden"><Loading messagge=""/></div>
         
     } else if (!isAuthenticated) {
         return (

@@ -6,7 +6,7 @@ interface LoadingProps {
 }
 const Loading = ({messagge}:LoadingProps) => {
     return (
-        <div className="w-full h-full min-w-screen min-h-screen
+        <div className="w-full h-full overflow-hidden
         flex flex-col gap-4 items-center justify-center ">
             <img src={Logo} alt='logo' className='h-[60px] w-auto'/>
             <h1 className='font-bold'>Loading content...</h1>

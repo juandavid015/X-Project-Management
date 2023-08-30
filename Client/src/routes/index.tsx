@@ -1,27 +1,8 @@
 
 import { createBrowserRouter } from "react-router-dom";
 import Root from "./root";
-import { Project } from "../pages/Project";
-import Projects from "../pages/Projects";
-import Notifications from "../pages/Notifications";
-import Spaces from "../pages/Spaces";
-import Goals from "../pages/Goals";
-import Chats from "../pages/Chats";
-import PostLogin from "../pages/PostLogin";
 import Auth0ProviderWithNavigate from "../providers/Auth0ProviderWithNavigate";
 import ErrorPage from "../components/error/ErrorPage";
-import NotFoundPage from "../pages/NotFoundPage";
-import ProjectDiscussions from "../components/project/ProjectDiscussions";
-import { Kanban } from "../components/kanban/Kanban";
-import ProjectTimeline from "../components/project/ProjectTimeline";
-import ProjectOverview from "../components/project/ProjectOverview";
-import ProjectFiles from "../components/project/ProjectFiles";
-import List from "../components/project/List";
-import Calendar from "../components/project/Calendar";
-import Gantt from "../components/project/Gantt";
-import Tasks from "../components/project/Tasks";
-import ProtectedRoute from "../components/authentication/ProtectedRoute";
-import Settings from "../pages/Settings";
 
 export const router = createBrowserRouter([
     {
@@ -37,15 +18,24 @@ export const router = createBrowserRouter([
                         children: [
                             {
                                 path: "login",
-                                element: <PostLogin />
+                                async lazy() {
+                                    const  PostLogin  = (await import("../pages/PostLogin")).default
+                                    return { Component: PostLogin }
+                                }
                             },
                             {
                                 path: "projects",
-                                element: <Projects />
+                                async lazy() {
+                                    const  Projects  = (await import("../pages/Projects")).default
+                                    return { Component: Projects }
+                                }
                             },
                             {
                                 path: "projects/:projectId",
-                                element: <Project />,
+                                async lazy() {
+                                    const  Project  = (await import("../pages/Project")).default
+                                    return { Component: Project }
+                                },
                                 errorElement: <ErrorPage />,
                                 children: [
                                     {
@@ -53,51 +43,98 @@ export const router = createBrowserRouter([
                                         children: [
                                             {
                                                 path: "tasks",
-                                                element: <Tasks />,
+                                                async lazy () {
+                                                    const  Tasks  = (await import ("../components/project/Tasks")).default
+                                                    return { Component: Tasks }
+                                                },
                                                 children: [
                                                     {
                                                         path: "",
-                                                        element: <Kanban />
+                                                        async lazy () {
+                                                            const  Kanban = (await import ( "../components/kanban/Kanban")).default
+                                                            return { Component: Kanban }
+                                                        },
                                                     },
                                                     {
                                                         path: "kanban",
-                                                        element: <Kanban />
+                                                        async lazy () {
+                                                            const  Kanban = (await import ( "../components/kanban/Kanban")).default
+                                                            return { Component: Kanban }
+                                                        },
                                                     },
                                                     {
                                                         path: "list",
-                                                        element: <ProtectedRoute children={<List />} />
+                                                        async lazy() {
+                                                            const List = (await import("../components/project/List")).default;
+                                                            const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                                            return { Component: ()=> <ProtectedRoute children={<List />}/> }
+                                                        },
                                                         // List will be public once the feature is ready
                                                     },
                                                     {
                                                         path: "calendar",
-                                                        element: <ProtectedRoute children={<Calendar />} />
+                                                        async lazy() {
+                                                            const Calendar = (await import("../components/project/Calendar")).default;
+                                                            const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                                            return { Component: ()=> <ProtectedRoute children={<Calendar />}/> }
+                                                        },
                                                         // Calendar will be public once the feature is ready
                                                     },
                                                     {
                                                         path: "gantt",
-                                                        element: <ProtectedRoute children={<Gantt />} />
+                                                        async lazy() {
+                                                            const Gantt = (await import("../components/project/Gantt")).default;
+                                                            const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                                            return { Component: ()=> <ProtectedRoute children={<Gantt />}/> }
+                                                        },
                                                     },
                                                 ]
                                             },
                                             {
                                                 path: "",
-                                                element: <Kanban />
+                                                async lazy () {
+                                                    const  Kanban = (await import ( "../components/kanban/Kanban")).default
+                                                    return { Component: Kanban }
+                                                },
                                             },
                                             {
                                                 path: "discussions",
-                                                element: <ProtectedRoute children={<ProjectDiscussions />} />
+                                                async lazy() {
+                                                    const ProjectDiscussions = (await import("../components/project/ProjectDiscussions")).default;
+                                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                                    return { Component: ()=> <ProtectedRoute children={<ProjectDiscussions />}/> }
+                                                },
                                             },
                                             {
                                                 path: "timeline",
-                                                element: <ProtectedRoute children={<ProjectTimeline />} />
+                                                async lazy() {
+                                                    const ProjectTimeline = (await import("../components/project/ProjectTimeline")).default;
+                                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                                    return { Component: ()=> <ProtectedRoute children={<ProjectTimeline />}/> }
+                                                },
                                             },
                                             {
                                                 path: "overview",
-                                                element: <ProtectedRoute children={<ProjectOverview />} />
+                                                async lazy() {
+                                                    const ProjectOverview = (await import("../components/project/ProjectOverview")).default;
+                                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                                    return { Component: ()=> <ProtectedRoute children={<ProjectOverview />}/> }
+                                                },
                                             },
                                             {
                                                 path: "files",
-                                                element: <ProtectedRoute children={<ProjectFiles />} />
+                                                async lazy() {
+                                                    const ProjectFiles = (await import("../components/project/ProjectFiles")).default;
+                                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                                    return { Component: ()=> <ProtectedRoute children={<ProjectFiles />}/> }
+                                                },
                                             }
                                         ]
                                     }
@@ -109,27 +146,55 @@ export const router = createBrowserRouter([
                     
                             {
                                 path: "notifications",
-                                element: <ProtectedRoute children={<Notifications />} />
+                                async lazy() {
+                                    const Notifications = (await import("../pages/Notifications")).default;
+                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                    return { Component: ()=> <ProtectedRoute children={<Notifications />}/> }
+                                },
                             },
                             {
                                 path: "spaces",
-                                element: <ProtectedRoute children={<Spaces />} />
+                                async lazy() {
+                                    const Spaces = (await import("../pages/Spaces")).default;
+                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                    return { Component: ()=> <ProtectedRoute children={<Spaces />}/> }
+                                },
                             },
                             {
                                 path: "goals",
-                                element: <ProtectedRoute children={<Goals />} />
+                                async lazy() {
+                                    const Goals = (await import("../pages/Goals")).default;
+                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                    return { Component: ()=> <ProtectedRoute children={<Goals />}/> }
+                                },
                             },
                             {
                                 path: "chats",
-                                element: <ProtectedRoute children={<Chats />} />
+                                async lazy() {
+                                    const Chats = (await import("../pages/Chats")).default;
+                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                    return { Component: ()=> <ProtectedRoute children={<Chats />}/> }
+                                },
                             },
                             {
                                 path: "settings",
-                                element: <ProtectedRoute children={<Settings />} />
+                                async lazy() {
+                                    const Settings = (await import("../pages/Settings")).default;
+                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
+
+                                    return { Component: ()=> <ProtectedRoute children={<Settings />}/> }
+                                },
                             },
                             {
                                 path: '*',
-                                element: <NotFoundPage />
+                                async lazy () {
+                                    const  NotFoundPage  = (await import ("../pages/NotFoundPage")).default
+                                    return { Component: NotFoundPage }
+                                },
                             }
                         
                             

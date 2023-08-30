@@ -41,3 +41,9 @@ export interface TaskCreate extends Task {
     projectId: string | undefined //undefined must be removed
 }
 
+export interface CustomErrorResponse {
+    status: number,
+    statusText: string,
+    message?: string
+    data?: Record<string, unknown>
+} 

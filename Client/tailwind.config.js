@@ -12,7 +12,7 @@ export default {
         "dark-med": "rgba(3, 8, 34, 0.7)",
         "dark-purple-md": "rgba(53, 25, 134, 0.6)",
         "gray": "#CBCBCB",
-        "red-warning": "#D00000",
+        "red-warning": "#b80000",
         "blue-bright": "#3D68FE",
         "yellow-gold": "#efa32a",
         "purple": "#8C52FF"
@@ -29,6 +29,13 @@ export default {
         sans: ['Heebo', 'Arial', 'sans-serif'],
         heading: ['Righteous', 'Georgia', 'serif'], // Use your preferred font for headers here
       },
+      keyframes: {
+        shimmer: {
+          "100%": {
+            "transform": "translateX(100%)"
+          }
+        }
+      }
     },
   },
   plugins: [],

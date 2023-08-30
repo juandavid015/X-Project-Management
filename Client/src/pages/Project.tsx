@@ -1,8 +1,8 @@
-import { ProjectHeader } from "../components/project/ProjectHeader"
-import { ProjectSubMenu } from "../components/project/ProjectSubMenu"
-import { ProjectView } from "../components/project/ProjectView"
+import ProjectHeader from "../components/project/ProjectHeader"
+import ProjectSubMenu from "../components/project/ProjectSubMenu"
+import ProjectView  from "../components/project/ProjectView"
 
-export const Project= () => {
+const Project= () => {
     return (
         <div className="p-8 w-full text-dark-med
         flex flex-col gap-6  ">
@@ -12,3 +12,5 @@ export const Project= () => {
         </div>
     )
 }
+
+export default Project;

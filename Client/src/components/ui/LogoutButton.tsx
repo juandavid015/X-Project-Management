@@ -1,6 +1,11 @@
 import { useAuth0 } from '@auth0/auth0-react';
+import { LogoutIcon } from '../../assets/icons/Icons';
 
-export const LogoutButton = () => {
+interface LogoutButtonProps {
+    expanded?: boolean,
+    [key:string]: unknown
+}
+export const LogoutButton = ({expanded}: LogoutButtonProps) => {
     const { logout } = useAuth0();
 
     const handleLogout = () => {
@@ -10,8 +15,16 @@ export const LogoutButton = () => {
     }
 
     return (
-        <button onClick={()=> handleLogout()}>
-            Log out
+        <button onClick={()=> handleLogout()} title='Log out'
+        className={`border-none bg-red-warning w-fit text-white ${expanded ? 'px-4': 'px-1'} py-2 rounded-md
+        flex items-center gap-2 fill-white whitespace-nowrap
+        transition-all duration-700 `}>
+            <LogoutIcon className='h-[20px] w-fit'/>
+            {
+                expanded &&
+                <span>Log out</span>
+                
+            }
         </button>
     )
 }

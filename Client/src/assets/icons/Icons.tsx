@@ -44,6 +44,11 @@ export const LogoutIcon = ({className}: ClassName) => {
     )
 }
 
+export const LoginIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="log-in"><path d="M13,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V3A1,1,0,0,1,3,2h9a1,1,0,0,1,0,2H4V20h8A1,1,0,0,1,13,21Zm8-10H9.41l2.29-2.29a1,1,0,0,0-1.41-1.41l-4,4h0a1,1,0,0,0,0,1.41h0l4,4a1,1,0,0,0,1.41-1.41L9.41,13H21a1,1,0,0,0,0-2Z" data-name="LOG IN"></path></svg>
+    )
+}
 export const RightDoubleArrowIcon = ({className}: ClassName) => {
     return (
         <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="right-arrow"><path d="M23.706 15.312l-5.918-6.69a1.007 1.007 0 0 0-1.422 1.422l5.3 5.992-5.3 5.992a1.007 1.007 0 0 0 1.422 1.422l5.918-6.69c.2-.2.296-.462.292-.724a1.004 1.004 0 0 0-.292-.724zm-14.514 8.14c.392.392 1.03.392 1.422 0l5.918-6.69c.2-.2.296-.462.292-.724a.993.993 0 0 0-.292-.724l-5.916-6.692a1.007 1.007 0 0 0-1.422 1.422l5.3 5.992-5.3 5.992a1.007 1.007 0 0 0-.002 1.424z"></path></svg>

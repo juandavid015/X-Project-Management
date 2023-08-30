@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 
-export const ProjectView = () => {
+const ProjectView = () => {
     // The outlet render the view/ui or childrens of the present parent route "Project"
     // depending on the current pathname
     return (
@@ -9,3 +9,5 @@ export const ProjectView = () => {
         </div>
     )
 }
+
+export default ProjectView;

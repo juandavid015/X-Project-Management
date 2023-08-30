@@ -11,6 +11,7 @@ import Loading from "../components/ui/Loading";
 import useRedirectPublicProject from "../hooks/useRedirectPublicProject";
 import ProjectsHeader from "../components/projects/ProjectsHeader";
 import ProjectsList from "../components/projects/ProjectsList";
+import SkeletonProjectList from "../components/ui/skeletons/SkeletonProjectList";
 
 
 // const sampleProjects = [
@@ -60,7 +61,7 @@ import ProjectsList from "../components/projects/ProjectsList";
 const Projects = () => {
 
     const {openModal, closeModal, isActive} = useModal();
-    const { isAuthenticated, user, isLoading} = useAuth0();
+    const { isAuthenticated, user, isLoading: isLoadingUser} = useAuth0();
     const userId = user && user[`app_metadata`].id
     const hasPublicSpace = window.localStorage.getItem('public')?.length ? true: false;
 
@@ -72,12 +73,13 @@ const Projects = () => {
     ] = useMutation( CREATE_PUBLIC_PROJECT );
 
     const {
-        loading, 
+        loading: isLoadingProjects, 
         data, 
         error
     } = useQuery( GET_PROJECTS, 
         {
-            skip: (!isAuthenticated && !hasPublicSpace) ,
+            skip: isLoadingUser || (!isAuthenticated && !hasPublicSpace) ,
+            
             variables: {
                 userId: userId || ''
             }
@@ -90,12 +92,11 @@ const Projects = () => {
     
 
     if(loadingPublicProject) return (
-        <Loading messagge="Wait, all is being set up for you..."/>
+        <div className=" flex items-center justify-center w-full overflow-hidden"><Loading messagge="Wait, all is being set up for you..."/></div>
+        
     )
 
-    if(loading || isLoading) return (
-        <div>Loding...</div>
-    )
+    
 
     if (error ) {    
         handleErrorResponse(error);
@@ -121,8 +122,18 @@ const Projects = () => {
                 <ProjectsHeader
                 openModal={openModal} />
 
-                <ProjectsList
-                projects={projects} />
+                {
+                    isLoadingProjects || isLoadingUser
+                    ?
+                    <SkeletonProjectList
+                    totalItems={4}
+                    />
+                    :
+                    <ProjectsList
+                    projects={projects} />
+                
+                }
+                
 
             </div>
         </>

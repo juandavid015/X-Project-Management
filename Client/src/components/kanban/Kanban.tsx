@@ -15,6 +15,7 @@ import { handleErrorResponse } from "../../helpers/errorHelpers";
 import { KanbanHeader } from "./KanbanHeader";
 import { KanbanCard } from "./KanbanCard";
 import { KanbanCardEditable } from "./KanbanCardEditable";
+import SkeletonKanbanList from "../ui/skeletons/SkeletonKanbanList";
 
 export type TaskColumn = {
     [key: string]: Task[]
@@ -23,11 +24,11 @@ export type TaskColumns = TaskColumn[]
 export type ProjectStatus = Status[]
 
 
-export const Kanban = () => {
+const Kanban = () => {
     // labels must be a propertie from the project instance
     const projectStatus: ProjectStatus = ['PENDING', 'IN_PROGRESS', 'REVIEW', 'COMPLETED'];
     const { projectId } = useParams();
-    const {loading, error, data} = useQuery(GET_PROJECT_TASKS, {
+    const {loading: isLoadingTasks, error, data} = useQuery(GET_PROJECT_TASKS, {
         variables: {projectId: projectId},
         errorPolicy: 'all'
         // onError: error => console.log(error.networkError.result.errors),
@@ -71,7 +72,9 @@ export const Kanban = () => {
     }, [data])
     
 
-    if (loading) return <p>Loading...</p>;
+    if (isLoadingTasks) {
+        return <SkeletonKanbanList />
+    }
     if (error ) {    
         handleErrorResponse(error);
     }
@@ -148,3 +151,5 @@ export const Kanban = () => {
         </div>
     )
 }
+
+export default Kanban;

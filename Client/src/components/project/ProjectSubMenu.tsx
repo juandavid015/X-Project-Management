@@ -1,6 +1,6 @@
 import { NavLink} from "react-router-dom"
 
-export const ProjectSubMenu = () => {
+const ProjectSubMenu = () => {
   
     return (
         <div className="max-w-[1048px] py-2 border-b border-white-gray text-dark-med font-medium">
@@ -69,3 +69,5 @@ export const ProjectSubMenu = () => {
         </div>
     )
 }
+
+export default ProjectSubMenu;

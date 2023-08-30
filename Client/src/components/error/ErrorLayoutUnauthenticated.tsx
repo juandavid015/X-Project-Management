@@ -23,8 +23,9 @@ const ErrorLayoutUnauthenticated = ({title, extraInfo}: ErrorLayoutUnauthenticat
                 {extraInfo}
             </p>
 
-            <LoginButton
-            className={`bg-purple text-white rounded-full w-full px-8 py-4 m-auto
+            <LoginButton expanded
+            className={`bg-purple text-white rounded-full w-full px-8 py-4 m-auto 
+            flex gap-2 items-center justify-center fill-white
             shadow-md hover:scale-[1.01] font-bold`} />
         </>
     )

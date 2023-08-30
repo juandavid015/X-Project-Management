@@ -3,9 +3,10 @@ import { GET_PROJECT } from "../../graphql/querys";
 import { ProjectMembers } from "./ProjectMembers";
 import { NavLink, useParams } from "react-router-dom";
 import { Project } from "../../types/types";
+import SkeletonProjectHeader from "../ui/skeletons/SkeletonProjectHeader";
 
-export const 
-ProjectHeader = () => {
+
+const ProjectHeader = () => {
     
     const { projectId } = useParams();
     const {loading, error, data } = useQuery(GET_PROJECT, {
@@ -26,11 +27,13 @@ ProjectHeader = () => {
     // }, [data]);
    
    
-    if (loading) return (<p>Loading...</p>)
+    if (loading) {
+        return <SkeletonProjectHeader />
+    }
     if (error)  return (<p>Error</p>)
     const project: Project = data?.getProject;
 
-
+    
     return (
         <header className="max-w-[1048px] flex items-center justify-between font-medium text-dark-md">
             <h1 className="font-heading inline pr-4 text-xl font-bold 
@@ -98,3 +101,5 @@ ProjectHeader = () => {
         </header>
     )
 }
+
+export default ProjectHeader;

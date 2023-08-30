@@ -5,9 +5,11 @@ import {useAuth0} from '@auth0/auth0-react';
 import { LogoutButton } from './LogoutButton';
 import { LoginButton } from './LoginButton';
 import { NavLink } from 'react-router-dom';
+import { SkeletonUser } from './skeletons/SkeletonElements';
+import { UserPreview } from './UserPreview';
 export const Sidebar = () => {
 
-    const {isAuthenticated} = useAuth0();
+    const {isAuthenticated, user, isLoading} = useAuth0();
 
     const [expand, setExapand] = useState(false);
 
@@ -37,7 +39,7 @@ export const Sidebar = () => {
                         </button>
                     }
                 </div>
-                    <ul className="flex flex-col gap-10">
+                    <ul className="flex flex-col gap-10 border-gray/50 border-t border-b pt-8 pb-8">
                         <li>
                             <NavLink to={`projects`}
                             className={({isActive, isPending})=> 
@@ -149,9 +151,27 @@ export const Sidebar = () => {
                             </NavLink>
                         </li>
                         {
+                            isAuthenticated &&
+
+                            <li className='relative min-h-[20px]'>
+                                {
+                                    user && !isLoading?
+                                 
+                                    <UserPreview
+                                    expanded={expand}
+                                    name={user.nickname ? user.given_name || user.nickname : ''}
+                                    image={user.picture ? user.picture : ''}
+                                    className ={'absolute w-[30px] -top-0 -left-[4px] whitespace-nowrap flex items-center gap-2 text-dark-med'}
+                                    />
+                                    :
+                                    <SkeletonUser />
+                                }
+                            </li>
+                        }
+                        {
                             isAuthenticated ? 
                             <li>
-                                <LogoutButton />
+                                <LogoutButton expanded={expand} />
                             </li> :
                             <li>
                                 {/* <a className="flex gap-2 items-center"> 
@@ -162,7 +182,7 @@ export const Sidebar = () => {
                                         Log out
                                     </span>
                                 </a> */}
-                                <LoginButton />
+                                <LoginButton expanded={expand} />
                             </li>
                         }
                         
