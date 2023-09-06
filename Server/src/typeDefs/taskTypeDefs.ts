@@ -37,7 +37,13 @@ export const taskTypeDefs = {
             timeline: String
             members: [User]
             userIds: [String]
+            projectId: String
             indexPosition: Float!
+        }
+
+        type TaskSubscriptionPayload {
+            task: Task!
+            action: String
         }
     `, 
     query: `
@@ -84,5 +90,8 @@ export const taskTypeDefs = {
             taskId: String
             userId: String
         ): Task
+    `,
+    subscription: `
+        taskUpdated(projectId: String!): TaskSubscriptionPayload
     `
 }

@@ -1,69 +1,31 @@
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
-import {validatePublicToken, validateToken} from './utils/validateToken.js';
-import { UserDataSource, generateUserModel } from './models/User.js';
-import { TaskDataSource, generateTaskModel } from './models/Task.js';
-import { ProjectDataSource, generateProjectModel } from './models/Project.js';
-import { projectResolvers } from './resolvers/projectResolvers.js';
-import { taskResolvers } from './resolvers/taskResolvers.js';
-import { userResolvers } from './resolvers/userResolvers.js';
-import { userTypeDefs } from './typeDefs/userTypeDefs.js';
-import { projectTypeDefs } from './typeDefs/projectTypeDefs.js';
-import { taskTypeDefs } from './typeDefs/taskTypeDefs.js';
+import { UserDataSource, } from './models/User.js';
+import { TaskDataSource,} from './models/Task.js';
+import { ProjectDataSource, } from './models/Project.js';
 import { authenticationAndAccessGuard } from './plugins/plugins.js';
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
+import express from 'express';
+import { createServer } from 'http';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import cors from 'cors'
+import { expressMiddleware } from '@apollo/server/express4';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
+// import { PubSub } from 'graphql-subscriptions';
+import { UserAuthenticated, UserWithPartialAccess} from './authentication/authenticateUser.js';
+import { globalContextAuthentication } from './authentication/authenticationContext.js';
+import { typeDefs } from './typeDefs/index.js';
+import { resolvers } from './resolvers/index.js';
+import { wsAccessGuardConnection } from './authentication/wsAuthenticationConnection.js';
+import { MongoClient} from 'mongodb'
+import { MongodbPubSub } from 'graphql-mongodb-subscriptions';
+import dotenv from 'dotenv'
+dotenv.config();
 
-const typeDefs = `#graphql
-    # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
+const mongoClient = new MongoClient(process.env.DATABASE_URL);
+// model to track events that update active subscriptions
+export const pubsub = new MongodbPubSub({connectionDb: mongoClient.db()});
 
-    # Type defines the queryable fields for every book in our data source.
-        ${userTypeDefs.type}
-        ${projectTypeDefs.type}
-        ${taskTypeDefs.type}
-
-
-    # The "Query" type is special: it lists all of the available queries that
-    # clients can execute, along with the return type for each.
-
-    type Query {
-        ${userTypeDefs.query}
-        ${projectTypeDefs.query}
-        ${taskTypeDefs.query}
-    }
-
-    type Mutation {
-        ${userTypeDefs.mutation}
-        ${projectTypeDefs.mutation}
-        ${taskTypeDefs.mutation}
-    }
-`;
-
-// Resolvers define how to fetch the types defined in your schema.
-const resolvers = {
-    Query: {
-        ...userResolvers.Query, 
-        ...projectResolvers.Query, 
-        ...taskResolvers.Query
-    },
-    Mutation: {
-        ...userResolvers.Mutation, 
-        ... projectResolvers.Mutation, 
-        ...taskResolvers.Mutation
-    }
-}
-
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
-export type UserAuthenticated = {
-    id?: string,
-    name: string,
-    email: string,
-    image: string, 
-    emailIsVerified: boolean
-}
-export type UserWithPartialAccess = & UserAuthenticated 
 export interface MyContext {
     userIsLoggedIn: boolean,
     userAuthenticated: UserAuthenticated
@@ -75,71 +37,89 @@ export interface MyContext {
         Task: TaskDataSource
     }
 }
-const server = new ApolloServer<MyContext>({
-    typeDefs,
-    resolvers,
-    plugins: [
-        authenticationAndAccessGuard
-    ]
-  });
+// Required logic for integrating with Express
+const app = express();
 
-  // Passing an ApolloServer instance to the `startStandaloneServer` function:
-  //  1. creates an Express app
-  //  2. installs your ApolloServer instance as middleware
-  //  3. prepares your app to handle incoming requests
-const { url } = await startStandaloneServer(server, {
- 
-    context: async ({req})=> {
-    // The user authentication will be handled by AUth0 Google, which says if the user has valid credentials
-        let authorization = req.headers.authorization || null;
-        let token = authorization && authorization.startsWith('bearer') && authorization.split(' ')[1] ;
-        let identifier = authorization && authorization.startsWith('publicIdentifier') && authorization.split(' ')[1];
-        let projectCode = '';
-        let decodedAccesToken: unknown;
-        let userIsAuthenticated: boolean;
-        let userAuthenticated:UserAuthenticated;
-        let userWithPartialAccess: UserWithPartialAccess;
-        let userHasPartialAccess: boolean;
-        let decodedPublicAccessToken: unknown;
+// Our httpServer handles incoming requests to our Express app.
+// Below, we tell Apollo Server to "drain" this httpServer,
+// enabling our servers to shut down gracefully.
+const httpServer = createServer(app);
 
-        // console.log(req.headers.authorization)
-        // console.log('REQ MIDLWR', identifier)
-        try {
-        
-            projectCode = '';
-            decodedPublicAccessToken = identifier && await validatePublicToken(identifier)
-            decodedAccesToken = token && await validateToken(token);
-            // const userIsAuthenticated = await validateToken(token).then(success =>  true).catch(fail => false)
-            userIsAuthenticated = decodedAccesToken ? true : false
-            userHasPartialAccess = decodedPublicAccessToken ? true : false
-            
+// Create schema, which will be used separately by ApolloServer and
+// the WebSocket server.
+// A schema is a collection of type definitions (hence "typeDefs")
+// that together define the "shape" of queries that are executed against
+// your data.
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-            const {id, name, email, image, emailIsVerified} = 
-            decodedAccesToken ? decodedAccesToken as UserAuthenticated:
-            decodedPublicAccessToken as UserWithPartialAccess
+// Set up WebSocket/subscription server for enable bi-directional comunnication
+// for real time data transfer.
+const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/',
+});
 
-            userAuthenticated = {id, name, email, image, emailIsVerified} 
-            userWithPartialAccess = {id, name, email, image, emailIsVerified} 
-            // console.log('is', userIsAuthenticated,  userHasPartialAccess, userWithPartialAccess )
-        } catch (error) {
-            console.error('Error on validating token',  error.message)
-        }
-
-        return {
-            userIsLoggedIn: userIsAuthenticated,
-            userAuthenticated: userAuthenticated,
-            userHasPartialAccess: userHasPartialAccess,
-            userWithPartialAccess: userWithPartialAccess,
-            models: {
-                User: generateUserModel(userAuthenticated),
-                Task: generateTaskModel({userIsAuthenticated}),
-                Project: generateProjectModel({userIsAuthenticated, userHasPartialAccess, userAuthenticated, userWithPartialAccess})
-            }
-        
-        }
+// Hand in the schema we just created and have the
+// WebSocketServer start listening.
+const serverCleanup = useServer(
+    {
+        schema,
+        context: async (ctx) => {
+            return await globalContextAuthentication(ctx);
+        },
+        onConnect: async(ctx) => {
+            // Check authentication every time a client connects.
+            return await wsAccessGuardConnection(ctx);
+        },
+        onDisconnect() {
+            console.log('Disconnected!');
+        },
     },
+    wsServer
+);
+
+// Same ApolloServer initialization as before, plus the drain plugins
+// for our httpServer and for authentication.
+const server = new ApolloServer<MyContext>({
+    schema,
+    plugins: [
+        // Proper shutdown for the HTTP server.
+        ApolloServerPluginDrainHttpServer({httpServer}),
+        // Proper shutdown for the WebSocket server.
+        {
+            async serverWillStart() {
+              return {
+                async drainServer() {
+                  await serverCleanup.dispose();
+                },
+              };
+            },
+        },
+        // Handle the authentication flow
+        authenticationAndAccessGuard
+    ],
     
-    listen: { port: 4000 },
   });
-  
-  console.log(`🚀  Server ready at: ${url}`);
+
+// Ensure we wait for our server to start
+await server.start();
+
+// Set up our Express middleware to handle CORS, body parsing,
+// and our expressMiddleware function.
+app.use(
+    '/',
+    cors<cors.CorsRequest>(),
+    express.json(),
+    expressMiddleware(server, {
+        context: async ({req})=> {
+            return await globalContextAuthentication({req})
+         
+        },
+    })
+)
+const PORT = 4000;
+// Now that our HTTP server is fully set up, actually listen.
+httpServer.listen(PORT, () => {
+    console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/`);
+    console.log(`🚀 Subscription endpoint ready at ws://localhost:${PORT}/`);
+  });

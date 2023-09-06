@@ -1,6 +1,7 @@
 import { Task } from "@prisma/client";
 import { getNextId, prisma } from "../db";
 import { AssignMemberToTaskArgs, CreateTaskArgs, GetProjectTasksArgs, MemberConnectDisconnect, MoveTaskArgs, RemoveTaskArgs, TaskExt, UpdateTaskArgs } from "../types/types";
+import { SUBSCRIPTION_TASK_EVENTS } from "../Subscriptions";
 
 
 export interface TaskDataSource {
@@ -12,7 +13,7 @@ export interface TaskDataSource {
   updateTask: (parent: unknown, args: UpdateTaskArgs)=> Promise<TaskExt>
 }
 
-export const generateTaskModel = ({userIsAuthenticated}): TaskDataSource => ({
+export const generateTaskModel = ({userIsAuthenticated, pubsub}): TaskDataSource => ({
     getTasksByProjectId: async (_, args) => {
         // throw new GraphQLError('Invalid user credentials', {
         //   extensions: {code: 'UNAUTHENTICATED', }
@@ -33,14 +34,14 @@ export const generateTaskModel = ({userIsAuthenticated}): TaskDataSource => ({
         let { projectId, userIds, id, ...taskData } = args
 
      
-          return await prisma.task.create({data: {
+          const taskCreated =  await prisma.task.create({data: {
             indexPosition: await getNextId(),
             ...taskData,
             project: {
               connect: {id: projectId}
             },
             members: {
-              connect: userIds.map((id: string) => ({id}))
+              connect: userIds?.map((id: string) => ({id}))
             },
             
           }, 
@@ -48,6 +49,15 @@ export const generateTaskModel = ({userIsAuthenticated}): TaskDataSource => ({
             members: true
           }
         })
+
+        pubsub.publish(SUBSCRIPTION_TASK_EVENTS.TASK_UPDATED, {
+          taskUpdated: {
+            task: taskCreated,
+            action: 'CREATE'
+          }  
+        })
+
+        return taskCreated;
 
     },
     //Update the task changing its indexPosition, this way the task can be moved of position
@@ -83,6 +93,13 @@ export const generateTaskModel = ({userIsAuthenticated}): TaskDataSource => ({
           include: { members: true }
         })
 
+        pubsub.publish(SUBSCRIPTION_TASK_EVENTS.TASK_UPDATED, {
+          taskUpdated: {
+            task: updatedTask,
+            action: 'EDIT'
+          }  
+        })
+
         return updatedTask;
       },
 
@@ -104,6 +121,10 @@ export const generateTaskModel = ({userIsAuthenticated}): TaskDataSource => ({
           }
         })
 
+        pubsub.publish(SUBSCRIPTION_TASK_EVENTS.TASK_UPDATED, {
+          taskUpdated: memberAssigned
+        })
+
         return memberAssigned
       },
       deleteTaskById: async(_, {id}) => {
@@ -112,6 +133,13 @@ export const generateTaskModel = ({userIsAuthenticated}): TaskDataSource => ({
           where: {
             id: id
           }
+        })
+
+        pubsub.publish(SUBSCRIPTION_TASK_EVENTS.TASK_UPDATED, {
+          taskUpdated: {
+            task: deletedTask,
+            action: 'DELETE'
+          }  
         })
 
         return deletedTask;
@@ -154,6 +182,14 @@ export const generateTaskModel = ({userIsAuthenticated}): TaskDataSource => ({
             members: true,
           },
         });
+        // publish the event subscription whenever any change
+        // ocurred 
+        pubsub.publish(SUBSCRIPTION_TASK_EVENTS.TASK_UPDATED, {
+          taskUpdated: {
+            task: updatedTask,
+            action: 'EDIT'
+          }  
+        })
       
         return updatedTask;
       },

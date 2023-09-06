@@ -14,7 +14,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cors": "^2.8.13",
     "@types/node": "^20.2.5",
+    "@types/ws": "^8.5.5",
     "nodemon": "^2.0.22",
     "prisma": "^4.14.1",
     "ts-node": "^10.9.1",
@@ -23,11 +25,18 @@
   },
   "dependencies": {
     "@apollo/server": "^4.7.1",
+    "@graphql-tools/schema": "^10.0.0",
     "@prisma/client": "^4.14.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.1.4",
+    "express": "^4.18.2",
     "graphql": "^16.6.0",
+    "graphql-mongodb-subscriptions": "^1.0.0",
+    "graphql-subscriptions": "^2.0.0",
+    "graphql-ws": "^5.14.0",
     "jsonwebtoken": "^9.0.0",
     "jwks-rsa": "^3.0.1",
-    "mongodb": "^5.5.0"
+    "mongodb": "^5.5.0",
+    "ws": "^8.13.0"
   }
 }
