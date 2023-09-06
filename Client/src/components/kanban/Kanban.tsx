@@ -16,6 +16,7 @@ import { KanbanHeader } from "./KanbanHeader";
 import { KanbanCard } from "./KanbanCard";
 import { KanbanCardEditable } from "./KanbanCardEditable";
 import SkeletonKanbanList from "../ui/skeletons/SkeletonKanbanList";
+import { TASK_UPDATED } from "../../graphql/subscriptions";
 
 export type TaskColumn = {
     [key: string]: Task[]
@@ -28,9 +29,10 @@ const Kanban = () => {
     // labels must be a propertie from the project instance
     const projectStatus: ProjectStatus = ['PENDING', 'IN_PROGRESS', 'REVIEW', 'COMPLETED'];
     const { projectId } = useParams();
-    const {loading: isLoadingTasks, error, data} = useQuery(GET_PROJECT_TASKS, {
+    const {loading: isLoadingTasks, error, data, subscribeToMore} = useQuery(GET_PROJECT_TASKS, {
         variables: {projectId: projectId},
-        errorPolicy: 'all'
+        errorPolicy: 'all',
+        fetchPolicy: 'cache-and-network',
         // onError: error => console.log(error.networkError.result.errors),
     })
 
@@ -68,10 +70,49 @@ const Kanban = () => {
     });
 
     useEffect(()=> {
+        return subscribeToMore({
+            document: TASK_UPDATED,
+            variables: {
+                projectId: projectId
+            },
+            updateQuery: (prevData, { subscriptionData }) => {
+     
+                if(!subscriptionData.data) return prevData
+                const taskUpdated = subscriptionData.data.taskUpdated.task;
+                const action = subscriptionData.data.taskUpdated.action; // Get the action type (add, edit, or delete)
+                const taskIsAlreadyPresent = prevData.getProjectTasks.some((task: Task) => task.id ===  taskUpdated.id)
+               
+                if(action === 'CREATE' && !taskIsAlreadyPresent) {
+                    return {
+                        ...prevData,
+                        // Add the new task to the appropriate field
+                        getProjectTasks: [...prevData.getProjectTasks, taskUpdated],
+                    };
+                } else if (action === 'EDIT') {
+                    return {
+                        ...prevData,
+                        // Update the existing task in the array
+                        getProjectTasks: prevData.getProjectTasks.map((task: Task) => 
+                            task.id === taskUpdated.id ? taskUpdated : task
+                        ),
+                    };
+                } else if (action === 'DELETE') {
+                    return {
+                        ...prevData,
+                        // Remove the deleted task from the array
+                        getProjectTasks: prevData.getProjectTasks.filter((task: Task) => task.id !== taskUpdated.id),
+                    };
+                } else {
+                    return prevData
+                }
+               
+            }
+        })
+    }, [subscribeToMore, projectId])
+    useEffect(()=> {
         setTaskColumns(tasksOrganizedInColumns)
     }, [data])
     
-
     if (isLoadingTasks) {
         return <SkeletonKanbanList />
     }

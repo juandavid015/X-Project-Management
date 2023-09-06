@@ -24,7 +24,8 @@ export const KanbanCardOptions = ({task, ...rest}: KanbanCardOptionsProps) => {
 
     const deleteTaks = useDeleteEntity(DELETE_TASK, GET_PROJECT_TASKS)
     const eliminateTask = (id: string | undefined) => {
-        deleteTaks(id || undefined);
+        const optimisticResponse = {id, __typename: "Task"}
+        deleteTaks(id || undefined, optimisticResponse);
     } 
     // const duplicateTask = (task: Task) => {
     //     const taskCopy = {...task}

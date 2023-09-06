@@ -40,57 +40,63 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
     const saveEntity = async (entityData: EntityData<OperationVariables>, optimisticData?: EntityData<OperationVariables>) => {
   
       try {
-        // console.log('E',entityName,  entityData, optimisticData)
+        // console.log('data', optimisticData)
         const { data } = await createOrUpdateEntity({
           variables:  entityData,
           optimisticResponse: {
-            [entityName]: optimisticData
+            [entityName]: optimisticData,
           },
-          update(cache, { data:  createOrUpdateEntity  }) {
-            // Manually modify the cache to add the new reference to the entity list
-            // console.log('HELLO')
-            cache.modify({
+          
+          // update(cache, { data:  createOrUpdateEntity  }) {
+          //   // Manually modify the cache to add the new reference to the entity list
+          //   cache.modify({
+          //     // id: cache.identify(entityData),
+          //     //This is uncommented to work properly with fetchPolicy "cache-and-network"
+          //     //due to the useSaveEntity when creating a new task can
+          //     //not identify to which active query to append the task as 
+          //     //the getAllTaskProject query doesn't have a reference to be identified with
+            
+          //     fields: {
+          //         // the data or the new object to take its reference and add it to the fields
+          //       [fieldName](existingProjectEntities = [], { readField }) {
                 
-              fields: {
-                  // the data or the new object to take its reference and add it to the fields
-                [fieldName](existingProjectEntities = {}, { readField }) {
-                  
-                  const newEntity = cache.writeFragment({
-                    data: createOrUpdateEntity[entityName]
-                      ? createOrUpdateEntity[entityName]
-                      : createOrUpdateEntity[entityName],
-                     // take the reference of the new object
-                    fragment: gql`
-                      fragment EntityRef on Entity {
-                        id
-                      }
-                    `,
-                  });
-                  // console.log('ex', existingProjectEntities)
-                  if (Array.isArray(existingProjectEntities)) {
-                    // console.log('yep')
-                    if (existingProjectEntities.some((entity: StoreObject) => 
-                    readField('id', entity) === readField('id', newEntity))) {
-                      return existingProjectEntities.map((entity: StoreObject) => {
-                          // update the object field with the new values
-                        return entity.id === createOrUpdateEntity[entityName].id ? newEntity : entity;
-                      });
+          //         const newEntity = cache.writeFragment({
+          //           data: createOrUpdateEntity[entityName],
+          //            // take the reference of the new object
+          //           fragment: gql`
+          //             fragment EntityRef on Entity {
+          //               id
+          //             }
+          //           `,
+          //         });
+               
+          //         if (Array.isArray(existingProjectEntities)) {
+                 
+          //           if (existingProjectEntities.some((entity: StoreObject) => 
+          //           readField('id', entity) === readField('id', newEntity))) {
+          //             return existingProjectEntities.map((entity: StoreObject) => {
+          //                 // update the object field with the new values
+          //               return entity.id === createOrUpdateEntity[entityName].id ? newEntity : entity;
+          //             });
   
-                    } else {
-                        // append the new object reference to update the fields in cache
-                      return [...existingProjectEntities, newEntity];
-                    }
-                  } else {
-                    if (readField('id', existingProjectEntities) === readField('id', newEntity)) {
-                      return newEntity
-                    } else {
-                      return existingProjectEntities
-                    }
-                  }
-                },
-              },
-            });
-          },
+          //           } else {
+           
+          //               // append the new object reference to update the fields in cache
+          //             return [...existingProjectEntities, newEntity];
+          //           }
+          //         } else {
+               
+          //           if (readField('id', existingProjectEntities) === readField('id', newEntity)) {
+          //             return newEntity
+          //           } else {
+                 
+          //             return existingProjectEntities
+          //           }
+          //         }
+          //       },
+          //     },
+          //   });
+          // },
         });
         // console.log('data', data)
         return data

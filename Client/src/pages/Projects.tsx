@@ -105,7 +105,7 @@ const Projects = () => {
     // user didn't have public session or were logged in... use the public project recently created
     // otherwise... the user is logged in, so use its related data.
     const projects: Project[] = !isAuthenticated && !hasPublicSpace 
-        ? (publicProject && [publicProject?.createPublicProject.project]) 
+        ? (publicProject && [publicProject?.createPublicProject?.project]) 
         : data?.getAllProjects
 
         

@@ -1,5 +1,5 @@
-import { DocumentNode, StoreObject, useMutation } from "@apollo/client";
-import { getFieldName } from "./useSaveEntity";
+import { DocumentNode, OperationVariables, StoreObject, useMutation } from "@apollo/client";
+import { EntityData, getEntityName, getFieldName } from "./useSaveEntity";
 
 export const useDeleteEntity = (documentNode: DocumentNode, queryDocumentNode: DocumentNode) => {
     const [deleteEntity] = useMutation(documentNode);
@@ -7,22 +7,26 @@ export const useDeleteEntity = (documentNode: DocumentNode, queryDocumentNode: D
     // const entityName = getEntityName(documentNode)
  // Extract field name to be updated dynamically
     const fieldName = getFieldName(queryDocumentNode)
-
-    const deleteFields = async (id: string | undefined) => {
+    const entityName = getEntityName(documentNode)
+    const deleteFields = async (id: string | undefined, optimisticData?: EntityData<OperationVariables>) => {
         try {
-            await deleteEntity({
-                variables: {id: id},
-                update(cache) {
-                    cache.modify({
-                        fields: {
-                            [fieldName](existingEntityRefs, { readField }) {
-                                return existingEntityRefs.filter(
-                                    (entityRef: StoreObject) => id !== readField('id', entityRef)
-                                )
-                            }
-                        }
-                    })
-                }
+            return await deleteEntity({
+                variables: { id: id },
+             
+                optimisticResponse: {
+                    [entityName]: optimisticData,
+                },
+                // update(cache) {
+                //     cache.modify({
+                //         fields: {
+                //             [fieldName](existingEntityRefs, { readField }) {
+                //                 return existingEntityRefs.filter(
+                //                     (entityRef: StoreObject) => id !== readField('id', entityRef)
+                //                 )
+                //             }
+                //         }
+                //     })
+                // }
             })
         } catch (error) {
             console.log(error)
