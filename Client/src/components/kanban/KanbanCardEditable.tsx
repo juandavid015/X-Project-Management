@@ -3,8 +3,8 @@ import React, {  useEffect, useRef, useState } from 'react';
 import { CREATE_TASK, UPDATE_TASK } from "../../graphql/mutations";
 import {  Status, Task, TaskCreate, User } from "../../types/types";
 import { useClickOutside } from "../../hooks/useClickOutside";
-import { useSaveEntity } from "../../hooks/useSaveEntity";
-import { GET_PROJECT_TASKS } from "../../graphql/querys";
+// import { useSaveEntity } from "../../hooks/useSaveEntity";
+// import { GET_PROJECT_TASKS } from "../../graphql/querys";
 import { useForm } from "../../hooks/useForm";
 import { FieldPriority } from "../form/FieldPriority";
 import { FieldMembers } from "../form/FieldMembers";
@@ -13,6 +13,7 @@ import { FieldTitle } from "../form/FieldTitle";
 import { FieldTimeline } from "../form/FieldTimeline";
 import { FieldDescription } from "../form/FieldDescription";
 import { SubmitButton } from "../form/SubmitButton";
+import { useMutation } from '@apollo/client';
 
 interface Props {
     create: boolean, // not goes here
@@ -21,6 +22,7 @@ interface Props {
     task?: Task | TaskCreate
     projectMembers: User[]
     projectId: string
+    isLoadedBySubscription: boolean | undefined
 }
 export interface InputEditable  {
     inputName: string,
@@ -28,7 +30,7 @@ export interface InputEditable  {
 }
 export type SetInputEditable = React.Dispatch<React.SetStateAction<InputEditable>>
 
-export const KanbanCardEditable = ({create, status, onEdit, projectMembers, projectId, task}:Props) => {
+export const KanbanCardEditable = ({create, status, onEdit, projectMembers, projectId, task, isLoadedBySubscription}:Props) => {
     // const cleanedLabels = labels.map(({ __typename, ...rest }) => rest);
     const {id, title, description, labels, timeline, priority, members, userIds} = task || {};
     const containerRef = useRef<HTMLDivElement>(null);
@@ -55,15 +57,22 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
     const { formData: taskData, setFormData: setTaskData, handleInputChange } = useForm(initialState);
 
     const mutationSchemaStatus = create ? CREATE_TASK : UPDATE_TASK;
-    const projectTaskSchema = GET_PROJECT_TASKS;
-    const saveEntity = useSaveEntity(mutationSchemaStatus, projectTaskSchema);
-    
-    const updateInformation = (taskData: Task | TaskCreate) => {
+    // const projectTaskSchema = GET_PROJECT_TASKS;
+    // const {saveEntity, loading}= useSaveEntity(mutationSchemaStatus, projectTaskSchema);
+    const [createOrUpdateTask, { loading }] = useMutation(mutationSchemaStatus)
+    const updateInformation = async(taskData: Task | TaskCreate) => {
         // before a validations must be passed sucessfully
+
+        !create && onEdit && onEdit()
         const optimisticResponse = {...taskData, __typename: "Task"}
-        onEdit && onEdit()
-        saveEntity(taskData, optimisticResponse).finally(()=> onEdit && onEdit())
-  
+
+        createOrUpdateTask({
+            variables: taskData,
+            optimisticResponse: {
+                [create ? 'createTask': 'updateTask']: optimisticResponse
+            }
+        })
+       
     }
 
     const changeEditingInput = (inputName: string) => {
@@ -71,13 +80,15 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
     }
 
     useClickOutside({elementRef: containerRef, onClickOutside: onEdit});
-
     useEffect(() => {
+        isLoadedBySubscription && (onEdit && onEdit());
         return () => {
             setInputEditable({inputName: 'title', inputIsEditable: false});
+            
         }
         
-    },[]);
+    },[isLoadedBySubscription, onEdit]);
+
 
     return (
         <div className="w-full bg-white shadow-white-gray shadow-md2 rounded-md px-[16px] py-[10px]
@@ -124,6 +135,7 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
             />
     
             <SubmitButton
+            isLoading={isLoadedBySubscription === true ? false : loading}
             onSubmit={()=> updateInformation(taskData)} />
 
         </div>

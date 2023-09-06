@@ -2,7 +2,7 @@ import { DocumentNode, OperationVariables, StoreObject, useMutation } from "@apo
 import { EntityData, getEntityName, getFieldName } from "./useSaveEntity";
 
 export const useDeleteEntity = (documentNode: DocumentNode, queryDocumentNode: DocumentNode) => {
-    const [deleteEntity] = useMutation(documentNode);
+    const [deleteEntity, {loading}] = useMutation(documentNode);
     // Extract entity name from the documentNode
     // const entityName = getEntityName(documentNode)
  // Extract field name to be updated dynamically
@@ -33,5 +33,5 @@ export const useDeleteEntity = (documentNode: DocumentNode, queryDocumentNode: D
         }
     }
 
-    return deleteFields
+    return {deleteFields, loading}
 }

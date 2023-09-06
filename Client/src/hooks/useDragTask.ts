@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { TaskColumns,  } from '../components/kanban/Kanban';
 import { Status, Task } from '../types/types';
+import { FetchResult, MutationFunctionOptions } from '@apollo/client';
 
 type TaskDragInfo = {
 	actualTaskId: string, 
@@ -16,7 +17,7 @@ type TaskOptmisticResponse = Task & {
 	projectId: string
 }
 interface UserDragTaskProps {
-    reOrdering: (taskDragInfo: TaskDragInfo, optimisticResponse?: TaskOptmisticResponse) => Promise<void>,
+    reOrdering: (options?: MutationFunctionOptions)=> Promise<FetchResult<unknown>>
     mockedData?: TaskColumns,
     setMockedData: React.Dispatch<React.SetStateAction<TaskColumns>>
 }
@@ -188,15 +189,22 @@ const dropHandler = async (e:React.DragEvent, colName: string, colIndex: number)
 	const nextTaskPosition =  mockedData ? mockedData[colIndex][colName][taskIndex + 1]?.indexPosition : undefined;
 	// console.log('DATA', previousTaskPosition, currentTaskPosition, nextTaskPosition, colName)
 
-	const optimisticData = {...initialTask, indexPosition: taskDragged?.taskPosition, status: taskDragged?.colName}
+	const optimisticData = {...initialTask, indexPosition: taskDragged?.taskPosition, status: taskDragged?.colName, __typename: 'Task'}
 	// execute mutation to change the index (order) and status of the task
 	await reOrdering({
-		actualTaskId: currentTaskId, 
-		previousTaskPosition: previousTaskPosition, 
-		actualTaskPosition: currentTaskPosition,
-		nextTaskPosition: nextTaskPosition, 
-		newStatus: colName
-	}, optimisticData as TaskOptmisticResponse)
+		variables: {
+
+			actualTaskId: currentTaskId, 
+			previousTaskPosition: previousTaskPosition, 
+			actualTaskPosition: currentTaskPosition,
+			nextTaskPosition: nextTaskPosition, 
+			newStatus: colName
+		} as TaskDragInfo,
+		optimisticResponse: {
+			moveTask: optimisticData as TaskOptmisticResponse
+		}
+		
+	}, )
 	.finally(() => {
 		console.log('done', )
 	})

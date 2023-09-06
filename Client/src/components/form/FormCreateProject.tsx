@@ -44,7 +44,7 @@ const FormCreateProject = () => {
             return {...prevState, [name]: value}
         })
     }
-    const saveEntity = useSaveEntity(CREATE_PROJECT, GET_PROJECTS)
+    const {saveEntity} = useSaveEntity(CREATE_PROJECT, GET_PROJECTS)
 
     const createProject = async () => {
         try {

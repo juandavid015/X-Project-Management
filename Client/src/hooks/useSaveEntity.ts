@@ -29,7 +29,7 @@ export function getFieldName(node: DocumentNode): string  {
 
 export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: DocumentNode) => {
   
-    const [createOrUpdateEntity] = useMutation(documentNode);
+    const [createOrUpdateEntity, {loading}] = useMutation(documentNode);
      // Extract entity name from the documentNode
     const entityName = getEntityName(documentNode)
   // Extract field name to be updated dynamically
@@ -38,65 +38,67 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
     
 
     const saveEntity = async (entityData: EntityData<OperationVariables>, optimisticData?: EntityData<OperationVariables>) => {
-  
+
       try {
         // console.log('data', optimisticData)
         const { data } = await createOrUpdateEntity({
           variables:  entityData,
           optimisticResponse: {
+            __typename: 'Mutation',
             [entityName]: optimisticData,
           },
           
-          // update(cache, { data:  createOrUpdateEntity  }) {
-          //   // Manually modify the cache to add the new reference to the entity list
-          //   cache.modify({
-          //     // id: cache.identify(entityData),
-          //     //This is uncommented to work properly with fetchPolicy "cache-and-network"
-          //     //due to the useSaveEntity when creating a new task can
-          //     //not identify to which active query to append the task as 
-          //     //the getAllTaskProject query doesn't have a reference to be identified with
+          
+          update(cache, { data:  createOrUpdateEntity  }) {
+            // Manually modify the cache to add the new reference to the entity list
+            cache.modify({
+              // id: cache.identify(entityData),
+              //This is uncommented to work properly with fetchPolicy "cache-and-network"
+              //due to the useSaveEntity when creating a new task can
+              //not identify to which active query to append the task as 
+              //the getAllTaskProject query doesn't have a reference to be identified with
             
-          //     fields: {
-          //         // the data or the new object to take its reference and add it to the fields
-          //       [fieldName](existingProjectEntities = [], { readField }) {
+              fields: {
+                  // the data or the new object to take its reference and add it to the fields
+                [fieldName](existingProjectEntities = [], { readField }) {
                 
-          //         const newEntity = cache.writeFragment({
-          //           data: createOrUpdateEntity[entityName],
-          //            // take the reference of the new object
-          //           fragment: gql`
-          //             fragment EntityRef on Entity {
-          //               id
-          //             }
-          //           `,
-          //         });
+                  const newEntity = cache.writeFragment({
+                    data: createOrUpdateEntity[entityName],
+                     // take the reference of the new object
+                    fragment: gql`
+                      fragment EntityRef on Entity {
+                        id
+                      }
+                    `,
+                  });
                
-          //         if (Array.isArray(existingProjectEntities)) {
+                  if (Array.isArray(existingProjectEntities)) {
                  
-          //           if (existingProjectEntities.some((entity: StoreObject) => 
-          //           readField('id', entity) === readField('id', newEntity))) {
-          //             return existingProjectEntities.map((entity: StoreObject) => {
-          //                 // update the object field with the new values
-          //               return entity.id === createOrUpdateEntity[entityName].id ? newEntity : entity;
-          //             });
+                    if (existingProjectEntities.some((entity: StoreObject) => 
+                    readField('id', entity) === readField('id', newEntity))) {
+                      return existingProjectEntities.map((entity: StoreObject) => {
+                          // update the object field with the new values
+                        return entity.id === createOrUpdateEntity[entityName].id ? newEntity : entity;
+                      });
   
-          //           } else {
+                    } else {
            
-          //               // append the new object reference to update the fields in cache
-          //             return [...existingProjectEntities, newEntity];
-          //           }
-          //         } else {
+                        // append the new object reference to update the fields in cache
+                      return [...existingProjectEntities, newEntity];
+                    }
+                  } else {
                
-          //           if (readField('id', existingProjectEntities) === readField('id', newEntity)) {
-          //             return newEntity
-          //           } else {
+                    if (readField('id', existingProjectEntities) === readField('id', newEntity)) {
+                      return newEntity
+                    } else {
                  
-          //             return existingProjectEntities
-          //           }
-          //         }
-          //       },
-          //     },
-          //   });
-          // },
+                      return existingProjectEntities
+                    }
+                  }
+                },
+              },
+            });
+          },
         });
         // console.log('data', data)
         return data
@@ -107,5 +109,5 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
       }
     };
   
-    return saveEntity;
+    return {saveEntity, loading}
   };

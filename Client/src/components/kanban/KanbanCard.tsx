@@ -19,7 +19,7 @@ interface Props extends Task {
 
 export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ...task}: Props) => {
 
-    const {title, description, labels, priority, timeline, members, indexPosition, id} = task
+    const {title, description, labels, priority, timeline, members, id} = task
     const timelineString = new Date(timeline || '');
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const formattedTimeline = timeline && timelineString.toLocaleDateString(undefined, options as Intl.DateTimeFormatOptions);
@@ -88,7 +88,7 @@ export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ..
                     }
                 </p>
                 }
-                <span className={`${taskIsBeingDragged ? 'pointer-events-none': 'pointer-events-auto'}`}>{indexPosition}</span>
+                {/* <span className={`${taskIsBeingDragged ? 'pointer-events-none': 'pointer-events-auto'}`}>{indexPosition}</span> */}
                 <div className="border-t border-white-gray pt-2 w-full flex items-center justify-evenly 
                 hidden group-hover:flex ">
                     <button className="w-fit fill-dark-med hover:fill-dark">

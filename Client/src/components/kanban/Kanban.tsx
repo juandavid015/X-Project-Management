@@ -1,13 +1,9 @@
 
-import { useApolloClient, useQuery} from "@apollo/client";
-
-
+import { useApolloClient, useMutation, useQuery} from "@apollo/client";
 import { useState, useEffect } from "react";
 import { Status, Task } from "../../types/types";
 import { GET_PROJECT_MEMBERS, GET_PROJECT_TASKS } from "../../graphql/querys";
-
 import { AddIcon } from "../../assets/icons/Icons";
-import { useSaveEntity } from "../../hooks/useSaveEntity";
 import { MOVE_TASK } from "../../graphql/mutations";
 import { useDragTask } from "../../hooks/useDragTask";
 import { useParams } from "react-router-dom";
@@ -17,6 +13,7 @@ import { KanbanCard } from "./KanbanCard";
 import { KanbanCardEditable } from "./KanbanCardEditable";
 import SkeletonKanbanList from "../ui/skeletons/SkeletonKanbanList";
 import { TASK_UPDATED } from "../../graphql/subscriptions";
+import { useLoadSubscriptionTask } from "../../hooks/useLoadSubscriptionTask";
 
 export type TaskColumn = {
     [key: string]: Task[]
@@ -50,7 +47,7 @@ const Kanban = () => {
         editingOnCard: ''
     });
     
-    const saveEntity = useSaveEntity(MOVE_TASK, GET_PROJECT_TASKS)
+    const [moveTask] = useMutation(MOVE_TASK)
     const tasks = data?.getProjectTasks
     
  
@@ -64,51 +61,13 @@ const Kanban = () => {
     const [taskColumns, setTaskColumns] = useState(tasksOrganizedInColumns);
     
     const { dragOverHandler, dragStartHandler, dropHandler, taskDragged, skeletonStyles, dragEnterHandler } = useDragTask({
-        reOrdering: saveEntity,
+        reOrdering: moveTask,
         mockedData: taskColumns,
         setMockedData: setTaskColumns
     });
 
-    useEffect(()=> {
-        return subscribeToMore({
-            document: TASK_UPDATED,
-            variables: {
-                projectId: projectId
-            },
-            updateQuery: (prevData, { subscriptionData }) => {
-     
-                if(!subscriptionData.data) return prevData
-                const taskUpdated = subscriptionData.data.taskUpdated.task;
-                const action = subscriptionData.data.taskUpdated.action; // Get the action type (add, edit, or delete)
-                const taskIsAlreadyPresent = prevData.getProjectTasks.some((task: Task) => task.id ===  taskUpdated.id)
-               
-                if(action === 'CREATE' && !taskIsAlreadyPresent) {
-                    return {
-                        ...prevData,
-                        // Add the new task to the appropriate field
-                        getProjectTasks: [...prevData.getProjectTasks, taskUpdated],
-                    };
-                } else if (action === 'EDIT') {
-                    return {
-                        ...prevData,
-                        // Update the existing task in the array
-                        getProjectTasks: prevData.getProjectTasks.map((task: Task) => 
-                            task.id === taskUpdated.id ? taskUpdated : task
-                        ),
-                    };
-                } else if (action === 'DELETE') {
-                    return {
-                        ...prevData,
-                        // Remove the deleted task from the array
-                        getProjectTasks: prevData.getProjectTasks.filter((task: Task) => task.id !== taskUpdated.id),
-                    };
-                } else {
-                    return prevData
-                }
-               
-            }
-        })
-    }, [subscribeToMore, projectId])
+    const loadedTask = useLoadSubscriptionTask(subscribeToMore, TASK_UPDATED, projectId);
+    
     useEffect(()=> {
         setTaskColumns(tasksOrganizedInColumns)
     }, [data])
@@ -153,6 +112,7 @@ const Kanban = () => {
                                         ) :
                                         (
                                             <KanbanCardEditable
+                                            isLoadedBySubscription={loadedTask.isLoadedBySubscription}
                                             projectMembers={projectMembers}
                                             projectId={projectId ||  ''}
                                             task={task}
@@ -167,6 +127,7 @@ const Kanban = () => {
                             {
                                 creatingNewCard.creating && creatingNewCard.creatingOn === status && (
                                     <KanbanCardEditable
+                                    isLoadedBySubscription={loadedTask.isLoadedBySubscription}
                                     projectId={projectId || ''}
                                     projectMembers={projectMembers}
                                     key={indexStatus}

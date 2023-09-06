@@ -6,6 +6,7 @@ import { Task, TaskCreate } from "../../types/types";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useDeleteEntity } from "../../hooks/useDeleteEntity";
 import { GET_PROJECT_TASKS } from "../../graphql/querys";
+import LoadingItem from "../ui/LoadingItem";
 
 interface KanbanCardOptionsProps {
     task: TaskCreate,
@@ -22,10 +23,11 @@ export const KanbanCardOptions = ({task, ...rest}: KanbanCardOptionsProps) => {
         setExpanded(!expanded);
     }
 
-    const deleteTaks = useDeleteEntity(DELETE_TASK, GET_PROJECT_TASKS)
-    const eliminateTask = (id: string | undefined) => {
+    const {deleteFields: deleteTask, loading} = useDeleteEntity(DELETE_TASK, GET_PROJECT_TASKS)
+    const eliminateTask = async (id: string | undefined) => {
+
         const optimisticResponse = {id, __typename: "Task"}
-        deleteTaks(id || undefined, optimisticResponse);
+        await deleteTask(id || undefined, optimisticResponse);
     } 
     // const duplicateTask = (task: Task) => {
     //     const taskCopy = {...task}
@@ -54,9 +56,14 @@ export const KanbanCardOptions = ({task, ...rest}: KanbanCardOptionsProps) => {
                         </button>
                     </li>
                     <li>
-                        <button className="flex items-center gap-1 fill-gray hover:fill-red-warning hover:text-red-warning font-medium"
+                        <button className={`flex items-center gap-1 fill-gray 
+                        ${!loading && 'hover:fill-red-warning hover:text-red-warning'} font-medium`}
                         onClick={()=> eliminateTask(id)}>
-                            <RemoveIcon className="h-[20px]"/>
+                            {
+                                !loading ?
+                                <RemoveIcon className="h-[20px]"/>:
+                                <LoadingItem height="h-[15px]"/>
+                            }
                             <span>Eliminate</span>
                         </button>
                     </li>
