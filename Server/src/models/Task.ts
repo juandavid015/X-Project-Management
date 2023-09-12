@@ -50,7 +50,7 @@ export const generateTaskModel = ({userIsAuthenticated, pubsub}): TaskDataSource
           }
         })
 
-        pubsub.publish(SUBSCRIPTION_TASK_EVENTS.TASK_UPDATED, {
+        await pubsub.publish(SUBSCRIPTION_TASK_EVENTS.TASK_UPDATED, {
           taskUpdated: {
             task: taskCreated,
             action: 'CREATE'

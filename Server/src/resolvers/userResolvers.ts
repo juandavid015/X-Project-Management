@@ -1,6 +1,9 @@
+import { GraphQLError } from "graphql";
 import { MyContext } from "..";
 import { CreateUserArgs, GetAllUsersArgs, LoginUserArgs } from "../types/types";
-
+import { userSchema } from "../validations/userSchema";
+import { ApolloServerErrorCode } from '@apollo/server/errors';
+import {ValidationError} from 'yup'
 
 // export type UserResolvers = {
 //     Query: {
@@ -22,7 +25,11 @@ export const userResolvers = {
         loginUser: (parent: unknown, args: LoginUserArgs, context: MyContext) => 
         context.models.User.loginUser(parent, args),
 
-        createUser: (parent: unknown, args: CreateUserArgs, context: MyContext) => 
-        context.models.User.createUser(parent, args),
+        createUser: async (parent: unknown, args: CreateUserArgs, context: MyContext) => {
+
+            await userSchema.validate(args, { abortEarly: false })
+            return context.models.User.createUser(parent, args)
+        }
+        
     }
 }

@@ -3,6 +3,8 @@ import { SUBSCRIPTION_TASK_EVENTS } from "../Subscriptions"
 import { AssignMemberToTaskArgs, CreateTaskArgs, GetProjectTasksArgs, MoveTaskArgs, RemoveTaskArgs, UpdateTaskArgs } from "../types/types"
 import { pubsub } from ".."
 import { withFilter } from "graphql-subscriptions"
+import { taskSchema } from "../validations/taskSchema"
+
 export const taskResolvers = { 
     Query: {
         // TASKS QUERY
@@ -11,12 +13,14 @@ export const taskResolvers = {
     },
     Mutation: {
         // TASK MUTATIONS
-        createTask: (parent: unknown, args: CreateTaskArgs, context: MyContext) => 
-        context.models.Task.createTask(parent, args), 
-
-        updateTask: (parent: unknown, args: UpdateTaskArgs, context: MyContext) => 
-        context.models.Task.updateTask(parent, args), 
-
+        createTask: async (parent: unknown, args: CreateTaskArgs, context: MyContext) => {
+            await taskSchema.validate(args, { abortEarly: true })
+            return context.models.Task.createTask(parent, args)
+        },
+        updateTask: async (parent: unknown, args: UpdateTaskArgs, context: MyContext) => {
+            await taskSchema.validate(args, { abortEarly: true })
+            return context.models.Task.updateTask(parent, args)
+        },
         removeTask: (parent: unknown, args: RemoveTaskArgs, context: MyContext) => 
         context.models.Task.deleteTaskById(parent, args), 
         

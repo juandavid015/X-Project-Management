@@ -37,7 +37,7 @@ export const generateUserModel = (userAuthenticated: UserAuthenticated): UserDat
 
     loginUser: async() => {
 
-        const {id, email, name, image} = userAuthenticated
+        const { id, email, name, image } = userAuthenticated
 
         const user = await prisma.user.findUnique({
             where: {

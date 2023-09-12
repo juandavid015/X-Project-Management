@@ -1,5 +1,6 @@
 import { MyContext } from ".."
 import { AssignMemberToProjectArgs, CreateProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types"
+import { projectSchema } from "../validations/projectSchema"
 
 export const projectResolvers = {
     Query: {
@@ -15,11 +16,14 @@ export const projectResolvers = {
         createPublicProject: (parent: unknown, args: CreateProjectArgs, context: MyContext) => 
         context.models.Project.createPublicProject(parent, args),
 
-        createProject: (parent: unknown, args: CreateProjectArgs, context: MyContext) => 
-        context.models.Project.createProject(parent, args),
+        createProject: async (parent: unknown, args: CreateProjectArgs, context: MyContext) => {
+            await projectSchema.validate(args, { abortEarly: true })    
+            return context.models.Project.createProject(parent, args)
+        },
         
-        updateProject: (parent: unknown, args: UpdateProjectArgs, contex: MyContext) => 
-        contex.models.Project.updateProject(parent, args),
+        updateProject: (parent: unknown, args: UpdateProjectArgs, contex: MyContext) => {
+            return contex.models.Project.updateProject(parent, args)
+        },
         
         assignMemberToProject: (parent: unknown, args: AssignMemberToProjectArgs, context: MyContext) =>
         context.models.Project.assignMemberToProject(parent, args),

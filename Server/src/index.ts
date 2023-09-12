@@ -2,7 +2,7 @@ import { ApolloServer } from '@apollo/server';
 import { UserDataSource, } from './models/User.js';
 import { TaskDataSource,} from './models/Task.js';
 import { ProjectDataSource, } from './models/Project.js';
-import { authenticationAndAccessGuard } from './plugins/plugins.js';
+import { authenticationAndAccessGuard, inputValidateError } from './plugins/plugins.js';
 import express from 'express';
 import { createServer } from 'http';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
@@ -20,6 +20,7 @@ import { wsAccessGuardConnection } from './authentication/wsAuthenticationConnec
 import { MongoClient} from 'mongodb'
 import { MongodbPubSub } from 'graphql-mongodb-subscriptions';
 import dotenv from 'dotenv'
+
 dotenv.config();
 
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
@@ -71,9 +72,10 @@ const serverCleanup = useServer(
             // Check authentication every time a client connects.
             return await wsAccessGuardConnection(ctx);
         },
-        onDisconnect() {
-            console.log('Disconnected!');
+        onDisconnect(reason) {
+            console.log('Disconnected!' + reason);
         },
+        
     },
     wsServer
 );
@@ -96,8 +98,14 @@ const server = new ApolloServer<MyContext>({
             },
         },
         // Handle the authentication flow
-        authenticationAndAccessGuard
+        authenticationAndAccessGuard,
+        inputValidateError
     ],
+    formatError: (formatedError, error) => {
+        let newErrorFormated = {...formatedError}
+        delete newErrorFormated.extensions.stacktrace
+        return newErrorFormated
+    }
     
   });
 

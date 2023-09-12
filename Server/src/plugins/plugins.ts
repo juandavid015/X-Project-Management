@@ -1,9 +1,12 @@
 import { ApolloServerPlugin } from "@apollo/server"
 import { GraphQLError } from "graphql"
 import { MyContext } from ".."
+import {ValidationError} from 'yup'
+import { ApolloServerErrorCode } from '@apollo/server/errors';
 
 export const authenticationAndAccessGuard: ApolloServerPlugin<MyContext> = {
-    async requestDidStart({request, contextValue, errors}) {
+
+    async requestDidStart({request, contextValue}) {
         console.log('HE', contextValue.userHasPartialAccess, request.operationName, request.extensions)
         const allowedPublicRequests = ['CreateProject', 'GetProjects', 'GetProjectTasks', 'CreateTask', 'MoveTask', 'UpdateTask', 'GetProject']
         if(request.operationName === 'CreatePublicProject') {
@@ -25,8 +28,40 @@ export const authenticationAndAccessGuard: ApolloServerPlugin<MyContext> = {
     // the unexpected error is catched here and customized to be more gracefully to the client.
     async unexpectedErrorProcessingRequest({ error, }) {
     console.log( 'Error response', error.message )
-    throw new GraphQLError('Invalid user credentials', {
-        extensions: {code: 'UNAUTHENTICATED', http: { status: 401 }}
+    throw new GraphQLError(error.message, {
+        originalError: error
     })
+    }
+}
+
+
+export const inputValidateError: ApolloServerPlugin<MyContext> = {
+
+    async requestDidStart() {
+        return {
+            async willSendResponse({errors}) {
+                if(errors) {
+
+                    const validationErrors = errors.filter(error => error.originalError instanceof ValidationError);
+
+                    if(validationErrors.length) {
+
+                        let error = validationErrors[0].originalError
+
+                        throw new GraphQLError(error.message,  {
+                            extensions: {
+                                code: ApolloServerErrorCode.BAD_USER_INPUT,
+                                http: {
+                                    status: 400
+                                },
+                                errors: (error as ValidationError).errors
+                            },
+                            originalError: error,
+                            
+                        });
+                    }
+                }
+            }
+        }
     }
 }
