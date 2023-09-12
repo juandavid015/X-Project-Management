@@ -36,7 +36,7 @@ export const handleErrorResponse = (error: ApolloError | CustomErrorResponse) =>
                 const statusCode = error.networkError.statusCode;
                 const statusText = errors[0].extensions.code;
                 
-                throw new Response('', {status: statusCode, statusText: statusText})
+                throw new Response('', {status: statusCode, statusText: statusText, })
             }
         } 
       } else if(isCustomErrorResponse(error)) {

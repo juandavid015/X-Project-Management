@@ -6,9 +6,11 @@ export const UPDATE_TASK = gql`
         $title: String!,
         $description: String, 
         $timeline: String,
+        $status: AllowedStatus,
         $priority: Priority,
         $labels: [LabelInput],
         $userIds: [String]
+        $projectId: String
     ) {
         updateTask(
             id: $id,
@@ -18,6 +20,8 @@ export const UPDATE_TASK = gql`
             priority: $priority,
             labels: $labels,
             userIds: $userIds
+            status: $status
+            projectId: $projectId
         ) {
             id,
             title, 

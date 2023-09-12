@@ -86,7 +86,7 @@ const Projects = () => {
         }
     );
 
-    console.log('USER', user)
+    // console.log('USER', user)
  
     useRedirectPublicProject(createPublicProject, hasPublicSpace, isAuthenticated);
     

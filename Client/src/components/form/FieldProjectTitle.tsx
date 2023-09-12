@@ -1,12 +1,14 @@
 import { TitleIcon } from "../../assets/icons/Icons";
+import ErrorMessage from "./ErrorMessage";
 
 interface FieldProjectTitleProps {
     handleInputChange: React.ChangeEventHandler<HTMLInputElement>
-    projectFormTitle: string
+    projectFormTitle: string,
+    errorMessage: string
 }
-const FieldProjectTitle = ({handleInputChange, projectFormTitle}: FieldProjectTitleProps) => {
+const FieldProjectTitle = ({handleInputChange, projectFormTitle, errorMessage}: FieldProjectTitleProps) => {
     return (
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-4">
             <span className="text-dark-purple-md font-bold">
                 Step 1/3
             </span>
@@ -25,6 +27,9 @@ const FieldProjectTitle = ({handleInputChange, projectFormTitle}: FieldProjectTi
             <input type="text" placeholder="Dope title project" onChange={handleInputChange} 
             value={projectFormTitle} id="title" name="title" autoFocus
             className="text-base w-full bg-white-purple p-4 outline-electric-blue"/>
+            <ErrorMessage
+            msg={errorMessage}
+            />
         </div>
     )
 }

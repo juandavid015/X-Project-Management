@@ -1,11 +1,13 @@
 import { DescriptionIcon } from "../../assets/icons/Icons";
+import ErrorMessage from "./ErrorMessage";
 interface FieldProjectDescriptionProps {
     handleInputChange: React.ChangeEventHandler<HTMLInputElement>
     projectFormDescription: string
+    errorMessage: string
 }
-const FieldProjectDescription = ({handleInputChange, projectFormDescription}: FieldProjectDescriptionProps) => {
+const FieldProjectDescription = ({handleInputChange, projectFormDescription, errorMessage}: FieldProjectDescriptionProps) => {
     return (
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-4">
             <span className="text-dark-purple-md font-bold">
                 Step 2/3
             </span>
@@ -23,6 +25,9 @@ const FieldProjectDescription = ({handleInputChange, projectFormDescription}: Fi
             <input type="text" placeholder="A short description about your project..." onChange={handleInputChange} 
             value={projectFormDescription} id="description" name="description" autoFocus
             className="text-base w-full bg-white-purple p-4 outline-electric-blue"/>
+            <ErrorMessage
+            msg={errorMessage}
+            />
         </div>
     )
 }

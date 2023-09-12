@@ -1,5 +1,8 @@
-import { DocumentNode, OperationVariables, StoreObject, gql, useMutation } from "@apollo/client"
+import { ApolloError, DocumentNode, OperationVariables, StoreObject, gql, useMutation } from "@apollo/client"
 import { FieldNode, OperationDefinitionNode } from "graphql";
+import { handleErrorResponse } from "../helpers/errorHelpers";
+import { CustomErrorResponse } from "../types/types";
+import { isCustomErrorResponse } from "../types/typeGuards";
 
 export type EntityData<T> = T 
 
@@ -44,7 +47,6 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
         const { data } = await createOrUpdateEntity({
           variables:  entityData,
           optimisticResponse: {
-            __typename: 'Mutation',
             [entityName]: optimisticData,
           },
           
@@ -103,9 +105,13 @@ export const useSaveEntity = (documentNode: DocumentNode, queryDocumentNode: Doc
         // console.log('data', data)
         return data
         // Handle successful response or perform additional actions
-      } catch (error) {
+      } catch (error: ApolloError |  CustomErrorResponse | unknown) {
         // Handle error
-        console.log(error);
+        // console.log('error on middle', JSON.stringify(error))
+        if(error instanceof ApolloError || isCustomErrorResponse(error)) {
+          handleErrorResponse(error)
+        }
+        
       }
     };
   

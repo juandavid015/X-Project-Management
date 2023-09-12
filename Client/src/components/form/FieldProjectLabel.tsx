@@ -1,12 +1,14 @@
 import { LabelIcon } from "../../assets/icons/Icons";
+import ErrorMessage from "./ErrorMessage";
 
 interface FieldProjectLabelProps {
     handleInputChange: React.ChangeEventHandler<HTMLInputElement>
     projectFormLabel: string
+    errorMessage: string
 }
-const FieldProjectLabel = ({handleInputChange, projectFormLabel}: FieldProjectLabelProps) => {
+const FieldProjectLabel = ({handleInputChange, projectFormLabel, errorMessage}: FieldProjectLabelProps) => {
     return (
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-4">
             <span className="text-dark-purple-md font-bold">
                 Step 3/3
             </span>
@@ -24,6 +26,9 @@ const FieldProjectLabel = ({handleInputChange, projectFormLabel}: FieldProjectLa
             <input type="text" placeholder="Bussiness" onChange={handleInputChange} 
             value={projectFormLabel} id="label" name="label" autoFocus
             className="text-base w-full bg-white-purple p-4 outline-electric-blue"/>
+            <ErrorMessage
+            msg={errorMessage}
+            />
         </div>
     )
 }

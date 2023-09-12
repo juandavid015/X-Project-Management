@@ -17,7 +17,7 @@ const ModalCreateProject = ({closeModal, children}: ModalCreateProjectProps) => 
         <div className="w-full h-screen bg-white/70 flex justify-center items-center
         fixed top-0 left-0" >
             <div ref={divRef}
-            className='max-w-[350px] w-full min-h-[300px] relative'>
+            className='max-w-[400px] w-full min-h-[300px] relative'>
                 <button onClick={closeModal} 
                 className='absolute right-[1em] hover:scale-105 fill-dark'>
                     <RemoveCircleIcon className='h-[30px]'/>

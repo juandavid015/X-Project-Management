@@ -1,6 +1,6 @@
 export type Status = 'PENDING' | 'IN_PROGRESS' | 'REVIEW' | 'COMPLETED';
 
-export type Priority = "HIGH" | "MODERATE" | "LOW" | null;
+export type Priority = "HIGH" | "MODERATE" | "LOW" | undefined;
 
 
 export  interface Label {
@@ -11,7 +11,7 @@ export interface User {
     id: string!,
     email: string!
     name: string!,
-    image: string
+    image?: string
 }
 
 export interface Project {
@@ -20,6 +20,11 @@ export interface Project {
     members: User[]
     label?: string
     description?: string
+}
+
+export interface ProjectCreate extends Project {
+    id?: string
+    members?: User[]
 }
 
 export interface Task {

@@ -9,7 +9,7 @@ interface Props {
         index: number,
         propertyName: keyof Task
       ) => void,
-    valueSelected: string | null,
+    valueSelected: string | undefined,
     [key:string]: unknown,
 }
 

@@ -40,7 +40,7 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
         title: title || '',
         description: description || '',
         timeline: timeline || '',
-        priority: priority || null,
+        priority: priority || undefined,
         labels: labels || [],
         status: status,
         indexPosition: parseFloat(Date.now().toString()),

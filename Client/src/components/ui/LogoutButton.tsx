@@ -16,9 +16,9 @@ export const LogoutButton = ({expanded}: LogoutButtonProps) => {
 
     return (
         <button onClick={()=> handleLogout()} title='Log out'
-        className={`border-none bg-red-warning w-fit text-white ${expanded ? 'px-4': 'px-1'} py-2 rounded-md
-        flex items-center gap-2 fill-white whitespace-nowrap
-        transition-all duration-700 `}>
+        className={`border-none w-fit text-red-warning ${expanded ? 'px-4': 'px-1'} py-2 rounded-md
+        flex items-center gap-2 fill-red-warning whitespace-nowrap
+        transition-all duration-700`}>
             <LogoutIcon className='h-[20px] w-fit'/>
             {
                 expanded &&
