@@ -1,15 +1,23 @@
 import { Link } from "react-router-dom";
 import { Project } from "../../types/types";
 import { Members } from "../ui/Members";
+import ProjectCardOptions from "./ProjectCardOptions";
 
 interface ProjectCardProps {
+    toggleEdit: ()=> void
     project: Project
 }
-const ProjectCard = ({project}: ProjectCardProps) => {
+const ProjectCard = ({project, toggleEdit}: ProjectCardProps) => {
     return (
-        <div className="max-w-[270px] w-full bg-white p-8
+        <div className="max-w-[270px] w-full bg-white p-8 relative rounded-md
          " key={project.id}>
-            <Link to={project.id} className="w-full flex  flex-col gap-2">
+
+            <ProjectCardOptions 
+            className={'absolute top-[1rem] left-[calc(100%-3rem)] z-10'}
+            editProject={toggleEdit}
+            projectId={project.id}
+            />
+            <Link to={project.id} className="w-full flex flex-col gap-2">
                 <h2 className="font-heading text-xl
                 line-clamp-3">
                     {project.title}

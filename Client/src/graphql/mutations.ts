@@ -127,6 +127,15 @@ export const CREATE_PROJECT = gql`
         }
     }
 `
+export const DELETE_PROJECT = gql`
+    mutation DeleteProject($id: String!) {
+        deleteProject(
+            id: $id
+        ) {
+            id
+        }
+    }
+`
 export const DELETE_TASK = gql`
     mutation RemoveTask ($id: String!) {
         removeTask(id: $id) {
@@ -148,7 +157,25 @@ mutation UpdateProject($projectId: String!, $userIds: [String]!) {
         }
     }
 } `
-
+export const UPDATE_PROJECT = gql`
+    mutation UpdateProject($id: String!, $userIds: [String]!, $title: String!, 
+    $description: String, $label: String) {
+        updateProject(id: $id, userIds: $userIds, title: $title, description: $description,
+        label: $label) {
+            id
+            userIds
+            title
+            description
+            label
+            members {
+                id
+                email
+                name
+                image
+            }
+        }
+    }
+`
 export const ASSIGN_PROJECT_MEMBER = gql`
 mutation AssignProjectMember($projectId: String!, $userEmail: String!) {
     assignMemberToProject(projectId: $projectId, userEmail: $userEmail) {

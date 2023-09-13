@@ -4,9 +4,8 @@ import { useState, useRef } from 'react';
 import { DELETE_TASK } from "../../graphql/mutations";
 import { Task, TaskCreate } from "../../types/types";
 import { useClickOutside } from "../../hooks/useClickOutside";
-import { useDeleteEntity } from "../../hooks/useDeleteEntity";
-import { GET_PROJECT_TASKS } from "../../graphql/querys";
 import LoadingItem from "../ui/LoadingItem";
+import { useMutation } from "@apollo/client";
 
 interface KanbanCardOptionsProps {
     task: TaskCreate,
@@ -22,12 +21,14 @@ export const KanbanCardOptions = ({task, ...rest}: KanbanCardOptionsProps) => {
     const expand = () => {
         setExpanded(!expanded);
     }
-
-    const {deleteFields: deleteTask, loading} = useDeleteEntity(DELETE_TASK, GET_PROJECT_TASKS)
+    const [deleteTask, {loading}] = useMutation(DELETE_TASK, );
+    // const {deleteFields: deleteTask, loading} = useDeleteEntity(DELETE_TASK, GET_PROJECT_TASKS)
     const eliminateTask = async (id: string | undefined) => {
 
-        const optimisticResponse = {id, __typename: "Task"}
-        await deleteTask(id || undefined, optimisticResponse);
+        await deleteTask({
+            variables: { id },
+            optimisticResponse:  {id, __typename: "Task"}
+        });
     } 
     // const duplicateTask = (task: Task) => {
     //     const taskCopy = {...task}

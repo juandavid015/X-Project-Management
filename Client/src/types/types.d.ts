@@ -20,6 +20,7 @@ export interface Project {
     members: User[]
     label?: string
     description?: string
+    userIds: string
 }
 
 export interface ProjectCreate extends Project {

@@ -16,17 +16,17 @@ export const useDeleteEntity = (documentNode: DocumentNode, queryDocumentNode: D
                 optimisticResponse: {
                     [entityName]: optimisticData,
                 },
-                // update(cache) {
-                //     cache.modify({
-                //         fields: {
-                //             [fieldName](existingEntityRefs, { readField }) {
-                //                 return existingEntityRefs.filter(
-                //                     (entityRef: StoreObject) => id !== readField('id', entityRef)
-                //                 )
-                //             }
-                //         }
-                //     })
-                // }
+                update(cache) {
+                    cache.modify({
+                        fields: {
+                            [fieldName](existingEntityRefs, { readField }) {
+                                return existingEntityRefs.filter(
+                                    (entityRef: StoreObject) => id !== readField('id', entityRef)
+                                )
+                            }
+                        }
+                    })
+                }
             })
         } catch (error) {
             console.log(error)

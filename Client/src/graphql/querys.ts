@@ -41,6 +41,7 @@ export const GET_PROJECTS = gql`
             title
             description
             label
+            userIds
             members {
                 id
                 email

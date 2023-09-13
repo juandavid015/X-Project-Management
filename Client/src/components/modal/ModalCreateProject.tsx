@@ -15,7 +15,7 @@ const ModalCreateProject = ({closeModal, children}: ModalCreateProjectProps) => 
 
     return (
         <div className="w-full h-screen bg-white/70 flex justify-center items-center
-        fixed top-0 left-0" >
+        fixed top-0 left-0 z-[10000000]" >
             <div ref={divRef}
             className='max-w-[400px] w-full min-h-[300px] relative'>
                 <button onClick={closeModal} 
