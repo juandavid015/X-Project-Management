@@ -57,3 +57,5 @@ export type AssignMemberToProjectArgs = Pick<Project, 'id'> & Pick<User, 'email'
     projectId: Project['id']
     userEmail: User['email']
 }
+
+export type DeleteProjectArgs = Pick<Project, 'id'>

@@ -29,13 +29,20 @@ export const projectTypeDefs = {
         ): Project
 
         updateProject(
+            id: String!
             userIds: [String]!
-            projectId: String!
+            title: String!
+            description: String
+            label: String
         ): Project
 
         assignMemberToProject(
             projectId: String!
             userEmail: String!
+        ): Project
+
+        deleteProject(
+            id: String!
         ): Project
     `
 }

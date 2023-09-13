@@ -1,5 +1,5 @@
 import { MyContext } from ".."
-import { AssignMemberToProjectArgs, CreateProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types"
+import { AssignMemberToProjectArgs, CreateProjectArgs, DeleteProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types"
 import { projectSchema } from "../validations/projectSchema"
 
 export const projectResolvers = {
@@ -27,5 +27,8 @@ export const projectResolvers = {
         
         assignMemberToProject: (parent: unknown, args: AssignMemberToProjectArgs, context: MyContext) =>
         context.models.Project.assignMemberToProject(parent, args),
+
+        deleteProject: (parent: unknown, args: DeleteProjectArgs, context: MyContext) => 
+        context.models.Project.deleteProject(parent, args)
     }
 }

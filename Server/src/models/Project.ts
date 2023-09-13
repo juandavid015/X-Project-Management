@@ -1,6 +1,6 @@
 import { Project } from "@prisma/client";
 import { prisma } from "../db";
-import { AssignMemberToProjectArgs, CreateProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types";
+import { AssignMemberToProjectArgs, CreateProjectArgs, DeleteProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types";
 import { MemberConnectDisconnect } from "../types/types"
 import { createPublicToken } from "../utils/validateToken";
 import { generateRandomUsername } from "../utils/randomNames";
@@ -17,6 +17,7 @@ export interface ProjectDataSource {
     createPublicProject: (parent: unknown, args: CreateProjectArgs) => Promise<PublicProject>
     updateProject: (parent: unknown, args: UpdateProjectArgs) => Promise<Project>
     assignMemberToProject: (parent: unknown, args: AssignMemberToProjectArgs) => Promise<Project>
+    deleteProject: (parent: unknown, args: DeleteProjectArgs) => Promise<Project>
 }
 
 export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess, userAuthenticated, userWithPartialAccess}):ProjectDataSource => ({
@@ -101,7 +102,7 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
         
     },
     updateProject: async (_, args) => {
-        let { projectId, userIds, ...projectData}: {
+        let { id, userIds, ...projectData}: {
             members?: MemberConnectDisconnect; // Explicitly include members property in the data type
             [key: string]: any; // Allow any other properties (dynamic)
           } = args
@@ -109,7 +110,7 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
         if(userIds){
           const project = await prisma.project.findUnique({
             where: {
-              id: projectId
+                id: id
             }, 
             include: {
               members: true
@@ -130,7 +131,7 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
         
         const updatedProject = await prisma.project.update({
           where: {
-            id: projectId,
+            id: id,
           },
           data: projectData,
           include: {
@@ -172,4 +173,15 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
         return updatedProject
 
       },
+    deleteProject: async (_, args) => {
+        let { id } = args;
+
+        let deletedProject = await prisma.project.delete({
+            where: {
+                id: id
+            }
+        })
+
+        return deletedProject;
+    }
 })
