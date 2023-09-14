@@ -3,8 +3,6 @@ import React, {  useEffect, useRef, useState } from 'react';
 import { CREATE_TASK, UPDATE_TASK } from "../../graphql/mutations";
 import {  Status, Task, TaskCreate, User } from "../../types/types";
 import { useClickOutside } from "../../hooks/useClickOutside";
-// import { useSaveEntity } from "../../hooks/useSaveEntity";
-// import { GET_PROJECT_TASKS } from "../../graphql/querys";
 import { useForm } from "../../hooks/useForm";
 import { FieldPriority } from "../form/FieldPriority";
 import { FieldMembers } from "../form/FieldMembers";
@@ -13,7 +11,9 @@ import { FieldTitle } from "../form/FieldTitle";
 import { FieldTimeline } from "../form/FieldTimeline";
 import { FieldDescription } from "../form/FieldDescription";
 import { SubmitButton } from "../form/SubmitButton";
-import { useMutation } from '@apollo/client';
+import { ApolloError, useMutation } from '@apollo/client';
+import toast from 'react-hot-toast'
+import ToastErrorNotfication from '../error/ToastError';
 
 interface Props {
     create: boolean, // not goes here
@@ -62,16 +62,27 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
     const [createOrUpdateTask, { loading }] = useMutation(mutationSchemaStatus)
     const updateInformation = async(taskData: Task | TaskCreate) => {
         // before a validations must be passed sucessfully
-
-        !create && onEdit && onEdit()
-        const optimisticResponse = {...taskData, __typename: "Task"}
-
-        createOrUpdateTask({
-            variables: taskData,
-            optimisticResponse: {
-                [create ? 'createTask': 'updateTask']: optimisticResponse
-            }
-        })
+        try {
+            
+            !create && onEdit && onEdit()
+            const optimisticResponse = {...taskData, __typename: "Task"}
+    
+            await createOrUpdateTask({
+                variables: taskData,
+                optimisticResponse: {
+                    [create ? 'createTask': 'updateTask']: optimisticResponse
+                }
+            })
+        } catch (error: unknown) {
+            // console.log(JSON.stringify(error))
+            // handleErrorResponse(error as ApolloError)
+            if (error instanceof ApolloError && error.networkError && 'result' in error.networkError ) {
+                const result = error.networkError.result as Record<string, any> 
+                toast.custom((t)=> <ToastErrorNotfication t={t} message={result.errors[0].message}/>, {
+                    duration: 2000
+                });
+            } 
+        }
        
     }
 

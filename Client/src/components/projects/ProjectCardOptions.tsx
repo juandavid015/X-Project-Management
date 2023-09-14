@@ -5,6 +5,9 @@ import { useDeleteEntity } from '../../hooks/useDeleteEntity';
 import { DELETE_PROJECT } from '../../graphql/mutations';
 import { GET_PROJECTS } from '../../graphql/querys';
 import LoadingItem from '../ui/LoadingItem';
+import { getErrorResponseBody } from '../../helpers/errorHelpers';
+import toast from 'react-hot-toast';
+import ToastErrorNotfication from '../error/ToastError';
 
 interface ProjectCardOptions {
     projectId: string,
@@ -23,7 +26,15 @@ const ProjectCardOptions = ({projectId, editProject, ...rest}: ProjectCardOption
     }
     const eliminateProject = async (id: string) => {
         const optimisticResponse = {id, __typename: "Project"}
-        await deleteProject(id, optimisticResponse);
+        await deleteProject(id, optimisticResponse)
+        .catch(async error => {
+            const newError = await getErrorResponseBody(error as Response)
+            toast.custom((t)=> <ToastErrorNotfication t={t} message={newError?.message} />, {
+                duration: 2000
+            })
+        })
+       
+        
     }
     useClickOutside({elementRef: containerRef, onClickOutside: () => setExpanded(false)});
 

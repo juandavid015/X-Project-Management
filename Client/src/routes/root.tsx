@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import { Sidebar } from "../components/ui/Sidebar";
 import {Outlet} from 'react-router-dom';
 
@@ -8,6 +9,7 @@ const Root = () => {
         flex'>
             <Sidebar />
             <Outlet />
+            <Toaster />
         </main>
       </>
     );

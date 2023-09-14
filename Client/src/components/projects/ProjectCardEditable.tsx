@@ -4,9 +4,11 @@ import { Members } from "../ui/Members";
 import ProjectCardOptions from "./ProjectCardOptions";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useForm } from "../../hooks/useForm";
-import { useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import { UPDATE_PROJECT } from "../../graphql/mutations";
 import LoadingItem from "../ui/LoadingItem";
+import ToastErrorNotfication from "../error/ToastError";
+import toast from "react-hot-toast";
 
 interface ProjectCardEditableProps {
     toggleEdit: () => void
@@ -31,6 +33,7 @@ const ProjectCardEditable = ({toggleEdit, project}:ProjectCardEditableProps) => 
     const [editProject, {loading}] = useMutation(UPDATE_PROJECT)
 
     const handleEditProject = async () => {
+        
         const optimisticData = {...projectData, members: project.members, __typename: 'Project'};
         // "await" prefix is needed to loading layout if not optimistic response is given
         editProject({
@@ -38,9 +41,17 @@ const ProjectCardEditable = ({toggleEdit, project}:ProjectCardEditableProps) => 
             optimisticResponse: {
                 ['updateProject']: optimisticData
             }
+        }).catch(error => {
+            if (error instanceof ApolloError && error.networkError && 'result' in error.networkError ) {
+                const result = error.networkError.result as Record<string, any> 
+                toast.custom((t)=> <ToastErrorNotfication t={t} message={result.errors[0].message}/>, {
+                    duration: 2000
+                });
+            } 
         })
         toggleEdit();
     }
+    
 
     return (
         <div className="relative max-w-[270px] w-full bg-white p-8 relative rounded-md

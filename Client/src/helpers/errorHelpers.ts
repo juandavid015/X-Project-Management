@@ -35,8 +35,9 @@ export const handleErrorResponse = (error: ApolloError | CustomErrorResponse) =>
                 const errors = result.errors 
                 const statusCode = error.networkError.statusCode;
                 const statusText = errors[0].extensions.code;
+                const errorBody = JSON.stringify({message: errors[0].message, data: errors[0]})
                 
-                throw new Response('', {status: statusCode, statusText: statusText, })
+                throw new Response(errorBody, {status: statusCode, statusText: statusText, })
             }
         } 
       } else if(isCustomErrorResponse(error)) {
