@@ -1,8 +1,7 @@
-import { ObjectSchema, array, object, string } from "yup";
-import { Project,  } from "@prisma/client";
+import { array, object, string } from "yup";
 import { ObjectId } from "mongodb";
 
-export const projectSchema: ObjectSchema<Project> = object({
+export const projectSchema = object({
     id: string(),
     title: string().max(50).required(),
     description: string().max(250),
@@ -12,5 +11,10 @@ export const projectSchema: ObjectSchema<Project> = object({
         message: 'userIds must be in a valid "ObjectId" format',
         test: (value => ObjectId.isValid(value))
     })),
+    // ownerId: string().test({
+    //     name: 'objectId',
+    //     message: 'ownerId must be in a valid "ObjectId" format',
+    //     test: (value => ObjectId.isValid(value))
+    // }),
     token: string()
 })

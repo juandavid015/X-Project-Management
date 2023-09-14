@@ -8,7 +8,7 @@ export const authenticationAndAccessGuard: ApolloServerPlugin<MyContext> = {
 
     async requestDidStart({request, contextValue}) {
         console.log('HE', contextValue.userHasPartialAccess, request.operationName, request.extensions)
-        const allowedPublicRequests = ['CreateProject', 'GetProjects', 'GetProjectTasks', 'CreateTask', 'MoveTask', 'UpdateTask', 'GetProject']
+        const allowedPublicRequests = ['CreateProject', 'GetProjects', 'GetProjectTasks', 'CreateTask', 'MoveTask', 'UpdateTask', 'GetProject', 'UpdateProject']
         if(request.operationName === 'CreatePublicProject') {
             return
         } else if (contextValue['userHasPartialAccess'] && allowedPublicRequests.includes(request.operationName)) {

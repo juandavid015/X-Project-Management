@@ -24,9 +24,10 @@ model User {
   name    String?
   projectIds String[] @db.ObjectId
   taskIds String[] @db.ObjectId
-  projects Project[] @relation(fields: [projectIds], references: [id])
+  projects Project[] @relation(name: "Members", fields: [projectIds], references: [id])
   tasks Task[] @relation(fields: [taskIds], references: [id])
   image String? 
+  ownedProjects Project[] 
 }
 model Project {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -35,8 +36,10 @@ model Project {
   label String?
   tasks Task[]
   userIds String[] @db.ObjectId
-  members User[] @relation(fields: [userIds], references: [id])
+  members User[] @relation(name: "Members", fields: [userIds], references: [id])
   token String?
+  ownerId String @db.ObjectId 
+  owner User @relation(fields: [ownerId], references: [id])
 }
 model Task {
   id String @id @default(auto()) @map("_id") @db.ObjectId

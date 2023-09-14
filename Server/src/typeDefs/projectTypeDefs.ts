@@ -9,6 +9,8 @@ export const projectTypeDefs = {
             tasks: [Task]
             members: [User]
             token: String
+            owner: User
+            ownerId: String
         }
         type PublicProject {
             project: Project
@@ -30,7 +32,7 @@ export const projectTypeDefs = {
 
         updateProject(
             id: String!
-            userIds: [String]!
+            userIds: [String]
             title: String!
             description: String
             label: String

@@ -45,7 +45,7 @@ export type GetAllProjectArgs = {
     userId: User['id']
 }
 
-export type CreateProjectArgs = Project & {
+export type CreateProjectArgs = Pick<Project, 'title' | 'description' | 'label'> & {
     userId: User['id']
 }
 

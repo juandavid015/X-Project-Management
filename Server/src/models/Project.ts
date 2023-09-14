@@ -5,6 +5,7 @@ import { MemberConnectDisconnect } from "../types/types"
 import { createPublicToken } from "../utils/validateToken";
 import { generateRandomUsername } from "../utils/randomNames";
 import { ObjectId } from "mongodb";
+import { GraphQLError } from "graphql";
 
 export type PublicProject = {
   project: Project,
@@ -28,7 +29,8 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
             id: args.projectId
         },
         include: {
-            members: true
+            members: true,
+            owner: true
         }
         })
     },
@@ -47,7 +49,8 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
           },
             include: {
                 members: true,
-                tasks: true
+                tasks: true,
+                owner: true
             }
         }, )
 
@@ -74,7 +77,10 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
               label: 'sample project',
               token: token,
               members: {
-              connect: {id: newPublicUser.id}
+                connect: {id: newPublicUser.id}
+              }, 
+              owner: {
+                connect: {id: newPublicUser.id}
               }
           },
         })
@@ -93,29 +99,48 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
                 ...projectData,
                 members: {
                     connect: {id: userId}
-                }
+                },
+                owner: {
+                  connect: {id: userId}
+                },
+               
             },
             include: {
-                members: true
+                members: true,
+                owner: true
             }
         }, )
         
     },
     updateProject: async (_, args) => {
+      
         let { id, userIds, ...projectData}: {
             members?: MemberConnectDisconnect; // Explicitly include members property in the data type
             [key: string]: any; // Allow any other properties (dynamic)
           } = args
+        let userAuthenticatedId = (userHasPartialAccess && userWithPartialAccess.id) || userAuthenticated.id
 
-        if(userIds){
-          const project = await prisma.project.findUnique({
-            where: {
-                id: id
-            }, 
-            include: {
-              members: true
+        const project = await prisma.project.findUnique({
+          where: {
+              id: id
+          }, 
+          include: {
+            members: true,
+            owner: true
+          }
+        });
+
+        if(project.ownerId !== userAuthenticatedId) {
+
+          throw new GraphQLError('You are not authorized to perform this action', {
+            extensions: {
+              code: 'FORBIDDEN',
+              http: { status: 403 }
             }
-          });
+          })
+        }
+        if(userIds){
+         
 
           const existingMembers = project.members.map((member) => member.id);
       
@@ -125,7 +150,7 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
           projectData.members = {
             connect: membersToAdd.map((userId: string) => ({ id: userId })),
             disconnect: membersToRemove.map((userId) => ({ id: userId })),
-        };
+          };
         }
         
         
@@ -136,6 +161,7 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
           data: projectData,
           include: {
             members: true,
+            owner: true
           },
         });
       
@@ -164,6 +190,7 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
             
             include: {
               members: true,
+              owner: true
             },
           });
 
@@ -174,7 +201,27 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
 
       },
     deleteProject: async (_, args) => {
+
         let { id } = args;
+        let userAuthenticatedId = (userHasPartialAccess && userWithPartialAccess.id) || userAuthenticated.id
+
+        const project = await prisma.project.findUnique({
+          where: {
+            id: id
+          },
+          include: {
+            owner: true
+          }
+        })
+        if(project.ownerId !== userAuthenticatedId) {
+
+          throw new GraphQLError('You are not authorized to perform this action', {
+            extensions: {
+              code: 'FORBIDDEN',
+              http: { status: 403 }
+            }
+          })
+        }
 
         let deletedProject = await prisma.project.delete({
             where: {
