@@ -259,3 +259,9 @@ export const ErrorWarningIcon = ({className}: ClassName) => {
         <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="error"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>
     )
 }
+export const ReloadIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="reload"><path d="M19.91,15.51H15.38a1,1,0,0,0,0,2h2.4A8,8,0,0,1,4,12a1,1,0,0,0-2,0,10,10,0,0,0,16.88,7.23V21a1,1,0,0,0,2,0V16.5A1,1,0,0,0,19.91,15.51ZM12,2A10,10,0,0,0,5.12,4.77V3a1,1,0,0,0-2,0V7.5a1,1,0,0,0,1,1h4.5a1,1,0,0,0,0-2H6.22A8,8,0,0,1,20,12a1,1,0,0,0,2,0A10,10,0,0,0,12,2Z"></path></svg>
+
+    )
+}

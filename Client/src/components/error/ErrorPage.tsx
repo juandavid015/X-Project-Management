@@ -20,12 +20,14 @@ const ErrorPage = () => {
     const [data, setData] = useState<Record<string, any>>({});
 
     useEffect(() => {
+
         if (error && isCustomErrorResponse(error)) {
      
             if (error.status === 401) {
                 setMessage('Invalid user credentials. Please login first before continue.');
 
-            } else if(error.status === 404 && error.statusText === 'Service unavailable') {
+            } else if((error.status === 404 || error.status >= 500 )&& error.statusText === 'Service unavailable') {
+
                 setLoading(true)
                 const getMessage = async (error: CustomErrorResponse) => {
                     const responseBody = await getErrorResponseBody(error as Response);
@@ -37,15 +39,21 @@ const ErrorPage = () => {
                         setMessage('This feauture is an in-developement feature and will be released soon in upcoming updates.')
                     } finally {
                         setLoading(false)
-                        setExtraInfo('You can still visit and make use of Projects.') 
+                        error.status === 404 && setExtraInfo('You can still visit and make use of Projects.') 
                     }     
                 }
-            
                 getMessage(error)
                 // !message && setMessage('This feauture is an in-developement feature and will be released soon in upcoming updates.')
+                
             } else if (error.status === 404) {
                 setMessage('The resource you\'re trying to access does not exist.')
     
+            }
+            else if (error.status === 400) {
+                setMessage('The resource you were trying to access is not possible to get.')
+    
+            } else if (error.status >= 500) {
+                setMessage('Server is currently unavailable. Please try again later. If the problem persist, contact with the administrator.')
             }
         }
     
@@ -64,6 +72,7 @@ const ErrorPage = () => {
                     message={message} 
                     extraInfo={extraInfo}
                     featureName={data?.featureName}
+                    isServerError={error.status >= 500}
                     />: 
                     isCustomErrorResponse(error) && error.status === 401 ?
                     <ErrorLayoutUnauthenticated
@@ -73,7 +82,7 @@ const ErrorPage = () => {
                     />:
                     isCustomErrorResponse(error) ?
                     <ErrorLayoutCustom 
-                    title={error.statusText} 
+                    title={error.statusText.replaceAll('_', ' ')} 
                     message={message} 
                     extraInfo={extraInfo}
                     />:

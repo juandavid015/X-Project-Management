@@ -3,7 +3,8 @@ import { onError } from "@apollo/client/link/error";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
-
+import toast from "react-hot-toast";
+import ToastErrorNotfication from '../components/error/ToastError'
 // http connection for normal requests
 export const httpLink = new HttpLink({ uri: 'http://localhost:4000/' })
 
@@ -57,8 +58,10 @@ export const authMiddleware = new ApolloLink((operation, forward) => {
 });
 
   
-export const errorLink = onError(({ graphQLErrors, networkError}) => {
+export const errorLink = onError(({ graphQLErrors, networkError, operation}) => {
     if (graphQLErrors) {
+	
+		console.log('operation', operation.operationName)
 		graphQLErrors.forEach(({ message, locations, path }) => {
 			console.log(
 				`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
@@ -68,6 +71,17 @@ export const errorLink = onError(({ graphQLErrors, networkError}) => {
         
     if (networkError) {
 		console.log(`[Network error]: ${networkError}`);
+		const errorRequestsHandledLocally = ['UpdateTask', 'CreateTask', 'UpdateProject', 'DeleteProject', 'RemoveTask']
+		// Throw a toast error notification on a level component (for the desired component).
+		if(errorRequestsHandledLocally.includes(operation.operationName)) {
+			if ('result' in networkError ) {
+                const result = networkError.result as Record<string, any> 
+				const message = result.errors[0].message
+				toast.custom((t)=> ToastErrorNotfication ({t, message}), {
+					duration: 2000
+				});
+            } 
+		}
 	}
 });
 

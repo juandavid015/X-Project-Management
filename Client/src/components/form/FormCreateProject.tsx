@@ -171,7 +171,7 @@ const FormCreateProject = () => {
                         </span>
                         {
                             loading ? 
-                            <LoadingItem height='h-[20px]'/>
+                            <LoadingItem height='h-[20px]' fillColor='white'/>
                             :
                             <LargeArrow className='w-[40px]'/>
                         }

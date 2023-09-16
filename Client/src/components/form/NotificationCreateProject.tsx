@@ -22,6 +22,7 @@ const NotificationCreateProject = ({success, error}: NotificationCreateProjectPr
         success: null,
         error: null
     })
+    
     useEffect(()=> {
 
         if(success) {
@@ -50,6 +51,13 @@ const NotificationCreateProject = ({success, error}: NotificationCreateProjectPr
                             success: null
                         }
                     )
+                }else if(error.status >= 500 ) {
+                    setResponse({
+                        error: {
+                            message: 'Server errror. An unexpected error occurred but it is not your fault. Try again later, while the problem is fixed.'
+                        },
+                        success: null
+                    })
                 }
             } else {
                 setResponse({
@@ -73,7 +81,7 @@ const NotificationCreateProject = ({success, error}: NotificationCreateProjectPr
             <span className="text-dark-purple-md font-bold">
                 Done!
             </span>
-            <h2 className="font-heading text-2xl text-electric-blue">
+            <h2 className="font-heading text-2xl text-purple">
                 Your project was created successfully!
             </h2>
             <p>

@@ -4,11 +4,9 @@ import { Members } from "../ui/Members";
 import ProjectCardOptions from "./ProjectCardOptions";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useForm } from "../../hooks/useForm";
-import { ApolloError, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { UPDATE_PROJECT } from "../../graphql/mutations";
 import LoadingItem from "../ui/LoadingItem";
-import ToastErrorNotfication from "../error/ToastError";
-import toast from "react-hot-toast";
 
 interface ProjectCardEditableProps {
     toggleEdit: () => void
@@ -41,13 +39,6 @@ const ProjectCardEditable = ({toggleEdit, project}:ProjectCardEditableProps) => 
             optimisticResponse: {
                 ['updateProject']: optimisticData
             }
-        }).catch(error => {
-            if (error instanceof ApolloError && error.networkError && 'result' in error.networkError ) {
-                const result = error.networkError.result as Record<string, any> 
-                toast.custom((t)=> <ToastErrorNotfication t={t} message={result.errors[0].message}/>, {
-                    duration: 2000
-                });
-            } 
         })
         toggleEdit();
     }
