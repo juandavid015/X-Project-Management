@@ -8,8 +8,10 @@ export const projectResolvers = {
         getProject: (parent: unknown, args: GetProjectArgs, context: MyContext) =>
         context.models.Project.getProjectById(parent, args),
 
-        getAllProjects: (parent: unknown, args: GetAllProjectArgs, context: MyContext) => 
-        context.models.Project.getAllProjects(parent, args),
+        getAllProjects: async (parent: unknown, args: GetAllProjectArgs, context: MyContext) => {
+            await projectSchema.getAll.validate(args)
+            return context.models.Project.getAllProjects(parent, args);
+        }
     },
     Mutation: {
         // PROJECT
@@ -17,7 +19,7 @@ export const projectResolvers = {
         context.models.Project.createPublicProject(parent, args),
 
         createProject: async (parent: unknown, args: CreateProjectArgs, context: MyContext) => {
-            await projectSchema.validate(args, { abortEarly: true })    
+            await projectSchema.create.validate(args, { abortEarly: true })    
             return context.models.Project.createProject(parent, args)
         },
         

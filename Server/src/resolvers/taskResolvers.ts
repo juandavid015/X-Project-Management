@@ -8,17 +8,19 @@ import { taskSchema } from "../validations/taskSchema"
 export const taskResolvers = { 
     Query: {
         // TASKS QUERY
-        getProjectTasks: (parent: unknown, args: GetProjectTasksArgs, context: MyContext) =>
-        context.models.Task.getTasksByProjectId(parent, args),
+        getProjectTasks: async (parent: unknown, args: GetProjectTasksArgs, context: MyContext) => {
+            await taskSchema.getAll.validate(args, { abortEarly: true })
+            return context.models.Task.getTasksByProjectId(parent, args)
+        }
     },
     Mutation: {
         // TASK MUTATIONS
         createTask: async (parent: unknown, args: CreateTaskArgs, context: MyContext) => {
-            await taskSchema.validate(args, { abortEarly: true })
+            await taskSchema.create.validate(args, { abortEarly: true })
             return context.models.Task.createTask(parent, args)
         },
         updateTask: async (parent: unknown, args: UpdateTaskArgs, context: MyContext) => {
-            await taskSchema.validate(args, { abortEarly: true })
+            await taskSchema.create.validate(args, { abortEarly: true })
             return context.models.Task.updateTask(parent, args)
         },
         removeTask: (parent: unknown, args: RemoveTaskArgs, context: MyContext) => 

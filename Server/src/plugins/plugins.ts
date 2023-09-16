@@ -8,7 +8,7 @@ export const authenticationAndAccessGuard: ApolloServerPlugin<MyContext> = {
 
     async requestDidStart({request, contextValue}) {
         console.log('HE', contextValue.userHasPartialAccess, request.operationName, request.extensions)
-        const allowedPublicRequests = ['CreateProject', 'GetProjects', 'GetProjectTasks', 'CreateTask', 'MoveTask', 'UpdateTask', 'GetProject', 'UpdateProject']
+        const allowedPublicRequests = ['CreateProject', 'GetProjects', 'GetProjectTasks', 'CreateTask', 'MoveTask', 'UpdateTask', 'GetProject', 'UpdateProject', 'DeleteProject']
         if(request.operationName === 'CreatePublicProject') {
             return
         } else if (contextValue['userHasPartialAccess'] && allowedPublicRequests.includes(request.operationName)) {
@@ -37,28 +37,43 @@ export const authenticationAndAccessGuard: ApolloServerPlugin<MyContext> = {
 
 export const inputValidateError: ApolloServerPlugin<MyContext> = {
 
-    async requestDidStart() {
+    async requestDidStart({request}) {
         return {
             async willSendResponse({errors}) {
                 if(errors) {
-
+                 
                     const validationErrors = errors.filter(error => error.originalError instanceof ValidationError);
 
                     if(validationErrors.length) {
 
                         let error = validationErrors[0].originalError
-
-                        throw new GraphQLError(error.message,  {
-                            extensions: {
-                                code: ApolloServerErrorCode.BAD_USER_INPUT,
-                                http: {
-                                    status: 400
+                        if(request.operationName === 'GetProjectTasks') {
+                            throw new GraphQLError(error.message,  {
+                                extensions: {
+                                    code: 'NOT_FOUND',
+                                    http: {
+                                        status: 404
+                                    },
+                                    errors: (error as ValidationError).errors
                                 },
-                                errors: (error as ValidationError).errors
-                            },
-                            originalError: error,
-                            
-                        });
+                                originalError: error,
+                                
+                            });
+
+                        } else {
+
+                            throw new GraphQLError(error.message,  {
+                                extensions: {
+                                    code: ApolloServerErrorCode.BAD_USER_INPUT,
+                                    http: {
+                                        status: 400
+                                    },
+                                    errors: (error as ValidationError).errors
+                                },
+                                originalError: error,
+                                
+                            });
+                        }
                     }
                 }
             }
