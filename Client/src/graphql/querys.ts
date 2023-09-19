@@ -19,6 +19,7 @@ export const GET_PROJECT_TASKS = gql`
             timeline
             userIds
             indexPosition
+            imageUrl
             labels {
                 name
                 color

@@ -1,10 +1,11 @@
+
 import { ColorPaletteIcon, LabelIcon, RemoveCircleIcon } from "../../assets/icons/Icons"
 import { TaskSetter, addNewLabel, removeLabel } from "../../helpers/taskHelpers"
 import { HandleInputChange, SetFormData } from "../../hooks/useForm"
 import { Label, Task, TaskCreate } from "../../types/types"
 import { InputEditable, SetInputEditable } from "../kanban/KanbanCardEditable"
-
 import { KanbanCardOptions } from "../kanban/KanbanCardOptions"
+
 
 interface LabelsFieldProps {
     taskData: TaskCreate
@@ -24,6 +25,7 @@ export const FieldLabels = ({taskData, inputEditable, handleInputChange, setTask
     const removeLabelHandler = (index: number) => {
         removeLabel(index, setTaskData as TaskSetter)
     }
+    
 
     return (
         <div className="flex flex-wrap gap-1 relative w-full">
@@ -35,16 +37,16 @@ export const FieldLabels = ({taskData, inputEditable, handleInputChange, setTask
                                 <label className="flex max-w-full w-auto" htmlFor={label.name} >
                                     <LabelIcon className="h-[20px] fill-dark" />
                                     <input type="text" name="name" value={label.name} id={label.name} onChange={(e) => handleInputChange(e, index, 'labels')}
-                                    className={`font-bold`} style={{color: label.color, width: label.name.length ? label.name.length + 1 + 'ch': '50px'}}
-                                    autoFocus={inputEditable.inputName === 'labels'}/>
+                                    className={`font-bold px-1 mr-1 outline-purple/30`} style={{color: label.color, width: label.name.length ? label.name.length + 1 + 'ch': '50px'}}
+                                    autoFocus={inputEditable.inputName === 'labels'} required/>
                                 </label>
                                 <label className="flex" htmlFor={label.color}>
                                     <input type="color" name="color" value={label.color} id={label.color} onChange={(e) => handleInputChange(e, index, 'labels')}
                                     className="rounded-full appearance-none w-[0px] h-[0px] invisible" />
-                                    <ColorPaletteIcon className="h-[15px] hidden group-hover/remove:block"/>  
+                                    <ColorPaletteIcon className="h-[15px] invisible group-hover/remove:visible"/>  
                                 </label>
                                 <button onClick={()=> removeLabelHandler(index)}
-                                className="hidden group-hover/remove:block ">
+                                className="invisible group-hover/remove:visible ">
                                     <RemoveCircleIcon className="fill-dark-med h-[20px]" />
                                 </button>
                             </div>

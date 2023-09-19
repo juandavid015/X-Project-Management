@@ -14,7 +14,8 @@ export const FieldDescription = ({taskData, handleInputChange, inputEditable, ch
         inputEditable.inputName === 'description' || taskData.description?.length ? 
         <textarea value={taskData.description} rows={3} name={'description'} onChange={handleInputChange as React.ChangeEventHandler<HTMLTextAreaElement>}
         autoFocus={inputEditable.inputName === 'description'}
-        className="p-1 w-full resize-none  outline outline-1 outline-white-gray rounded-md" placeholder="Description of your task..." 
+        className="px-2 py-1 w-full resize-none  
+        outline outline-2 outline-purple/20 rounded-md" placeholder="Description of your task..." 
         />:
         <button className="flex items-center gap-1 fill-gray text-gray font-medium hover:fill-dark hover:font-bold hover:text-dark hover:scale-y-[1.03]" 
         onClick={()=> changeEditingInput('description')}>

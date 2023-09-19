@@ -12,6 +12,7 @@ import { FieldTimeline } from "../form/FieldTimeline";
 import { FieldDescription } from "../form/FieldDescription";
 import { SubmitButton } from "../form/SubmitButton";
 import { useMutation } from '@apollo/client';
+import FieldImageUrl from '../form/FieldImageUrl';
 
 interface Props {
     create: boolean, // not goes here
@@ -30,7 +31,7 @@ export type SetInputEditable = React.Dispatch<React.SetStateAction<InputEditable
 
 export const KanbanCardEditable = ({create, status, onEdit, projectMembers, projectId, task, isLoadedBySubscription}:Props) => {
     // const cleanedLabels = labels.map(({ __typename, ...rest }) => rest);
-    const {id, title, description, labels, timeline, priority, members, userIds} = task || {};
+    const {id, title, description, labels, timeline, priority, members, userIds, imageUrl} = task || {};
     const containerRef = useRef<HTMLDivElement>(null);
 
     const initialState: TaskCreate = {
@@ -44,7 +45,8 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
         indexPosition: parseFloat(Date.now().toString()),
         projectId: projectId,
         members: members || [],
-        userIds: userIds || []
+        userIds: userIds || [],
+        imageUrl: imageUrl || ''
       };
     
     const [inputEditable, setInputEditable] = useState({
@@ -129,6 +131,13 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
              projectMembers = {projectMembers}
              handleInputChange={handleInputChange}
              setFormData={ setTaskData }
+            />
+
+            <FieldImageUrl
+            taskData={taskData}
+            handleInputChange={handleInputChange}
+            inputEditable={inputEditable}
+            changeEditingInput={changeEditingInput}
             />
     
             <SubmitButton

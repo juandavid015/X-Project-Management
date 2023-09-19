@@ -163,9 +163,9 @@ const FormCreateProject = () => {
                 {
                     !finished && currentStep === maxSteps &&
                     <button type='button' onClick={createProject}
-                    className='ml-auto flex items-center gap-2 text-base font-bold
+                    className={`ml-auto flex items-center gap-2 text-base font-bold
                     bg-purple px-8 py-2 rounded-md text-white/70 fill-white/70 hover:fill-white hover:text-white
-                    hover:scale-[1.01]'>
+                    hover:scale-[1.01] ${loading && 'pointer-events-none'}`}>
                         <span>
                             Finish
                         </span>

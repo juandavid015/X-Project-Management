@@ -11,6 +11,7 @@ export const UPDATE_TASK = gql`
         $labels: [LabelInput],
         $userIds: [String]
         $projectId: String
+        $imageUrl: String
     ) {
         updateTask(
             id: $id,
@@ -22,6 +23,7 @@ export const UPDATE_TASK = gql`
             userIds: $userIds
             status: $status
             projectId: $projectId
+            imageUrl: $imageUrl
         ) {
             id,
             title, 
@@ -29,6 +31,7 @@ export const UPDATE_TASK = gql`
             timeline,
             priority,
             userIds,
+            imageUrl,
             labels {
                 name,
                 color
@@ -52,6 +55,7 @@ export const CREATE_TASK = gql`
         $projectId: String!,
         $status: AllowedStatus,
         $userIds: [String]
+        $imageUrl: String
     ) {
         createTask(
             title: $title,
@@ -62,6 +66,7 @@ export const CREATE_TASK = gql`
             status: $status
             projectId: $projectId,
             userIds: $userIds
+            imageUrl: $imageUrl
         ) {
             id,
             title, 
@@ -70,6 +75,7 @@ export const CREATE_TASK = gql`
             priority,
             status,
             userIds,
+            imageUrl
             labels {
                 name,
                 color

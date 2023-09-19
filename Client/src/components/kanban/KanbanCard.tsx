@@ -19,7 +19,7 @@ interface Props extends Task {
 
 export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ...task}: Props) => {
 
-    const {title, description, labels, priority, timeline, members, id} = task
+    const {title, description, labels, priority, timeline, members, id, imageUrl} = task
     const timelineString = new Date(timeline || '');
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const formattedTimeline = timeline && timelineString.toLocaleDateString(undefined, options as Intl.DateTimeFormatOptions);
@@ -34,7 +34,7 @@ export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ..
             </div>:
 
             <div className={`task bg-white shadow-white-gray shadow-md2 rounded-md px-[16px] py-[10px] 
-            flex flex-col gap-1 relative group break-words ${taskIsBeingDragged && 'pointer-events-none'} pointer-events-auto`} 
+            flex flex-col gap-2 relative group break-words ${taskIsBeingDragged && 'pointer-events-none'} pointer-events-auto`} 
             onDragStart={onDragStart}  
             draggable='true'  >
 
@@ -67,6 +67,12 @@ export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ..
                 <p className={`text-gray ${taskIsBeingDragged ? 'pointer-events-none': 'pointer-events-auto'}`}>
                     { formattedTimeline }
                 </p>
+                {
+                    imageUrl &&
+                    <div className="rounded-md overflow-hidden max-h-[200px]">
+                        <img src={imageUrl} alt={'task nested image'} className="object-cover h-full w-full"/>
+                    </div>
+                }
                 <Members
                 height="h-[20px]"
                 width="w-[20px]"

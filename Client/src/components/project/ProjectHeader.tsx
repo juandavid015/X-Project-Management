@@ -12,9 +12,7 @@ const ProjectHeader = () => {
     const {loading, error, data } = useQuery(GET_PROJECT, {
         variables: {projectId: projectId}
     });
-    console.log('ID', projectId)
-
-
+  
     // const initialState = {
     //     members: data?.members || [],
     //     userIds: data?.userIds || [],
@@ -36,7 +34,7 @@ const ProjectHeader = () => {
     
     return (
         <header className="max-w-[1048px] flex items-center justify-between font-medium text-dark-md">
-            <h1 className="font-heading inline pr-4 text-xl font-bold 
+            <h1 className="font-heading inline pr-4 text-xl font-bold truncate max-w-[300px]
             border-r border-gray">
                 {project.title}
             </h1>

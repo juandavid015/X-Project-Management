@@ -40,6 +40,7 @@ export interface Task {
     members: User[] | [],
     userIds: string[] | [],
     indexPosition: number
+    imageUrl: string
 }
 
 export interface TaskCreate extends Task {

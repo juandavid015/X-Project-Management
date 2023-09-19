@@ -22,11 +22,26 @@ export const Members = ({members, height, width}: MembersProps) => {
         {
             members?.map((user:User, index:number) => {
                 if(index <= 2) {
-                    return (
-                        <UserPreview expanded={false} name={user.name} image={user.image} key={index + 'mem'} 
+                    // user "email" is used to simulate the case of public user
+                    return user.email ? (
+                        <UserPreview expanded={false} name={user.name} image={user.image || ''} key={index + 'mem'} 
                         className={`pointer-events-none rounded-full overflow-hidden ${width} ${height}
                         ${index === 0 ? '': '-ml-[12.25%]'}
                         `}/>
+                    ):
+                    (
+                        <div key={index + 'mem'} 
+                        className={`pointer-events-none rounded-full overflow-hidden ${width} ${height}
+                        bg-white-gray flex items-center justify-center
+                        ${index === 0 ? '': '-ml-[12.25%]'}
+                        `}>
+                            <span className="uppercase text-dark font-bold ">
+                                {`${user.name[0]}`}
+                            </span>
+                            <span className="uppercase text-dark font-bold">
+                                {`${user.name.split('-')[1][0] || user.name[1]}`}
+                            </span>
+                        </div>
                     )
                 } else if(index === members.length - 1) {
                     return (
