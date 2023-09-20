@@ -1,6 +1,6 @@
-import { ObjectSchema, array, date, number, object, string } from "yup";
-import { userSchema } from "./userSchema";
-import { Task } from "@prisma/client";
+import { array, number, object, string } from "yup";
+import { userSchema } from "./userSchema.js";
+
 import { ObjectId } from "mongodb";
 
 export const taskSchema = {

@@ -1,9 +1,9 @@
 import { Project } from "@prisma/client";
-import { prisma } from "../db";
-import { AssignMemberToProjectArgs, CreateProjectArgs, DeleteProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types";
-import { MemberConnectDisconnect } from "../types/types"
-import { createPublicToken } from "../utils/validateToken";
-import { generateRandomUsername } from "../utils/randomNames";
+import { prisma } from "../db.js";
+import { AssignMemberToProjectArgs, CreateProjectArgs, DeleteProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types.js";
+import { MemberConnectDisconnect } from "../types/types.js"
+import { createPublicToken } from "../utils/validateToken.js";
+import { generateRandomUsername } from "../utils/randomNames.js";
 import { ObjectId } from "mongodb";
 import { GraphQLError } from "graphql";
 

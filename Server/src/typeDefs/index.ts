@@ -1,6 +1,6 @@
-import { projectTypeDefs } from "./projectTypeDefs";
-import { taskTypeDefs } from "./taskTypeDefs";
-import { userTypeDefs } from "./userTypeDefs";
+import { projectTypeDefs } from "./projectTypeDefs.js";
+import { taskTypeDefs } from "./taskTypeDefs.js";
+import { userTypeDefs } from "./userTypeDefs.js";
 
 export const typeDefs = `#graphql
 # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.

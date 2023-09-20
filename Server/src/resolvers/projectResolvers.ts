@@ -1,6 +1,6 @@
-import { MyContext } from ".."
-import { AssignMemberToProjectArgs, CreateProjectArgs, DeleteProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types"
-import { projectSchema } from "../validations/projectSchema"
+import { MyContext } from "../index.js"
+import { AssignMemberToProjectArgs, CreateProjectArgs, DeleteProjectArgs, GetAllProjectArgs, GetProjectArgs, UpdateProjectArgs } from "../types/types.js"
+import { projectSchema } from "../validations/projectSchema.js"
 
 export const projectResolvers = {
     Query: {

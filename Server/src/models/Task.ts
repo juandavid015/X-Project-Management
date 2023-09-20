@@ -1,7 +1,7 @@
 import { Task } from "@prisma/client";
-import { getNextId, prisma } from "../db";
-import { AssignMemberToTaskArgs, CreateTaskArgs, GetProjectTasksArgs, MemberConnectDisconnect, MoveTaskArgs, RemoveTaskArgs, TaskExt, UpdateTaskArgs } from "../types/types";
-import { SUBSCRIPTION_TASK_EVENTS } from "../Subscriptions";
+import { getNextId, prisma } from "../db.js";
+import { AssignMemberToTaskArgs, CreateTaskArgs, GetProjectTasksArgs, MemberConnectDisconnect, MoveTaskArgs, RemoveTaskArgs, TaskExt, UpdateTaskArgs } from "../types/types.js";
+import { SUBSCRIPTION_TASK_EVENTS } from "../Subscriptions/index.js";
 
 
 export interface TaskDataSource {

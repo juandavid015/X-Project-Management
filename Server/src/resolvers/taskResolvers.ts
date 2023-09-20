@@ -1,9 +1,9 @@
-import { MyContext } from ".."
-import { SUBSCRIPTION_TASK_EVENTS } from "../Subscriptions"
-import { AssignMemberToTaskArgs, CreateTaskArgs, GetProjectTasksArgs, MoveTaskArgs, RemoveTaskArgs, UpdateTaskArgs } from "../types/types"
-import { pubsub } from ".."
+import { MyContext } from "../index.js"
+import { SUBSCRIPTION_TASK_EVENTS } from "../Subscriptions/index.js"
+import { AssignMemberToTaskArgs, CreateTaskArgs, GetProjectTasksArgs, MoveTaskArgs, RemoveTaskArgs, UpdateTaskArgs } from "../types/types.js"
+import { pubsub } from "../index.js"
 import { withFilter } from "graphql-subscriptions"
-import { taskSchema } from "../validations/taskSchema"
+import { taskSchema } from "../validations/taskSchema.js"
 
 export const taskResolvers = { 
     Query: {

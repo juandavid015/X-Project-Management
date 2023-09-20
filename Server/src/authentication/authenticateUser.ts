@@ -1,4 +1,4 @@
-import { validatePublicToken, validateToken } from "../utils/validateToken";
+import { validatePublicToken, validateToken } from "../utils/validateToken.js";
 
 export type UserAuthenticated = {
     id?: string,

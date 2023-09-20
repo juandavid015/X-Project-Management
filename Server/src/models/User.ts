@@ -1,10 +1,10 @@
 
-import { prisma } from "../db";
+import { prisma } from "../db.js";
 import { User } from "@prisma/client";
-import { CreateUserArgs, GetAllUsersArgs, LoginUserArgs } from "../types/types";
+import { CreateUserArgs, GetAllUsersArgs, LoginUserArgs } from "../types/types.js";
 
 import {ObjectId} from 'mongodb'
-import { UserAuthenticated } from "../authentication/authenticateUser";
+import { UserAuthenticated } from "../authentication/authenticateUser.js";
 
 type CreateUser = (parent?: unknown, args?: CreateUserArgs)=> Promise<User>
 type GetAllUsers = (parent: unknown, args: GetAllUsersArgs)=> Promise<User[]>

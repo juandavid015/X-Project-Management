@@ -1,9 +1,9 @@
 import { Request } from "express";
-import { generateUserModel } from "../models/User";
-import { generateTaskModel } from "../models/Task";
-import { generateProjectModel } from "../models/Project";
-import { pubsub } from "..";
-import { authenticateUser } from "./authenticateUser";
+import { generateUserModel } from "../models/User.js";
+import { generateTaskModel } from "../models/Task.js";
+import { generateProjectModel } from "../models/Project.js";
+import { pubsub } from "../index.js";
+import { authenticateUser } from "./authenticateUser.js";
 
 interface HttpRequestContext {
     req: Request

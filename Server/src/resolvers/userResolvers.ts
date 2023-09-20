@@ -1,9 +1,8 @@
-import { GraphQLError } from "graphql";
-import { MyContext } from "..";
-import { CreateUserArgs, GetAllUsersArgs, LoginUserArgs } from "../types/types";
-import { userSchema } from "../validations/userSchema";
-import { ApolloServerErrorCode } from '@apollo/server/errors';
-import {ValidationError} from 'yup'
+
+import { MyContext } from "../index.js";
+import { CreateUserArgs, GetAllUsersArgs, LoginUserArgs } from "../types/types.js";
+import { userSchema } from "../validations/userSchema.js";
+
 
 // export type UserResolvers = {
 //     Query: {

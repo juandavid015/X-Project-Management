@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql"
-import { authenticateUser } from "./authenticateUser";
+import { authenticateUser } from "./authenticateUser.js";
 import { Context as WsContext } from "graphql-ws";
 
 export const wsAccessGuardConnection = async(ctx: WsContext) => {

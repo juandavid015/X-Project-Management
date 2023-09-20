@@ -1,6 +1,6 @@
 import { ApolloServerPlugin } from "@apollo/server"
 import { GraphQLError } from "graphql"
-import { MyContext } from ".."
+import { MyContext } from "../index.js"
 import {ValidationError} from 'yup'
 import { ApolloServerErrorCode } from '@apollo/server/errors';
 
