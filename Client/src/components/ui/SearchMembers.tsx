@@ -65,7 +65,7 @@ export const SearchMembers = ({reference, projectMembers, members, setFormData, 
                             <input type='checkbox' name="members" value={member.name} id={'member' + index}
                             onChange={(e) => handleChange(e, index, member)} defaultChecked={members[index]?.id === member.id}/>
 
-                            <UserPreview expanded={true} name={member.name} image={member.image} height="h-[30px]" width="w-[30px]"
+                            <UserPreview expanded={true} name={member.name} image={member.image || ''} height="h-[30px]" width="w-[30px]"
                             className={'flex gap-1 items-center text-gray hover:text-dark cursor-pointer font-medium ' }/>
                         </label>
                     )
