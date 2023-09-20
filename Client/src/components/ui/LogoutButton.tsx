@@ -6,13 +6,14 @@ interface LogoutButtonProps {
     expanded?: boolean,
     [key:string]: unknown
 }
+const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 export const LogoutButton = ({expanded}: LogoutButtonProps) => {
     const { logout } = useAuth0();
     const client = useApolloClient()
     const handleLogout = () => {
         localStorage.removeItem('token');
         client.resetStore()
-        logout({logoutParams: {returnTo: 'http://127.0.0.1:5173'}});
+        logout({logoutParams: {returnTo: CLIENT_URL}});
 
     }
 
