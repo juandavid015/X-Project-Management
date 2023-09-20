@@ -6,8 +6,8 @@ interface ProjectsHeaderProps {
 const ProjectsHeader = ({openModal}: ProjectsHeaderProps) => {
     return (
         <div className="flex gap-4">
-            <h1 className="font-heading text-3xl pr-8 border-r border-gray inline w-fit
-            ">
+            <h1 className="font-heading text-2xl pr-8 border-r border-gray inline w-fit
+            text-dark-med">
                 Projects
             </h1>
             <button onClick={openModal} 

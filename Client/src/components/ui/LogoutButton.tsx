@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { LogoutIcon } from '../../assets/icons/Icons';
+import { useApolloClient } from '@apollo/client';
 
 interface LogoutButtonProps {
     expanded?: boolean,
@@ -7,9 +8,10 @@ interface LogoutButtonProps {
 }
 export const LogoutButton = ({expanded}: LogoutButtonProps) => {
     const { logout } = useAuth0();
-
+    const client = useApolloClient()
     const handleLogout = () => {
         localStorage.removeItem('token');
+        client.resetStore()
         logout({logoutParams: {returnTo: 'http://127.0.0.1:5173'}});
 
     }

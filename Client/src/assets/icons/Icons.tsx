@@ -282,3 +282,11 @@ export const ImageIcon = ({className}: ClassName) => {
 
     )
 }
+
+export const EmptyFolderIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 64" id="empty-folder"><path d="M58 53.25H6a2 2 0 0 1-2-2v-7.71a2 2 0 0 1 4 0v5.71h48v-29.5H34.91a2 2 0 0 1-1.23-.42l-5.88-4.58H8v16.41a2 2 0 0 1-4 0V12.75a2 2 0 0 1 2-2h22.48a2 2 0 0 1 1.23.42l5.89 4.58H58a2 2 0 0 1 2 2v33.5a2 2 0 0 1-2 2Z"></path></svg>
+
+
+    )
+}
