@@ -23,7 +23,8 @@ export const projectResolvers = {
             return context.models.Project.createProject(parent, args)
         },
         
-        updateProject: (parent: unknown, args: UpdateProjectArgs, contex: MyContext) => {
+        updateProject: async (parent: unknown, args: UpdateProjectArgs, contex: MyContext) => {
+            await projectSchema.create.validate(args, { abortEarly: true })    
             return contex.models.Project.updateProject(parent, args)
         },
         

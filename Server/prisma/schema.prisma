@@ -54,6 +54,7 @@ model Task {
   userIds String[] @db.ObjectId
   members User[] @relation(fields: [userIds], references: [id])
   indexPosition Float @unique
+  imageUrl String
 }
 
 

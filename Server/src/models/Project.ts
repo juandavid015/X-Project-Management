@@ -49,7 +49,6 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
           },
             include: {
                 members: true,
-                tasks: true,
                 owner: true
             }
         }, )

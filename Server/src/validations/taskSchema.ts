@@ -7,7 +7,7 @@ export const taskSchema = {
     create: object({
         id: string(),
         title: string().required().max(20),
-        description: string().max(50),
+        description: string().max(200),
         status: string().oneOf(['PENDING', 'IN_PROGRESS', 'REVIEW', 'COMPLETED']).required(),
         labels: array().of(object({
             color: string(),
@@ -26,7 +26,8 @@ export const taskSchema = {
             test: (value => ObjectId.isValid(value))
         })),
         members: array().of(userSchema),
-        indexPosition: number()
+        indexPosition: number(),
+        imageUrl: string().url('The url provided is invalid.')
     }),
 
     getAll: object({

@@ -39,6 +39,7 @@ export const taskTypeDefs = {
             userIds: [String]
             projectId: String
             indexPosition: Float!
+            imageUrl: String
         }
 
         type TaskSubscriptionPayload {
@@ -60,6 +61,7 @@ export const taskTypeDefs = {
             timeline: String,
             projectId: String,
             userIds: [String]
+            imageUrl: String
         ): Task
 
         updateTask (
@@ -72,6 +74,7 @@ export const taskTypeDefs = {
             priority: Priority,
             timeline: String,
             projectId: String,
+            imageUrl: String
         ): Task
 
         removeTask (
