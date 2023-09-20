@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import { ChatIcon, GoalsIcon,  NotificationsIcon, ProjectsIcon, RightDoubleArrowIcon, TeamIcon } from "../../assets/icons/Icons"
-import Logo from '../../assets/Logo.png'
+import Logo from '../../assets/LOGO.png'
 import {useAuth0} from '@auth0/auth0-react';
 import { LogoutButton } from './LogoutButton';
 import { LoginButton } from './LoginButton';
