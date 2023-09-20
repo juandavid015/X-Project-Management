@@ -125,7 +125,7 @@ app.use(
         },
     })
 )
-const PORT = 4000;
+const PORT = process.env.SERVER_PORT || 4000;
 // Now that our HTTP server is fully set up, actually listen.
 httpServer.listen(PORT, () => {
     console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/`);
