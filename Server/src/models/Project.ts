@@ -35,7 +35,7 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
         })
     },
     getAllProjects: async (_, args) => {
-        let userId = (userHasPartialAccess && userWithPartialAccess.id)  ||  args.userId
+        let userId =  args.userId || (userHasPartialAccess && userWithPartialAccess.id)  
       
         let projects = await prisma.project.findMany({
           where: {
