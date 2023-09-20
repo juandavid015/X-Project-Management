@@ -7,10 +7,10 @@ import { Outlet, useNavigate } from "react-router-dom";
 const Auth0ProviderWithNavigate = () => {
     const navigate = useNavigate();
 
-    const domain = 'dev-lmxqx7b47rlxp7f7.us.auth0.com';
-    const clientId = 'D7ua33bZSRVkRI0GSoPRfqZoFWOz8Tau';
-    const audience = 'https://xmanagement.com';
-
+    const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+    const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+    const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
+    const reedirect_uri = import.meta.env.VITE_AUTH0_REEDIRECT_URI
     const onRedirectCallback = (appState?: AppState) => {
         navigate(appState?.returnTo || window.location.pathname)
     }
@@ -19,7 +19,7 @@ const Auth0ProviderWithNavigate = () => {
         <Auth0Provider 
             domain={domain}
             clientId={clientId}
-            authorizationParams={{redirect_uri: "http://127.0.0.1:5173/login", audience: audience, scope: 'profile email'}}
+            authorizationParams={{redirect_uri: reedirect_uri, audience: audience, scope: 'profile email'}}
             onRedirectCallback={onRedirectCallback}
             >
             <Outlet />

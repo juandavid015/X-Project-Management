@@ -66,7 +66,7 @@ export const handleErrorResponse = (error: ApolloError | CustomErrorResponse) =>
         throw json({message: message, data: error.data}, {status: statusCode, statusText: statusText})
 
       } 
-      console.log(JSON.stringify(error))
+      // console.log(JSON.stringify(error))
       throw new Error(error.message)
 }
 

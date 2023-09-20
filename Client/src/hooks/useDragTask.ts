@@ -205,9 +205,9 @@ const dropHandler = async (e:React.DragEvent, colName: string, colIndex: number)
 		}
 		
 	}, )
-	.finally(() => {
-		console.log('done', )
-	})
+	// .finally(() => {
+	// 	// console.log('done', )
+	// })
 	// setTaskDragged({...taskDragged, isDragging: false})
 	
 }

@@ -9,7 +9,7 @@ const PostLogin = () => {
     const {  getAccessTokenSilently, isLoading} = useAuth0();
     const getToken = useCallback(async() => {
     const token = await getAccessTokenSilently();
-        console.log('token', token)
+    
         return token
     }, [getAccessTokenSilently])
   

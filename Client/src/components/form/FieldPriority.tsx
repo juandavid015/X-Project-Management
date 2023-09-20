@@ -21,7 +21,7 @@ export const FieldPriority = ({handleInputChange, valueSelected, ...rest}:Props)
 
 
     const handleClick = () => {
-        console.log(expanded)
+        // console.log(expanded)
         setExpanded(!expanded);
     }
   

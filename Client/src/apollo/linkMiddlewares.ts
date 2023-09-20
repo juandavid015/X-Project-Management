@@ -6,11 +6,13 @@ import { createClient } from "graphql-ws";
 import toast from "react-hot-toast";
 import ToastErrorNotfication from '../components/error/ToastError'
 // http connection for normal requests
-export const httpLink = new HttpLink({ uri: 'http://localhost:4000/' })
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const WS_URL = import.meta.env.VITE_WS_SERVER_URL;
+export const httpLink = new HttpLink({ uri: SERVER_URL })
 
 // websocket connection for subscriptions
 export const wsLink = new GraphQLWsLink(createClient({
-	url: 'ws://localhost:4000/',
+	url: WS_URL,
 	connectionParams: {
 		authentication: (() => {
 			let token = localStorage.getItem('token');
@@ -61,7 +63,7 @@ export const authMiddleware = new ApolloLink((operation, forward) => {
 export const errorLink = onError(({ graphQLErrors, networkError, operation}) => {
     if (graphQLErrors) {
 	
-		console.log('operation', operation.operationName)
+		// console.log('operation', operation.operationName)
 		graphQLErrors.forEach(({ message, locations, path }) => {
 			console.log(
 				`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
