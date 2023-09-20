@@ -1,4 +1,4 @@
-import Logo from '../../assets/Logo.png'
+import Logo from '../../assets/LOGO.png'
 import { LoadingIcon } from '../../assets/icons/Icons';
 
 interface LoadingProps {
