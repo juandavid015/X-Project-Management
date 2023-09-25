@@ -11,6 +11,7 @@ export const TASK_UPDATED = gql`
                 userIds
                 projectId
                 indexPosition
+                imageUrl
                 labels {
                     name
                     color

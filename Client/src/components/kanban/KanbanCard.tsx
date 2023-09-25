@@ -69,7 +69,8 @@ export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ..
                 </p>
                 {
                     imageUrl &&
-                    <div className="rounded-md overflow-hidden max-h-[200px]">
+                    <div className={`pointer-events-none
+                    rounded-md overflow-hidden max-h-[200px]`}>
                         <img src={imageUrl} alt={'task nested image'} className="object-cover h-full w-full"/>
                     </div>
                 }
@@ -95,8 +96,8 @@ export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ..
                 </p>
                 }
                 {/* <span className={`${taskIsBeingDragged ? 'pointer-events-none': 'pointer-events-auto'}`}>{indexPosition}</span> */}
-                <div className="border-t border-white-gray pt-2 w-full flex items-center justify-evenly 
-                hidden group-hover:flex ">
+                <div className={`border-t border-white-gray pt-2 w-full flex items-center justify-evenly 
+                group-hover:flex ${taskIsBeingDragged && 'hidden'} hidden`}>
                     <button className="w-fit fill-dark-med hover:fill-dark">
                         <MessageIcon className="h-[20px] w-[20px]" />
                     </button>

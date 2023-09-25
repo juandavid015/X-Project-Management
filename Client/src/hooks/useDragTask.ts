@@ -4,6 +4,7 @@ import { TaskColumns,  } from '../components/kanban/Kanban';
 import { Status, Task } from '../types/types';
 import { FetchResult, MutationFunctionOptions } from '@apollo/client';
 
+
 type TaskDragInfo = {
 	actualTaskId: string, 
 	previousTaskPosition?: number, 
@@ -16,8 +17,10 @@ type TaskOptmisticResponse = Task & {
 	id: string  
 	projectId: string
 }
+type MutationOpts = (options?: MutationFunctionOptions)=> Promise<FetchResult<unknown>>
+// (entityData: EntityData<OperationVariables>, optimisticData?: EntityData<OperationVariables>)=> Promise<void>
 interface UserDragTaskProps {
-    reOrdering: (options?: MutationFunctionOptions)=> Promise<FetchResult<unknown>>
+    reOrdering: MutationOpts
     mockedData?: TaskColumns,
     setMockedData: React.Dispatch<React.SetStateAction<TaskColumns>>
 }
@@ -50,30 +53,33 @@ export const useDragTask = ({reOrdering, setMockedData, mockedData}: UserDragTas
 	// Function to find the index of the closest task to the drop position
     const findClosestTaskIndex = (e:React.DragEvent<Element>) => {
 
-	const element = e.currentTarget as HTMLElement
-	const dropContainer = element.getBoundingClientRect();
-	const dropContainerHeight = e.clientY - dropContainer.top;
+		const element = e.currentTarget as HTMLElement
+		const dropContainer = element.getBoundingClientRect();
+		const dropContainerHeight = e.clientY - dropContainer.top;
 
-	const taskIndex = Array.from(element.children).findIndex((task)=> {
-		const dropTarget = task.getBoundingClientRect();
-		const dropTargetHeight = dropTarget.bottom - dropContainer.top;
+		const taskIndex = Array.from(element.children).findIndex((task)=> {
+			//actually when the target is too larget when reposition the dragged gray desplace so much that the mouse doesn target due to the large droptarget
+			//making re loop and erratic behaviour
+			// console.log('t', task, task.className.includes('task'))
+			const dropTarget = task.getBoundingClientRect();
+			const dropTargetHeight = dropTarget.bottom - dropContainer.top;
 
-		const isNearToTask = dropContainerHeight < dropTargetHeight;
-		return isNearToTask
-	})
-
+			const isNearToTask = dropContainerHeight < dropTargetHeight;
+			return isNearToTask;
+		})
+		// console.log(taskIndex)
 		return taskIndex
-}
+	}
 // Event handler when drag starts on a task
-const dragStartHandler = (
-	e:React.DragEvent, 
-	currentTaskId: string, 
-	initialTaskPosition: number, 
-	task: Task, 
-	index:number, 
-	colIndex: number, 
-	colName: string
-) => {
+	const dragStartHandler = (
+		e:React.DragEvent, 
+		currentTaskId: string, 
+		initialTaskPosition: number, 
+		task: Task, 
+		index:number, 
+		colIndex: number, 
+		colName: string
+	) => {
 	// Set initial settings of the data to be transfered over the drag handlers
 	const data = currentTaskId
 	e.dataTransfer.setData('application/tasks', data)
@@ -93,14 +99,14 @@ const dragStartHandler = (
 	// manually to it
 	taskRef.current = e.currentTarget as HTMLElement;
 	
-	setTaskDragged({
+	setTaskDragged(()=>({
 		isDragging: false,
 		taskPosition: initialTaskPosition, 
 		id: currentTaskId, 
 		index: index, 
 		colName: colName, 
 		colIndex: colIndex
-	});
+	}));
 	
 }
 
@@ -108,7 +114,7 @@ const dragEnterHandler = (e:React.DragEvent) => {
 
 	const element = e.target as HTMLElement
 	if(element && element.className.length && element.className.includes('task')) {
-		taskDragged && setTaskDragged({...taskDragged, isDragging: true});
+		taskDragged && setTaskDragged(()=> ({...taskDragged, isDragging: true}));
 	}
 }
 	
@@ -191,6 +197,9 @@ const dropHandler = async (e:React.DragEvent, colName: string, colIndex: number)
 
 	const optimisticData = {...initialTask, indexPosition: taskDragged?.taskPosition, status: taskDragged?.colName, __typename: 'Task'}
 	// execute mutation to change the index (order) and status of the task
+	setTaskDragged((prevTaskDragged)=> {
+		return prevTaskDragged && {...prevTaskDragged, isDragging: false}
+	});
 	await reOrdering({
 		variables: {
 
@@ -205,11 +214,7 @@ const dropHandler = async (e:React.DragEvent, colName: string, colIndex: number)
 		}
 		
 	}, )
-	// .finally(() => {
-	// 	// console.log('done', )
-	// })
-	// setTaskDragged({...taskDragged, isDragging: false})
-	
+
 }
 
 const dragEndHandler = useCallback((e: React.DragEvent, colIndex: number, colName: string) => {

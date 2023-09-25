@@ -15,10 +15,11 @@ import SkeletonKanbanList from "../ui/skeletons/SkeletonKanbanList";
 import { TASK_UPDATED } from "../../graphql/subscriptions";
 import { useLoadSubscriptionTask } from "../../hooks/useLoadSubscriptionTask";
 
+
 export type TaskColumn = {
     [key: string]: Task[]
 }
-export type TaskColumns = TaskColumn[]
+export type TaskColumns = TaskColumn[] | []
 export type ProjectStatus = {
     name: Status,
     color: string
@@ -27,24 +28,8 @@ export type ProjectStatus = {
 
 const Kanban = () => {
     // labels must be a propertie from the project instance
-    const projectStatus:ProjectStatus = [
-        {
-            name: 'PENDING',
-            color: 'rgba(66, 0, 255, 0.2)'
-        },
-        {
-            name: 'IN_PROGRESS',
-            color: 'rgba(66, 0, 255, 0.6)'
-        },
-        {
-            name: 'REVIEW',
-            color: 'rgba(66, 0, 255, 0.7)'
-        },
-        {
-            name: 'COMPLETED',
-            color: 'rgba(66, 0, 255, 1)'
-        },
-    ];
+  
+    const [dragginIsOcurring, setDragginIsOcurring] = useState(false)
     const { projectId } = useParams();
     const {loading: isLoadingTasks, error, data, subscribeToMore} = useQuery(GET_PROJECT_TASKS, {
         variables: {projectId: projectId},
@@ -58,6 +43,7 @@ const Kanban = () => {
     let projectMembers = client.readQuery({
       query: GET_PROJECT_MEMBERS,
       variables: { projectId: projectId },
+
     });
 
     projectMembers = projectMembers?.getProject?.members;
@@ -68,30 +54,59 @@ const Kanban = () => {
     });
     
     const [moveTask] = useMutation(MOVE_TASK)
-    const tasks = data?.getProjectTasks
-    
- 
-    const tasksOrganizedInColumns: TaskColumns = projectStatus.map(status => {
-        const result: TaskColumn = {};
-        result[status.name] = tasks?.filter((task: Task) => task.status === status.name)
-        .sort((a:Task, b: Task) => (a.indexPosition - b.indexPosition)); 
-        return result
-        
-    })
-    const [taskColumns, setTaskColumns] = useState(tasksOrganizedInColumns);
+    const [taskColumns, setTaskColumns] = useState<TaskColumns>([]);
+    const [projectStatus, setProjectStatus] = useState<ProjectStatus>()
     
     const { dragOverHandler, dragStartHandler, dropHandler, taskDragged, skeletonStyles, dragEnterHandler } = useDragTask({
         reOrdering: moveTask,
         mockedData: taskColumns,
         setMockedData: setTaskColumns
     });
-
     const loadedTask = useLoadSubscriptionTask(subscribeToMore, TASK_UPDATED, projectId);
     
     useEffect(()=> {
-        setTaskColumns(tasksOrganizedInColumns)
-    }, [data])
-    
+        // console.log('fired')
+        const projectStatus:ProjectStatus = [
+            {
+                name: 'PENDING',
+                color: 'rgba(66, 0, 255, 0.2)'
+            },
+            {
+                name: 'IN_PROGRESS',
+                color: 'rgba(66, 0, 255, 0.6)'
+            },
+            {
+                name: 'REVIEW',
+                color: 'rgba(66, 0, 255, 0.7)'
+            },
+            {
+                name: 'COMPLETED',
+                color: 'rgba(66, 0, 255, 1)'
+            },
+        ];
+        const tasks = data?.getProjectTasks
+        const tasksOrganizedInColumns: TaskColumns = projectStatus.map(status => {
+            const result: TaskColumn = {};
+            result[status.name] = tasks?.filter((task: Task) => task.status === status.name)
+            .sort((a:Task, b: Task) => (a.indexPosition - b.indexPosition)); 
+            return result
+            
+        })
+      
+        // console.log('TASK', data, 'dragging', dragginIsOcurring)
+        // Correct the problem of too many isDragging due to useDragTask over is setting to true each time
+        if(taskDragged && taskDragged.isDragging) {
+           setDragginIsOcurring(true)
+        } else {
+            setDragginIsOcurring(false)
+        }
+        if(!dragginIsOcurring) {
+            setTaskColumns(tasksOrganizedInColumns)
+
+        }
+            setProjectStatus(projectStatus)
+    }, [data, taskDragged, dragginIsOcurring])
+
     if (isLoadingTasks) {
         return <SkeletonKanbanList />
     }
@@ -101,10 +116,10 @@ const Kanban = () => {
 
     return (
         <div className={`max-w-[1048px] grid 
-         gap-x-8 gap-y-4 `} style={{gridTemplateColumns: `repeat(${projectStatus.length},minmax(238px, auto))`}} 
+         gap-x-8 gap-y-4 `} style={{gridTemplateColumns: `repeat(${projectStatus?.length},minmax(238px, auto))`}} 
          > 
             {
-                projectStatus.map((status, indexStatus) => {
+                projectStatus?.map((status, indexStatus) => {
                     return(
                         <div className="flex flex-col gap-y-2  group/add w-full" key={indexStatus}  
                         >
