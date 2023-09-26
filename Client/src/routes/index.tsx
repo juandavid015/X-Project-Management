@@ -65,7 +65,7 @@ export const router = createBrowserRouter([
                                                     {
                                                         path: "list",
                                                         async lazy() {
-                                                            const List = (await import("../components/project/List")).default;
+                                                            const List = (await import("../components/list/List")).default;
                                                             const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
 
                                                             return { Component: ()=> <ProtectedRoute children={<List />}/> }

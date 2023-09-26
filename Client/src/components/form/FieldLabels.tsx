@@ -4,8 +4,6 @@ import { TaskSetter, addNewLabel, removeLabel } from "../../helpers/taskHelpers"
 import { HandleInputChange, SetFormData } from "../../hooks/useForm"
 import { Label, Task, TaskCreate } from "../../types/types"
 import { InputEditable, SetInputEditable } from "../kanban/KanbanCardEditable"
-import { KanbanCardOptions } from "../kanban/KanbanCardOptions"
-
 
 interface LabelsFieldProps {
     taskData: TaskCreate
@@ -59,10 +57,10 @@ export const FieldLabels = ({taskData, inputEditable, handleInputChange, setTask
                 </button>
             
                 
-                <KanbanCardOptions
+                {/* <KanbanCardOptions
                 task={taskData}
                 // duplicate={(taskData: Task)=> updateInformation(taskData)}
-                className={'absolute left-[calc(100%-1rem)] z-10'}/>
+                className={'absolute left-[calc(100%-1rem)] z-10'}/> */}
             </div>
     )
 }
