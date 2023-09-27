@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc",
-    "build": "npm run compile && echo {\"name\": \"softlink_server\", \"version\": \"1.0.0\", \"main\": \"index.js\", \"type\": \"module\", \"scripts\": { \"start\": \"node index.js\" }} > dist/package.json && node ./dist/index.js",
-    "start": "node dist/index.js",
+    "build": "npm run compile && echo {\"name\": \"softlink_server\", \"version\": \"1.0.0\", \"main\": \"index.js\", \"type\": \"module\", \"scripts\": { \"start\": \"node index.js\" }} > dist/package.json",
+    "start": "node ./dist/index.js",
     "dev": "nodemon --config nodemon.json"
   },
   "keywords": [],
