@@ -127,13 +127,10 @@ app.use(
 )
 const PORT = process.env.SERVER_PORT || 4000;
 // Now that our HTTP server is fully set up, actually listen.
-mongoClient.connect()
-.then(()=> {
-    app.listen(PORT, () => {
-        console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/`)
-        console.log(`🚀 Subscription endpoint ready at ws://localhost:${PORT}/`)
-      });
+await mongoClient.connect()
 
-}).catch(err => {
-    console.error(err)
-})
+httpServer.listen(PORT, () => {
+    console.log(`🚀 Query endpoint ready`)
+    console.log(`🚀 Subscription endpoint ready`)
+});
+
