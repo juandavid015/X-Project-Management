@@ -96,8 +96,9 @@ export const router = createBrowserRouter([
                                             {
                                                 path: "",
                                                 async lazy () {
+                                                    const TasksProvider = (await import ("../providers/TasksProvider")).default
                                                     const  Kanban = (await import ( "../components/kanban/Kanban")).default
-                                                    return { Component: Kanban }
+                                                    return { Component: ()=> <TasksProvider children={<Kanban/>}/>}
                                                 },
                                             },
                                             {

@@ -1,24 +1,18 @@
 
 import { DocumentIcon, EditIcon, EqualIcon, LabelIcon, LowLeftIcon, MessageIcon } from "../../assets/icons/Icons"
-import { TaskSkeletonStyles, TaskDragged } from "../../hooks/useDragTask"
+import { TasksContext } from "../../providers/TasksProvider"
 import { Label, Task } from "../../types/types"
 import { Members } from "../ui/Members"
+import { useContext } from 'react';
 
-interface Props extends Task {
-    create: boolean, // not goes here
-    onEdit?: () => void
+interface KanbanCardProps {
+    task: Task
+    toggleEdit: () => void
     onDragStart: (e: React.DragEvent) => void,
-    onDrop?: (e: React.DragEvent) => void,
-    onDragEnter?: (e: React.DragEvent) => void,
-    onDragLeave?: (e: React.DragEvent) => void,
-    taskDragged: TaskDragged | undefined
-    onDragOver?: (e: React.DragEvent) => void,
-    onDragEnd?: (e: React.DragEvent) => void,
-    skeletonStyles: TaskSkeletonStyles
 }
 
-export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ...task}: Props) => {
-
+export const KanbanCard = ({toggleEdit, onDragStart, task}: KanbanCardProps) => {
+    const {skeletonStyles, taskDragged} = useContext(TasksContext)
     const {title, description, labels, priority, timeline, members, id, imageUrl} = task
     const timelineString = new Date(timeline || '');
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -38,7 +32,7 @@ export const KanbanCard = ({onEdit, onDragStart, taskDragged, skeletonStyles, ..
             onDragStart={onDragStart}  
             draggable='true'  >
 
-                <button onClick={onEdit}
+                <button onClick={toggleEdit}
                 className="absolute right-0 pr-4 group-hover:block hidden w-fit">
                     <EditIcon className="fill-white-gray h-[20px] cursor-pointer"/>
                 </button>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { FieldLabels } from "../form/FieldLabels";
 import { FieldTitle } from "../form/FieldTitle";
@@ -8,23 +8,38 @@ import { FieldPriority } from "../form/FieldPriority";
 import { FieldMembers } from "../form/FieldMembers";
 import FieldImageUrl from "../form/FieldImageUrl";
 import { SubmitButton } from "../form/SubmitButton";
-import { Status, Task, TaskCreate, User } from "../../types/types";
+import { Status, Task, TaskCreate } from "../../types/types";
 import { CREATE_TASK, UPDATE_TASK } from "../../graphql/mutations";
 import { useForm } from "../../hooks/useForm";
 import { useMutation } from "@apollo/client";
 import { KanbanCardOptions } from "../kanban/KanbanCardOptions";
+import { TasksContext } from "../../providers/TasksProvider";
 
 interface ListCardEditableProps {
     toggleEdit: () => void
-    task?: Task | TaskCreate
-    projectId: string
-    create: boolean
-    projectMembers: User[]
-    isLoadedBySubscription: boolean | undefined
     status: Status
+    task?: Task | TaskCreate
 }
-const ListCardEditable = ({toggleEdit, task, projectId, create, projectMembers, isLoadedBySubscription, status}: ListCardEditableProps) => {
-    const {id, title, description, labels, timeline, priority, members, userIds, imageUrl} = task || {};
+const ListCardEditable = ({task, status, toggleEdit }: ListCardEditableProps) => {
+
+    const {
+        projectId,
+        projectMembers,
+        loadedTask,
+        create,
+    } = useContext(TasksContext);
+
+    const {
+        id, 
+        title, 
+        description, 
+        labels, 
+        timeline, 
+        priority, 
+        members, userIds, 
+        imageUrl
+    } = task || {};
+
     const containerRef = useRef(null);
     const initialState: TaskCreate = {
         id: id || 'temp-id',
@@ -35,7 +50,7 @@ const ListCardEditable = ({toggleEdit, task, projectId, create, projectMembers, 
         labels: labels || [],
         status: status || 'PENDING',
         indexPosition: parseFloat(Date.now().toString()),
-        projectId: projectId,
+        projectId: projectId || '',
         members: members || [],
         userIds: userIds || [],
         imageUrl: imageUrl || ''
@@ -47,21 +62,21 @@ const ListCardEditable = ({toggleEdit, task, projectId, create, projectMembers, 
     })
 
     const { formData: taskData, setFormData: setTaskData, handleInputChange } = useForm(initialState);
-
-    const mutationSchemaStatus = create ?  CREATE_TASK : UPDATE_TASK;
+    
+    const mutationSchemaStatus = create.isActive ?  CREATE_TASK : UPDATE_TASK;
     // const projectTaskSchema = GET_PROJECT_TASKS;
     // const {saveEntity, loading}= useSaveEntity(mutationSchemaStatus, projectTaskSchema);
     const [createOrUpdateTask, { loading }] = useMutation(mutationSchemaStatus)
     const updateInformation = async(taskData: Task | TaskCreate) => {
         // before a validations must be passed sucessfully
 
-        !create && toggleEdit && toggleEdit()
+        !create.isActive && toggleEdit && toggleEdit()
         const optimisticResponse = {...taskData, __typename: "Task"}
 
         await createOrUpdateTask({
             variables: taskData,
             optimisticResponse: {
-                [create ? 'createTask': 'updateTask']: optimisticResponse
+                [create.isActive ? 'createTask': 'updateTask']: optimisticResponse
             }
         })
     }
@@ -70,13 +85,13 @@ const ListCardEditable = ({toggleEdit, task, projectId, create, projectMembers, 
         setInputEditable({inputName: inputName, inputIsEditable: false});
     }
     useEffect(() => {
-        isLoadedBySubscription && (toggleEdit && toggleEdit());
+        loadedTask.isLoadedBySubscription && (toggleEdit && toggleEdit());
         return () => {
             setInputEditable({inputName: 'title', inputIsEditable: false});
             
         }
         
-    },[isLoadedBySubscription, toggleEdit]);
+    },[loadedTask.isLoadedBySubscription, toggleEdit]);
 
     useClickOutside({elementRef: containerRef, onClickOutside: toggleEdit})
     return (
@@ -134,7 +149,7 @@ const ListCardEditable = ({toggleEdit, task, projectId, create, projectMembers, 
             />
     
             <SubmitButton
-            isLoading={isLoadedBySubscription === true ? false : loading}
+            isLoading={loadedTask.isLoadedBySubscription === true ? false : loading}
             onSubmit={()=> updateInformation(taskData)} />
         </div>
     )

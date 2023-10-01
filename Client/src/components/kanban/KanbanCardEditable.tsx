@@ -1,7 +1,7 @@
 
-import React, {  useEffect, useRef, useState } from 'react';
+import React, {  useEffect, useRef, useState, useContext } from 'react';
 import { CREATE_TASK, UPDATE_TASK } from "../../graphql/mutations";
-import {  Status, Task, TaskCreate, User } from "../../types/types";
+import {  Status, Task, TaskCreate } from "../../types/types";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useForm } from "../../hooks/useForm";
 import { FieldPriority } from "../form/FieldPriority";
@@ -14,25 +14,42 @@ import { SubmitButton } from "../form/SubmitButton";
 import { useMutation } from '@apollo/client';
 import FieldImageUrl from '../form/FieldImageUrl';
 import { KanbanCardOptions } from './KanbanCardOptions';
+import { TasksContext } from '../../providers/TasksProvider';
 
-interface Props {
-    create: boolean, // not goes here
-    onEdit?: () => void
+interface KanbanCardEditableProps {
+    toggleEdit?: () => void
     status: Status
     task?: Task | TaskCreate
-    projectMembers: User[]
-    projectId: string
-    isLoadedBySubscription: boolean | undefined
 }
+
 export interface InputEditable  {
     inputName: string,
     inputIsEditable: boolean
 }
+
 export type SetInputEditable = React.Dispatch<React.SetStateAction<InputEditable>>
 
-export const KanbanCardEditable = ({create, status, onEdit, projectMembers, projectId, task, isLoadedBySubscription}:Props) => {
-    // const cleanedLabels = labels.map(({ __typename, ...rest }) => rest);
-    const {id, title, description, labels, timeline, priority, members, userIds, imageUrl} = task || {};
+export const KanbanCardEditable = ({status, toggleEdit, task }:KanbanCardEditableProps) => {
+
+    const { 
+        projectMembers, 
+        projectId, 
+        create, 
+        loadedTask 
+    } = useContext(TasksContext);
+
+    const {
+        id, 
+        title, 
+        description, 
+        labels, 
+        timeline, 
+        priority, 
+        members, 
+        userIds, 
+        imageUrl
+    } = task || {};
+
     const containerRef = useRef<HTMLDivElement>(null);
 
     const initialState: TaskCreate = {
@@ -44,7 +61,7 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
         labels: labels || [],
         status: status,
         indexPosition: parseFloat(Date.now().toString()),
-        projectId: projectId,
+        projectId: projectId || '',
         members: members || [],
         userIds: userIds || [],
         imageUrl: imageUrl || ''
@@ -57,20 +74,21 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
 
     const { formData: taskData, setFormData: setTaskData, handleInputChange } = useForm(initialState);
 
-    const mutationSchemaStatus = create ? CREATE_TASK : UPDATE_TASK;
+    const mutationSchemaStatus = create.isActive ? CREATE_TASK : UPDATE_TASK;
     // const projectTaskSchema = GET_PROJECT_TASKS;
     // const {saveEntity, loading}= useSaveEntity(mutationSchemaStatus, projectTaskSchema);
-    const [createOrUpdateTask, { loading }] = useMutation(mutationSchemaStatus)
+    const [createOrUpdateTask, { loading }] = useMutation(mutationSchemaStatus);
+
     const updateInformation = async(taskData: Task | TaskCreate) => {
         // before a validations must be passed sucessfully
 
-        !create && onEdit && onEdit()
+        !create.isActive && toggleEdit && toggleEdit()
         const optimisticResponse = {...taskData, __typename: "Task"}
 
         await createOrUpdateTask({
             variables: taskData,
             optimisticResponse: {
-                [create ? 'createTask': 'updateTask']: optimisticResponse
+                [create.isActive ? 'createTask': 'updateTask']: optimisticResponse
             }
         })
     }
@@ -79,15 +97,16 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
         setInputEditable({inputName: inputName, inputIsEditable: false});
     }
 
-    useClickOutside({elementRef: containerRef, onClickOutside: onEdit});
+    useClickOutside({elementRef: containerRef, onClickOutside: toggleEdit});
+
     useEffect(() => {
-        isLoadedBySubscription && (onEdit && onEdit());
+        loadedTask.isLoadedBySubscription && (toggleEdit && toggleEdit());
         return () => {
             setInputEditable({inputName: 'title', inputIsEditable: false});
             
         }
         
-    },[isLoadedBySubscription, onEdit]);
+    },[loadedTask.isLoadedBySubscription, toggleEdit]);
 
 
     return (
@@ -133,7 +152,7 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
 
             <FieldMembers
              members={taskData.members}
-             projectMembers = {projectMembers}
+             projectMembers={projectMembers}
              handleInputChange={handleInputChange}
              setFormData={ setTaskData }
             />
@@ -146,7 +165,7 @@ export const KanbanCardEditable = ({create, status, onEdit, projectMembers, proj
             />
     
             <SubmitButton
-            isLoading={isLoadedBySubscription === true ? false : loading}
+            isLoading={loadedTask.isLoadedBySubscription === true ? false : loading}
             onSubmit={()=> updateInformation(taskData)} />
 
         </div>

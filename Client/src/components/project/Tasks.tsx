@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import TasksProvider from "../../providers/TasksProvider";
 // import { Kanban } from "./Kanban";
 // import Calendar from "./Calendar";
 // import List from "./List";
@@ -24,6 +25,10 @@ const Tasks = () => {
     // else {
     //     return <Kanban />
     // }
-    return <Outlet />
+    return (
+        <TasksProvider>
+            <Outlet />
+        </TasksProvider>
+    )
 }
 export default Tasks;

@@ -1,18 +1,28 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Members } from "../ui/Members";
 import { CheckCircleIcon, EditIcon, EqualIcon, LabelIcon, LowLeftIcon } from "../../assets/icons/Icons";
 import { Label, Task } from "../../types/types";
-import { TaskDragged, TaskSkeletonStyles } from "../../hooks/useDragTask";
+import { TasksContext } from "../../providers/TasksProvider";
 
 interface ListCardProps {
     task: Task
     toggleEdit: () => void
     onDragStart: (e: React.DragEvent) => void,
-    taskDragged: TaskDragged | undefined
-    skeletonStyles: TaskSkeletonStyles
 }
-const ListCard = ({task, toggleEdit, onDragStart, taskDragged, skeletonStyles}:ListCardProps) => {
-    const { title, timeline, description, labels, priority, members, imageUrl, id } = task
+const ListCard = ({task, toggleEdit, onDragStart, }:ListCardProps) => {
+    
+    const {taskDragged, skeletonStyles} = useContext(TasksContext)
+    const { 
+        title,
+        timeline, 
+        description, 
+        labels, 
+        priority, 
+        members, 
+        imageUrl, 
+        id 
+    } = task
+
     const [taskCompleted, setTaskCompleted] = useState(false);
 
     const markTaskAsCompleted = () => {
