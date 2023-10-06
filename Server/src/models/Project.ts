@@ -18,6 +18,7 @@ export interface ProjectDataSource {
     createPublicProject: (parent: unknown, args: CreateProjectArgs) => Promise<PublicProject>
     updateProject: (parent: unknown, args: UpdateProjectArgs) => Promise<Project>
     assignMemberToProject: (parent: unknown, args: AssignMemberToProjectArgs) => Promise<Project>
+    deleteMemberFromProject: (parent: unknown, args: AssignMemberToProjectArgs) => Promise<Project>
     deleteProject: (parent: unknown, args: DeleteProjectArgs) => Promise<Project>
 }
 
@@ -171,12 +172,12 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
 
         let {projectId, userEmail} = args
         let updatedProject: Project;
-        const userToAssign = await prisma.user.findUnique({
+        const userToBeAdded = await prisma.user.findUnique({
           where: {
             email: userEmail
           }
         })
-        if (userToAssign) {
+        if (userToBeAdded) {
           updatedProject = await prisma.project.update({
             where: {
               id: projectId,
@@ -184,6 +185,38 @@ export const generateProjectModel = ({userIsAuthenticated, userHasPartialAccess,
             data: {
               members: {
                 connect: {email: userEmail}
+              },
+            },
+            
+            include: {
+              members: true,
+              owner: true
+            },
+          });
+
+
+        } 
+
+        return updatedProject
+
+      },
+      deleteMemberFromProject: async (_, args) => {
+
+        let {projectId, userEmail} = args
+        let updatedProject: Project;
+        const userToBeRemoved = await prisma.user.findUnique({
+          where: {
+            email: userEmail
+          }
+        })
+        if (userToBeRemoved) {
+          updatedProject = await prisma.project.update({
+            where: {
+              id: projectId,
+            },
+            data: {
+              members: {
+                disconnect: {email: userEmail}
               },
             },
             

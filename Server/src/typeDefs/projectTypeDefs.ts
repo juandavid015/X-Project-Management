@@ -43,6 +43,11 @@ export const projectTypeDefs = {
             userEmail: String!
         ): Project
 
+        deleteMemberFromProject(
+            projectId: String!
+            userEmail: String!
+        ): Project
+
         deleteProject(
             id: String!
         ): Project

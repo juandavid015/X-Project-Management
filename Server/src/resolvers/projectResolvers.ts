@@ -31,6 +31,9 @@ export const projectResolvers = {
         assignMemberToProject: (parent: unknown, args: AssignMemberToProjectArgs, context: MyContext) =>
         context.models.Project.assignMemberToProject(parent, args),
 
+        deleteMemberFromProject: (parent: unknown, args: AssignMemberToProjectArgs, context: MyContext) =>
+        context.models.Project.deleteMemberFromProject(parent, args),
+
         deleteProject: (parent: unknown, args: DeleteProjectArgs, context: MyContext) => 
         context.models.Project.deleteProject(parent, args)
     }
