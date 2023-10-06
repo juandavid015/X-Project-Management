@@ -1,43 +1,63 @@
-import { useQuery } from "@apollo/client";
-import { GET_PROJECT } from "../../graphql/querys";
+import { GET_PROJECTS } from "../../graphql/querys";
 import { ProjectMembers } from "./ProjectMembers";
-import { NavLink, useParams } from "react-router-dom";
-import { Project } from "../../types/types";
-import SkeletonProjectHeader from "../ui/skeletons/SkeletonProjectHeader";
-
+import { NavLink } from "react-router-dom";
+import { useSaveEntity } from "../../hooks/useSaveEntity";
+import { useForm } from "../../hooks/useForm";
+import { CHANGE_PROJECT_TITLE } from "../../graphql/mutations";
+import { useContext } from 'react';
+import { ProjectContext } from "../../providers/ProjectProvider";
+import { CheckIcon } from "../../assets/icons/Icons";
+import LoadingItem from "../ui/LoadingItem";
 
 const ProjectHeader = () => {
-    
-    const { projectId } = useParams();
-    const {loading, error, data } = useQuery(GET_PROJECT, {
-        variables: {projectId: projectId}
-    });
-  
-    // const initialState = {
-    //     members: data?.members || [],
-    //     userIds: data?.userIds || [],
-    //     projectId: data?.id || '64776d5011f6af1e77f4e984'
-    // }
-    // const [project, setProject] = useState(initialState);
-  
-    // useEffect(() => {
-    //   setProject(initialState);
-    // }, [data]);
-   
-   
-    if (loading) {
-        return <SkeletonProjectHeader />
-    }
-    if (error)  return (<p>Error</p>)
-    const project: Project = data?.getProject;
+ 
+    const {projectId, project, error} = useContext(ProjectContext);
 
+    const initialState = {
+        id: projectId,
+        title: project?.title 
+    }
+  
+    const { formData, handleInputChange } = useForm(initialState);
+
+    const { saveEntity: updateProjectTitle , loading} = useSaveEntity(CHANGE_PROJECT_TITLE, GET_PROJECTS)
     
+   
+    // if (loading) {
+    //     return <SkeletonProjectHeader />
+    // }
+    if (error)  return (<p>Error</p>)
+
+    const changeTitle = () => {
+        updateProjectTitle(formData)
+    }
+ 
+
     return (
         <header className="max-w-[1048px] flex items-center justify-between font-medium text-dark-md">
-            <h1 className="font-heading inline pr-4 text-xl font-bold truncate max-w-[300px]
-            border-r border-gray">
-                {project.title}
-            </h1>
+            <div className="flex items-center gap-2">
+
+                <label htmlFor="title" >
+
+                    <input type="text" value={formData.title} id="title" name="title" 
+                    onChange={handleInputChange as React.ChangeEventHandler<HTMLInputElement>}
+                    className="font-heading inline pr-4 text-xl font-bold truncate max-w-[300px]
+                    border-gray hover:outline-white-gray hover:outline rounded-md hover:outline-2
+                    focus:outline focus:outline-white-gray focus:outline-2 bg-transparent
+                    px-2">
+                    </input>
+                </label>
+                <button onClick={changeTitle} title="Save title" 
+                className="rounded-full border border-white-gray h-[30px] w-[30px] 
+                flex hover:bg-white-gray"> 
+                    {
+                        loading 
+                        ? <LoadingItem fillColor="fill-dark-med" height="h-[15px]"/>
+                        : <CheckIcon className="h-[20px] m-auto"/>
+                    }
+                   
+                </button>
+            </div>
      
                 <div>
                     <span className="text-dark-purple-md">
@@ -91,8 +111,8 @@ const ProjectHeader = () => {
                     </ul>
                 </div>
                 <ProjectMembers 
-                members={project.members}
-                projectId= {project.id}
+                members={project?.members}
+                projectId= {project?.id}
                 />
                
        

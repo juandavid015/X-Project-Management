@@ -12,7 +12,7 @@ const Root = () => {
   },[location, navigate])
     return (
       <>
-        <main className='font-sans text-sm bg-white-purple min-h-screen w-full
+        <main className='font-sans text-sm bg-white-purple min-h-screen w-full 
         flex'>
             <Sidebar />
             <Outlet />

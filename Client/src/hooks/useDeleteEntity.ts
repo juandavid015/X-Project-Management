@@ -10,10 +10,10 @@ export const useDeleteEntity = (documentNode: DocumentNode, queryDocumentNode: D
  // Extract field name to be updated dynamically
     const fieldName = getFieldName(queryDocumentNode)
     const entityName = getEntityName(documentNode)
-    const deleteFields = async (id: string | undefined, optimisticData?: EntityData<OperationVariables>) => {
+    const deleteFields = async (entityData: EntityData<OperationVariables>, optimisticData?: EntityData<OperationVariables>) => {
         try {
             return await deleteEntity({
-                variables: { id: id },
+                variables: entityData,
              
                 optimisticResponse: {
                     [entityName]: optimisticData,
@@ -23,7 +23,7 @@ export const useDeleteEntity = (documentNode: DocumentNode, queryDocumentNode: D
                         fields: {
                             [fieldName](existingEntityRefs, { readField }) {
                                 return existingEntityRefs.filter(
-                                    (entityRef: StoreObject) => id !== readField('id', entityRef)
+                                    (entityRef: StoreObject) => entityData.id !== readField('id', entityRef)
                                 )
                             }
                         }

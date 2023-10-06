@@ -26,7 +26,7 @@ const ProjectCardOptions = ({projectId, editProject, ...rest}: ProjectCardOption
     }
     const eliminateProject = async (id: string) => {
         const optimisticResponse = {id, __typename: "Project"}
-        await deleteProject(id, optimisticResponse)
+        await deleteProject({id: id}, optimisticResponse)
         .catch(async error => {
             const newError = await getErrorResponseBody(error as Response)
             toast.custom((t)=> <ToastErrorNotfication t={t} message={newError?.message} />, {

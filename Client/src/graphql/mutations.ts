@@ -183,18 +183,40 @@ export const UPDATE_PROJECT = gql`
     }
 `
 export const ASSIGN_PROJECT_MEMBER = gql`
-mutation AssignProjectMember($projectId: String!, $userEmail: String!) {
-    assignMemberToProject(projectId: $projectId, userEmail: $userEmail) {
-        id,
-        userIds
-        members {
-            id
-            email,
-            name,
-            image
+    mutation AssignProjectMember($projectId: String!, $userEmail: String!) {
+        assignMemberToProject(projectId: $projectId, userEmail: $userEmail) {
+            id,
+            userIds
+            members {
+                id
+                email,
+                name,
+                image
+            }
+        }
+    } `
+export const CHANGE_PROJECT_TITLE = gql`
+    mutation UpdateProject($id: String!, $title: String!) {
+        updateProject(id: $id, title: $title) {
+            id,
+            title
+        }
+    } `
+
+export const DELETE_PROJECT_MEMBER = gql`
+    mutation DeleteMemberFromProject($projectId: String!, $userEmail: String!) {
+        deleteMemberFromProject(projectId: $projectId, userEmail: $userEmail) {
+            id,
+            userIds
+            members {
+                id
+                email,
+                name,
+                image
+            }
         }
     }
-} `
+`
 
 
 export const MOVE_TASK = gql`

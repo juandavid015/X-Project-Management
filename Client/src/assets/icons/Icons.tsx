@@ -299,3 +299,9 @@ export const MinusBorderedIcon = ({className}: ClassName) => {
         <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" id="minus"><g><path d="M72 50c0 1.1-.9 2-2 2H30c-1.1 0-2-.9-2-2s.9-2 2-2h40c1.1 0 2 .9 2 2zm16 0c0 21-17 38-38 38S12 71 12 50s17-38 38-38 38 17 38 38zm-4 0c0-18.8-15.2-34-34-34S16 31.2 16 50s15.2 34 34 34 34-15.2 34-34z"></path></g><g><path fill="#00F" d="M1364-1210V474H-420v-1684h1784m8-8H-428V482h1800v-1700z"></path></g></svg>
     )
 }
+
+export const ArrowSimpleIcon = ({className}: ClassName) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 11 20"id="arrow"><path fillRule="evenodd" d="M.366 19.708c.405.39 1.06.39 1.464 0l8.563-8.264a1.95 1.95 0 0 0 0-2.827L1.768.292A1.063 1.063 0 0 0 .314.282a.976.976 0 0 0-.011 1.425l7.894 7.617a.975.975 0 0 1 0 1.414L.366 18.295a.974.974 0 0 0 0 1.413"></path></svg>
+    )
+}

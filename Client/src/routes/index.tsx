@@ -32,8 +32,10 @@ export const router = createBrowserRouter([
                             },
                             {
                                 path: "projects/:projectId",
-                                async lazy() {
-                                    const  Project  = (await import("../pages/Project")).default
+                                async lazy() {  const ProjectProvider = (await import ("../providers/ProjectProvider")).default
+                                const  Project  = (await import("../pages/Project")).default
+                                return { Component: ()=> <ProjectProvider children={<Project/>}/>}
+                              
                                     return { Component: Project }
                                 },
                                 errorElement: <ErrorPage />,

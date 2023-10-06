@@ -11,7 +11,7 @@ interface InviteProjectMemberProps {
 export const InviteProjectMember = ({projectId, reference, onCancel}: InviteProjectMemberProps) => {
 
     const [data, setData] = useState({
-        projectId: projectId || '64776d5011f6af1e77f4e984',
+        projectId: projectId,
         userEmail: ''
     })
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
