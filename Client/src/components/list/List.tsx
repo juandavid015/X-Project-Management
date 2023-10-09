@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { handleErrorResponse } from "../../helpers/errorHelpers";
 import ListColumn from "./ListColumn";
 import { TasksContext } from "../../providers/TasksProvider";
+import SkeletonList from "../ui/skeletons/SkeletonList";
 
 
 const List = () => {
@@ -12,7 +13,7 @@ const List = () => {
     } = useContext(TasksContext);
 
     if (isLoadingTasks) {
-        return <div>Loading list...</div>
+        return <SkeletonList />
     }
     if (error ) {    
         handleErrorResponse(error);

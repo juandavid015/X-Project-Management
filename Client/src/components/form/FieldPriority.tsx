@@ -31,7 +31,7 @@ export const FieldPriority = ({handleInputChange, valueSelected, ...rest}:Props)
     return (
         <div className="relative z-10" {...rest}>
             <button onClick={handleClick} title="Set priority"
-            className="w-fit flex items-center gap-1 fill-gray text-gray font-medium hover:fill-dark hover:font-bold hover:text-dark hover:scale-y-[1.03]">
+            className="w-fit flex items-center gap-1 fill-gray text-gray font-medium hover:fill-dark  hover:text-dark hover:scale-y-[1.03]">
                 {
                     valueSelected === 'LOW' ?     
                     <LowLeftIcon className="h-[20px] w-[20px] fill-yellow-gold" />:

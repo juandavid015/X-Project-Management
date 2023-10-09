@@ -19,7 +19,7 @@ export const FieldTitle = ({inputEditable, taskData, handleInputChange, changeEd
         placeholder="Your task title here..." autoFocus={inputEditable.inputName === 'title'}
         className="text-md font-bold focus:outline-none"
         />: 
-        <button className="flex items-center gap-1 fill-dark-med font-medium hover:fill-dark hover:font-bold hover:scale-y-[1.03]" 
+        <button className="flex items-center gap-1 fill-dark-med font-medium hover:fill-dark hover:scale-y-[1.03]" 
         onClick={()=> changeEditingInput('title')}>
             <TitleIcon className="h-[20px]"/>
             <span>

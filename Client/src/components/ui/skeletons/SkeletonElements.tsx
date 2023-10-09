@@ -2,7 +2,7 @@
 export const SkeletonUser = ({height, width}: {height?: string, width?: string}) => {
 
     return (
-        <div className={`${height} ${width} w-[30px] h-[30px] rounded-full bg-dark-med/[.06] rounded`}>
+        <div className={`${height} ${width} w-[20px] h-[20px] rounded-full bg-dark-med/[.06] rounded`}>
 
         </div>
     )

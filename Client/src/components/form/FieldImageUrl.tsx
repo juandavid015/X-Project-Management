@@ -18,7 +18,7 @@ const FieldImageUrl = ({taskData, inputEditable, handleInputChange, changeEditin
         placeholder="https://sampleurl/image/..."
         className="px-2 py-1 outline-purple/20"/>:
         <button className="flex items-center gap-1 fill-gray text-gray font-medium 
-        hover:fill-dark hover:font-bold hover:text-dark hover:scale-y-[1.03]" 
+        hover:fill-dark hover:text-dark hover:scale-y-[1.03]" 
         onClick={()=> changeEditingInput('imageUrl')}>
             <ImageIcon className="h-[20px]"/>
             <span>

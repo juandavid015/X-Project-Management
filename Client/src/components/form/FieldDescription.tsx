@@ -17,7 +17,7 @@ export const FieldDescription = ({taskData, handleInputChange, inputEditable, ch
         className="px-2 py-1 w-full resize-none  
         outline outline-2 outline-purple/20 rounded-md" placeholder="Description of your task..." 
         />:
-        <button className="flex items-center gap-1 fill-gray text-gray font-medium hover:fill-dark hover:font-bold hover:text-dark hover:scale-y-[1.03]" 
+        <button className="flex items-center gap-1 fill-gray text-gray font-medium hover:fill-dark hover:text-dark hover:scale-y-[1.03]" 
         onClick={()=> changeEditingInput('description')}>
             <DescriptionIcon className="h-[20px]"/>
             <span>
