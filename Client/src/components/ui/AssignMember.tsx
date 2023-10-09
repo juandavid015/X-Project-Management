@@ -25,7 +25,8 @@ export const AssignMember = ({openSearch}: AssignMemberProps) => {
     return (
         // Still the possibility to use form instead
         <div className="flex gap-2 items-center
-        group flex items-center gap-1 fill-gray text-gray font-medium hover:fill-dark hover:font-bold hover:text-dark hover:scale-y-[1.03] cursor-pointer">
+        group flex items-center gap-1 fill-gray text-gray font-medium 
+        hover:fill-dark hover:text-dark cursor-pointer">
            
 
             <button onClick={openSearch}

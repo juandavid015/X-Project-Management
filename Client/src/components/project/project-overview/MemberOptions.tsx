@@ -10,8 +10,10 @@ interface ProjectOverviewMemberOptionsProps {
     [key:string]: unknown
     userEmail: string
     projectId: string
+    userId: string
 }
-const ProjectOverviewMemberOptions = ({projectId, userEmail, ...rest}: ProjectOverviewMemberOptionsProps) => {
+const MemberOptions = ({projectId, userEmail, userId, ...rest}: ProjectOverviewMemberOptionsProps) => {
+    
     const containerRef = useRef<HTMLUListElement>(null);
     const [expanded, setExpanded] = useState(false);
     const {deleteFields: deleteMember, loading} = useDeleteEntity(DELETE_PROJECT_MEMBER, GET_PROJECT_MEMBERS)
@@ -20,16 +22,8 @@ const ProjectOverviewMemberOptions = ({projectId, userEmail, ...rest}: ProjectOv
         setExpanded(!expanded);
     }
     const eliminateMemberFromProject = async (projectId: string, userEmail: string) => {
-        const optimisticResponse = {projectId, userEmail, __typename: "Project"}
-        await deleteMember({projectId, userEmail}, optimisticResponse)
-        // .catch(async error => {
-        //     const newError = await getErrorResponseBody(error as Response)
-        //     toast.custom((t)=> <ToastErrorNotfication t={t} message={newError?.message} />, {
-        //         duration: 2000
-        //     })
-        // })
-       
-        
+        const optimisticResponse = {projectId, userEmail,  __typename: "Project"}
+        await deleteMember({projectId, userEmail, userId}, optimisticResponse)       
     }
     useClickOutside({elementRef: containerRef, onClickOutside: () => setExpanded(false)});
 
@@ -43,18 +37,10 @@ const ProjectOverviewMemberOptions = ({projectId, userEmail, ...rest}: ProjectOv
                 <ul className='bg-white rounded-md p-4 flex flex-col gap-4
                 shadow-gray shadow-md2 text-dark-med fill-dark-med' ref={containerRef} 
                 >
-                    {/* <li>
-                        <button onClick={editProject}
-                        className='flex gap-2 
-                        hover:fill-dark hover:text-dark'>
-                            <EditIcon className='h-[20px]'/>
-                            <span>Edit</span>
-                        </button>
-                    </li> */}
                     <li>
                         <button onClick={()=> eliminateMemberFromProject(projectId, userEmail)}
-                        className='flex gap-2 
-                        hover:fill-dark hover:text-dark'>
+                        className='flex gap-2 text-red-warning/70 fill-red-warning/70
+                        hover:fill-red-warning hover:text-red-warning'>
                             {
                                 !loading ?
                                 <RemoveIcon className='h-[20px]'/>:
@@ -68,4 +54,4 @@ const ProjectOverviewMemberOptions = ({projectId, userEmail, ...rest}: ProjectOv
         </div>
     )
 }
-export default ProjectOverviewMemberOptions;
+export default MemberOptions;

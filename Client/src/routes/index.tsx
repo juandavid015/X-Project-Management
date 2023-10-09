@@ -68,11 +68,8 @@ export const router = createBrowserRouter([
                                                         path: "list",
                                                         async lazy() {
                                                             const List = (await import("../components/list/List")).default;
-                                                            const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
-
-                                                            return { Component: ()=> <ProtectedRoute children={<List />}/> }
-                                                        },
-                                                        // List will be public once the feature is ready
+                                                            return { Component: List} 
+                                                        }
                                                     },
                                                     {
                                                         path: "calendar",
@@ -125,9 +122,7 @@ export const router = createBrowserRouter([
                                                 path: "overview",
                                                 async lazy() {
                                                     const ProjectOverview = (await import("../components/project/ProjectOverview")).default;
-                                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
-
-                                                    return { Component: ()=> <ProtectedRoute children={<ProjectOverview />}/> }
+                                                    return { Component: ProjectOverview }
                                                 },
                                             },
                                             {

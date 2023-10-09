@@ -2,6 +2,7 @@ export type Status = 'PENDING' | 'IN_PROGRESS' | 'REVIEW' | 'COMPLETED';
 
 export type Priority = "HIGH" | "MODERATE" | "LOW" | undefined;
 
+export type ProjectPermissions = 'VIEW' | 'EDIT' | 'ADMIN';
 
 export  interface Label {
     name: string,
@@ -14,6 +15,13 @@ export interface User {
     image?: string
 }
 
+export interface ProjectPermission {
+    id: string
+    projectId: string
+    userId: string
+    role: ProjectPermissions
+}
+
 export interface Project {
     id: string,
     title: string,
@@ -21,6 +29,9 @@ export interface Project {
     label?: string
     description?: string
     userIds: string
+    userPermissions: ProjectPermission[]
+    ownerId: string
+    owner: User
 }
 
 export interface ProjectCreate extends Project {

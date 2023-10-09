@@ -43,11 +43,21 @@ export const GET_PROJECTS = gql`
             description
             label
             userIds
+            ownerId
+            owner {
+                name
+                image
+            }
             members {
                 id
                 email
                 name
                 image
+            }
+            userPermissions {
+                id
+                userId
+                role
             }
         }
     }
@@ -60,11 +70,21 @@ export const GET_PROJECT = gql`
             title
             description
             label
+            ownerId
+            owner {
+                image
+                name
+            }
             members {
                 id
                 email
                 name
                 image
+            }
+            userPermissions {
+                id
+                userId
+                role
             }
         }
     }

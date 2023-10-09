@@ -4,6 +4,7 @@ import { Project } from "../../../types/types";
 import LoadingItem from "../../ui/LoadingItem";
 import { UPDATE_PROJECT } from "../../../graphql/mutations";
 import { useForm } from "../../../hooks/useForm";
+import { UserPreview } from "../../ui/UserPreview";
 
 interface ProjectOverviewGeneralSectionProps {
     project: Project
@@ -35,18 +36,33 @@ const ProjectOverviewGeneralSection = ({project}: ProjectOverviewGeneralSectionP
     }
 
     return (
-        <>
-         <label htmlFor="label">
-                <span className="text-blue-bright flex flex-col">
-                    <span>
-                        Tag
+        <>  
+            <div className="flex gap-4">
+                
+                <label htmlFor="label">
+                    <span className="text-blue-bright flex flex-col gap-2">
+                        <span className="font-bold">
+                            Tag
+                        </span>
+                        <input type="text" name="label" id="label" value={projectData.label}
+                        onChange={handleInputChange as React.ChangeEventHandler<HTMLInputElement>}
+                        className="text-dark-med w-fit p-2 
+                        hover:outline hover:outline-2 hover:outline-white-gray rounded-md outline-white-gray"/>
                     </span>
-                    <input type="text" name="label" id="label" value={projectData.label}
-                    onChange={handleInputChange as React.ChangeEventHandler<HTMLInputElement>}
-                    className="text-dark-med w-fit p-2 
-                    hover:outline hover:outline-2 hover:outline-white-gray rounded-md outline-white-gray"/>
+                
+                </label>
+                <span className="flex flex-col gap-2">
+                    <span className="text-blue-bright flex flex-col font-bold">
+                        Owner
+                    </span>
+                    <UserPreview
+                    expanded
+                    name={project.owner.name}
+                    image={project.owner.image || ''}
+
+                    />
                 </span>
-            </label>
+            </div>
 
             <label className="flex flex-col gap-2" htmlFor="description">
                 <span className="font-bold text-base">

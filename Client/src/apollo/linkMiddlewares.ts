@@ -73,7 +73,7 @@ export const errorLink = onError(({ graphQLErrors, networkError, operation}) => 
         
     if (networkError) {
 		console.log(`[Network error]: ${networkError}`);
-		const errorRequestsHandledLocally = ['UpdateTask', 'CreateTask', 'UpdateProject', 'DeleteProject', 'RemoveTask']
+		const errorRequestsHandledLocally = ['UpdateTask', 'CreateTask', 'UpdateProject', 'DeleteProject', 'RemoveTask', 'AssignProjectMember', 'DeleteMemberFromProject']
 		// Throw a toast error notification on a level component (for the desired component).
 		if(errorRequestsHandledLocally.includes(operation.operationName)) {
 			if ('result' in networkError ) {
