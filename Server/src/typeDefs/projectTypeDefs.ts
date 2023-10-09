@@ -1,5 +1,16 @@
 export const projectTypeDefs = {
     type: `
+        enum ProjectPermissions {
+            VIEW
+            EDIT
+            ADMIN
+        }
+        type ProjectPermission {
+            id: String!
+            projectId: String!
+            userId: String!
+            role: ProjectPermissions
+        }
         type Project {
             id: String!,
             userIds: [String]
@@ -11,6 +22,7 @@ export const projectTypeDefs = {
             token: String
             owner: User
             ownerId: String
+            userPermissions: [ProjectPermission]
         }
         type PublicProject {
             project: Project
@@ -41,11 +53,14 @@ export const projectTypeDefs = {
         assignMemberToProject(
             projectId: String!
             userEmail: String!
+            userId: String
+            role: ProjectPermissions!
         ): Project
 
         deleteMemberFromProject(
             projectId: String!
             userEmail: String!
+            userId: String!
         ): Project
 
         deleteProject(

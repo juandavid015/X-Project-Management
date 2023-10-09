@@ -1,4 +1,4 @@
-import { Project, Task, User } from "@prisma/client";
+import { Project, ProjectPermission, Task, User } from "@prisma/client";
 
 export interface MemberConnectDisconnect {
     connect?: { id: string }[];
@@ -38,6 +38,7 @@ export type AssignMemberToTaskArgs = Task & Pick<User ,'id'> & {
 }
 
 // PROJECT RESOLVER TYPES
+
 export type GetProjectArgs = Pick<Project, 'id'> & {
     projectId: Project['id']
 }
@@ -53,9 +54,11 @@ export type UpdateProjectArgs = Project & {
     projectId: Project['id']
 }
 
-export type AssignMemberToProjectArgs = Pick<Project, 'id'> & Pick<User, 'email'> & {
+export type AssignMemberToProjectArgs = Pick<Project, 'id'> & Pick<User, 'email' | 'id'> & {
     projectId: Project['id']
     userEmail: User['email']
+    userId: User['id']
+    role: ProjectPermission['role']
 }
 
 export type DeleteProjectArgs = Pick<Project, 'id'>

@@ -18,6 +18,11 @@ model Sequence {
   id String @id @map("_id")
    sequence_value Int
 }
+enum ProjectPermissions {
+  VIEW
+  EDIT
+  ADMIN
+}
 model User {
   id      String   @id @map("_id") @db.ObjectId
   email   String   @unique
@@ -28,6 +33,7 @@ model User {
   tasks Task[] @relation(fields: [taskIds], references: [id])
   image String? 
   ownedProjects Project[] 
+  projectPermissions ProjectPermission[]
 }
 model Project {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -40,6 +46,7 @@ model Project {
   token String?
   ownerId String @db.ObjectId 
   owner User @relation(fields: [ownerId], references: [id])
+  userPermissions ProjectPermission[]
 }
 model Task {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -55,6 +62,15 @@ model Task {
   members User[] @relation(fields: [userIds], references: [id])
   indexPosition Float @unique
   imageUrl String?
+}
+
+model ProjectPermission {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  projectId String @db.ObjectId
+  userId String @db.ObjectId
+  role ProjectPermissions @default(VIEW)
+  project Project @relation(fields: [projectId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 
