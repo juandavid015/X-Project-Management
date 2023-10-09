@@ -15,7 +15,15 @@ const defaultProject = {
     id: '',
     title: '',
     members: [],
-    userIds: ''
+    userIds: '',
+    userPermissions:[],
+    ownerId: '',
+    owner: {
+        id: '',
+        email: '',
+        name: '',
+        image: '',
+    }
 }
 
 const defaultProjectContext = {
