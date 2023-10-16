@@ -1,7 +1,6 @@
 import { useContext} from "react";
 import { handleErrorResponse } from "../../helpers/errorHelpers"
 import Loading from "../ui/Loading";
-import { ProjectContext } from "../../providers/ProjectProvider";
 import { ArrowCircleIcon } from "../../assets/icons/Icons";
 import { useDate } from "../../hooks/useDate";
 import { TasksContext } from "../../providers/TasksProvider";
@@ -9,8 +8,6 @@ import CalendarCells from "./CalendarCells";
 
 
 const Calendar = () => {
-
-    const { project } = useContext(ProjectContext);
 
     const {
 
@@ -39,16 +36,6 @@ const Calendar = () => {
         return <div className=" flex items-center justify-center w-full overflow-hidden"><Loading messagge="" /></div>
     }
 
-    if (!project) {
-        //simulate error response for in-developement feature
-        const error = {
-            status: 404,
-            statusText: 'Service unavailable',
-            message: 'is an in-developement feature and will be released soon in upcoming updates.',
-            data: { featureName: 'calendar' }
-        }
-        handleErrorResponse(error)
-    }
     if (error) {    
         handleErrorResponse(error);
     }

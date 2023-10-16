@@ -75,9 +75,7 @@ export const router = createBrowserRouter([
                                                         path: "calendar",
                                                         async lazy() {
                                                             const Calendar = (await import("../components/calendar/Calendar")).default;
-                                                            const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
-
-                                                            return { Component: ()=> <ProtectedRoute children={<Calendar />}/> }
+                                                            return { Component: Calendar} 
                                                         },
                                                         // Calendar will be public once the feature is ready
                                                     },

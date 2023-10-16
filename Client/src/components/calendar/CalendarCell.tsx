@@ -79,7 +79,7 @@ const CalendarCell = (
     useEffect(()=> {
         // 
         setAttemptsToCreate((prevAttempt) => {
-            if(prevAttempt === 0) return prevAttempt +=1;
+            if(prevAttempt === 0 && create.isActive) return prevAttempt +=1;
             else if(prevAttempt === 1) return prevAttempt -=1;
             return prevAttempt;
         })
