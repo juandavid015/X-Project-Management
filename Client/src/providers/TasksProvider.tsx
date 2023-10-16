@@ -46,10 +46,12 @@ interface TasksContextType {
     create:  {
         isActive: boolean
         columnTarget: string
+        itemTargetId?: string
      }
     setCreate: React.Dispatch<React.SetStateAction<{
         isActive: boolean;
         columnTarget: string;
+        itemTargetId?: string
     }>>
 }
 
@@ -80,7 +82,7 @@ const defaultTasksContext: TasksContextType = {
     },
     toggleEdit: ()=> null,
     create: {
-        isActive: false, columnTarget: '' 
+        isActive: false, columnTarget: '' ,  itemTargetId: ''
     },
     setCreate: () => null
 }

@@ -2,7 +2,7 @@ import { RefObject, useEffect } from "react"
 
 interface Props {
     elementRef: RefObject<HTMLElement>
-    onClickOutside?: ()=> void | undefined
+    onClickOutside?: ()=> Promise<void> | void | undefined
 }
 
 export const useClickOutside = ({elementRef, onClickOutside}: Props) => {
