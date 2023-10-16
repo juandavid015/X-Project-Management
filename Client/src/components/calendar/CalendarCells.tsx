@@ -30,12 +30,16 @@ const CalendarCells = (  {
 }: CalendarCellsProps) => {
 
     const { taskColumns } = useContext(TasksContext)
-    const tasksWithDates = taskColumns.reduce((acc: Task[], column) => {
+    // taskWithDate will be an array of Task with timeline present.
+    const tasksWithDates: Task[] = (taskColumns as Task[]).reduce<Task[]>((acc, column) => {
+        // destructuring the the tasks previous strucutures by columns and its status
+        // to only be an array of task (unustructured).
         const t = Object.values(column)[0] || [];
-        acc = [...acc, ...t]
-        return acc
-    }, []).filter(task => task.timeline)
+        acc.push(...t);
+        return acc;
+    }, []).filter((task: Task) => task.timeline);
 
+    // matching the task that coincide its timeline with the cell actual date
     const getTasksMatchByDate = (tasksWithDates: Task[], day: number, currentMonthIndex: number, currentYear: number) => {
         return tasksWithDates.filter(taskWithDate => {
             const dateTask = new Date(taskWithDate.timeline);
