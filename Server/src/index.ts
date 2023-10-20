@@ -41,6 +41,9 @@ export interface MyContext {
 // Required logic for integrating with Express
 const app = express();
 
+app.get('/', (req, res) => {
+    res.send('Welcome to Softlink server!'); // Customize the response message as needed
+});
 // Our httpServer handles incoming requests to our Express app.
 // Below, we tell Apollo Server to "drain" this httpServer,
 // enabling our servers to shut down gracefully.
