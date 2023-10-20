@@ -128,7 +128,7 @@ app.use(
         },
     })
 )
-const PORT = process.env.SERVER_PORT || 4000;
+const PORT = process.env.PORT || 4000;
 // Now that our HTTP server is fully set up, actually listen.
 await mongoClient.connect()
 
