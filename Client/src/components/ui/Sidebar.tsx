@@ -4,7 +4,7 @@ import Logo from '../../assets/LOGO.png'
 import {useAuth0} from '@auth0/auth0-react';
 import { LogoutButton } from './LogoutButton';
 import { LoginButton } from './LoginButton';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { SkeletonUser } from './skeletons/SkeletonElements';
 import { UserPreview } from './UserPreview';
 export const Sidebar = () => {
@@ -23,12 +23,16 @@ export const Sidebar = () => {
             fixed top-0 left-0  ${expand ? 'w-[calc(222px-2rem)]': 'w-[84px] '} transition-[width] duration-700
             `}>
                 <div className="flex flex-col gap-4 ">
-                    <img className="w-[50px] min-w-[50px]  h-auto" src={Logo}/>
-                    <span className={`origin-center text-electric-blue text-xl ${!expand ? 'invisible opacity-0': 'visible opacity-100'} transition-all duration-700 whitespace-nowrap
+                    <Link to={'/'}
+                    className='w-fit'>
+                        <img className="w-[50px] min-w-[50px]  h-auto" src={Logo}/>
+                    </Link>
+                    <Link to={'/'}
+                    className={`origin-center text-electric-blue text-xl ${!expand ? 'invisible opacity-0': 'visible opacity-100'} transition-all duration-700 whitespace-nowrap
                     ml-[15px] font-heading`}
                      >
                         Soft Link
-                    </span>
+                    </Link>
                     {
                         !expand ? 
                         <button onClick={toggleNavbarVisibility} className='w-fit transition-all duration-700'>

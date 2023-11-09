@@ -13,7 +13,7 @@ export const LogoutButton = ({expanded}: LogoutButtonProps) => {
     const handleLogout = () => {
         localStorage.removeItem('token');
         client.resetStore()
-        logout({logoutParams: {returnTo: CLIENT_URL}});
+        logout({logoutParams: {returnTo: CLIENT_URL + 'projects'}});
 
     }
 

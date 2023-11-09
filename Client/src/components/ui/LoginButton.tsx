@@ -11,7 +11,7 @@ export const LoginButton = ({expanded, ...rest}: LoginButtonProps) => {
     const handleLogin = async () => {
       
         await loginWithRedirect({
-            appState: {returnTo: '/',}
+            appState: {returnTo: '/projects',}
            
         })
 

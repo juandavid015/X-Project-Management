@@ -15,12 +15,16 @@ export default {
         "red-warning": "#D0342C",
         "blue-bright": "#3D68FE",
         "yellow-gold": "#efa32a",
-        "purple": "#8C52FF"
+        "purple": "#8C52FF",
+        "orange": "#FF5100"
       },
       gridTemplateColumns: {
         'kanban': 'repeat(4, 238px)',
         'custom': 'repeat($customValue, minmax(238px, 1fr))',
         
+      },
+      backgroundImage: {
+        'hero': "linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 90%, rgba(255, 255, 255, 1)), url('/src/assets/heroBg.webp')"
       },
       boxShadow: {
         "md2": "0 0 8px"
@@ -29,13 +33,27 @@ export default {
         sans: ['Heebo', 'Arial', 'sans-serif'],
         heading: ['Righteous', 'Georgia', 'serif'], // Use your preferred font for headers here
       },
+      animation: {
+        'expand-right': 'expand .3s ease-in 0s 1 forwards',
+        'expand-bottom': 'expandToBottom .3s ease-in 0s 1 forwards',
+
+      },
       keyframes: {
+        'expand': {
+          '0%': { transform: 'scaleX(0)' },
+          '100%': { transform: 'scaleX(1)' },
+        },
+        'expandToBottom': {
+          '0%': { height: '0px', opacity: 0 },
+          '100%': { height: '100px', opacity: 1 },
+        },
         shimmer: {
           "100%": {
             "transform": "translateX(100%)"
           }
-        }
-      }
+        },
+      },
+     
     },
   },
   plugins: [],
