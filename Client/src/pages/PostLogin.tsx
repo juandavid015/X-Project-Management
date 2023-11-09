@@ -2,6 +2,7 @@ import {useAuth0} from '@auth0/auth0-react'
 import {useEffect, useCallback} from 'react';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../graphql/querys';
+import Loading from '../components/ui/Loading';
 
 
 const PostLogin = () => {
@@ -25,14 +26,10 @@ const PostLogin = () => {
            
         }, [getToken,  loginUser])
         if (isLoading) {
-            return(<div>Loading...</div>)
+            return <div className="flex items-center justify-center w-full overflow-hidden"><Loading messagge=""/></div>
         }
 
-        return (
-            <div>
-                Login page
-            </div>
-        )
+        return null
 }
 
 export default PostLogin
