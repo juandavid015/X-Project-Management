@@ -4,6 +4,9 @@ import { generateTaskModel } from "../models/Task.js";
 import { generateProjectModel } from "../models/Project.js";
 import { pubsub } from "../index.js";
 import { authenticateUser } from "./authenticateUser.js";
+import { generateMessageModel } from "../models/Message.js";
+import { generateChatModel } from "../models/Chat.js";
+import { generatediscussionModel } from "../models/Discussion.js";
 
 interface HttpRequestContext {
     req: Request
@@ -23,6 +26,7 @@ export const globalContextAuthentication = async (ctx: AuthenticationContext ) =
         // This is an HTTP request
         const { req } = ctx;
         authorization = req.headers.authorization || null;
+        
         // Rest of authentication logic for HTTP
         // ...
     } else {
@@ -49,7 +53,11 @@ export const globalContextAuthentication = async (ctx: AuthenticationContext ) =
         models: {
             User: generateUserModel(userAuthenticated),
             Task: generateTaskModel({userIsAuthenticated, pubsub}),
-            Project: generateProjectModel({userIsAuthenticated, userHasPartialAccess, userAuthenticated, userWithPartialAccess})
+            Project: generateProjectModel({userIsAuthenticated, userHasPartialAccess, userAuthenticated, userWithPartialAccess}),
+            Message: generateMessageModel({userIsAuthenticated, pubsub}),
+            Chat: generateChatModel({userIsAuthenticated, pubsub}),
+            Discussion: generatediscussionModel({userIsAuthenticated, pubsub})
+
         }
     
     }

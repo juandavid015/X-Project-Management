@@ -20,6 +20,9 @@ import { wsAccessGuardConnection } from './authentication/wsAuthenticationConnec
 import { MongoClient} from 'mongodb'
 import { MongodbPubSub } from 'graphql-mongodb-subscriptions';
 import dotenv from 'dotenv'
+import { MessageDataSource } from './models/Message.js';
+import { ChatDataSource } from './models/Chat.js';
+import { DiscussionDataSource } from './models/Discussion.js';
 
 dotenv.config();
 
@@ -35,15 +38,18 @@ export interface MyContext {
     models: {
         User: UserDataSource,
         Project: ProjectDataSource,
-        Task: TaskDataSource
+        Task: TaskDataSource,
+        Message: MessageDataSource,
+        Chat: ChatDataSource,
+        Discussion: DiscussionDataSource
     }
 }
 // Required logic for integrating with Express
 const app = express();
 
-app.get('/', (req, res) => {
-    res.send('Welcome to Softlink server!'); // Customize the response message as needed
-});
+// app.get('/', (req, res) => {
+//     res.send('Welcome to Softlink server!'); // Customize the response message as needed
+// });
 // Our httpServer handles incoming requests to our Express app.
 // Below, we tell Apollo Server to "drain" this httpServer,
 // enabling our servers to shut down gracefully.

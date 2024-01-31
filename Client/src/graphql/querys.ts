@@ -103,3 +103,63 @@ export const GET_PROJECT_MEMBERS = gql`
         }
     }
 `
+
+export const GET_PROJECT_DISCUSSION = gql`
+    query GetProjectDiscussion($discussionId: String!) {
+        getDiscussion(discussionId: $discussionId) {
+            id,
+            title,
+            description,
+            createdAt,
+            subjects
+            members {
+                id
+                email
+                name
+                image
+            }
+            createdBy {
+                id
+                email
+                name
+                image
+            }
+            chat {
+              id
+              messages {      
+                content
+                likes
+                attachment
+                createdBy {
+                    id
+                    email
+                    name
+                    image
+                }
+              },
+              members {
+                id
+                email
+                name
+                image
+              }
+            }
+        }
+    }
+`
+export const GET_PROJECT_DISCUSSIONS = gql`
+    query GetProjectDiscussions($projectId: String!) {
+        getDiscussions(projectId: $projectId) {
+            id
+            title
+            description
+            members {
+                id
+                email
+                name
+                image
+            }
+            subjects
+        }
+    }
+`

@@ -1,4 +1,4 @@
-import { Project, ProjectPermission, Task, User } from "@prisma/client";
+import { Chat, Discussion, Message, Project, ProjectPermission, Task, User } from "@prisma/client";
 
 export interface MemberConnectDisconnect {
     connect?: { id: string }[];
@@ -62,3 +62,21 @@ export type AssignMemberToProjectArgs = Pick<Project, 'id'> & Pick<User, 'email'
 }
 
 export type DeleteProjectArgs = Pick<Project, 'id'>
+
+// MESSAGE RESOLVER TYPES
+export type MessageArgs = Message
+
+// CHAT RESOLVER TYPES
+export type ChatArgs = Chat
+
+// DISCUSSION RESOLVER TYPES
+type ChatWithoutRepeatedProps = Omit<Chat, 'userId' | 'userIds'>
+
+export type DiscussionArgs = Discussion & {
+    chat: ChatWithoutRepeatedProps
+}
+
+export type GetDiscussionArgs = {
+    projectId: Project['id']
+    discussionId: Discussion['id']
+}

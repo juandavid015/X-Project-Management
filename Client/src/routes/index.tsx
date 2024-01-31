@@ -33,10 +33,8 @@ export const router = createBrowserRouter([
                             {
                                 path: "projects/:projectId",
                                 async lazy() {  const ProjectProvider = (await import ("../providers/ProjectProvider")).default
-                                const  Project  = (await import("../pages/Project")).default
-                                return { Component: ()=> <ProjectProvider children={<Project/>}/>}
-                              
-                                    return { Component: Project }
+                                    const  Project  = (await import("../pages/Project")).default
+                                    return { Component: ()=> <ProjectProvider children={<Project/>}/> }
                                 },
                                 errorElement: <ErrorPage />,
                                 children: [
@@ -101,11 +99,17 @@ export const router = createBrowserRouter([
                                             {
                                                 path: "discussions",
                                                 async lazy() {
-                                                    const ProjectDiscussions = (await import("../components/project/ProjectDiscussions")).default;
-                                                    const ProtectedRoute = (await import("../components/authentication/ProtectedRoute")).default;
-
-                                                    return { Component: ()=> <ProtectedRoute children={<ProjectDiscussions />}/> }
+                                                    const ProjectDiscussions = (await import("../components/project/discussions/Discussions")).default;
+                                                    return { Component:  ProjectDiscussions }
                                                 },
+                                               
+                                            },
+                                            {
+                                                path: 'discussions/:discussionId',
+                                                async lazy() {
+                                                    const Discussion = (await import("../components/project/discussions/Discussion")).default;
+                                                    return { Component: Discussion } 
+                                                }
                                             },
                                             {
                                                 path: "timeline",

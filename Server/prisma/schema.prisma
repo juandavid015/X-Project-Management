@@ -34,6 +34,13 @@ model User {
   image String? 
   ownedProjects Project[] 
   projectPermissions ProjectPermission[]
+  messages Message[]
+  chatIds String[] @db.ObjectId
+  chats Chat[] @relation("ChatMembers", fields: [chatIds], references: [id])
+  ownedChats Chat[]
+  discussionIds  String[] @db.ObjectId
+  discussions Discussion[] @relation("DiscussionMembers", fields: [discussionIds], references: [id])
+  ownedDiscussions Discussion[]
 }
 model Project {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -47,6 +54,7 @@ model Project {
   ownerId String @db.ObjectId 
   owner User @relation(fields: [ownerId], references: [id])
   userPermissions ProjectPermission[]
+  discussions Discussion[]
 }
 model Task {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -73,6 +81,48 @@ model ProjectPermission {
   user User @relation(fields: [userId], references: [id])
 }
 
+model Message {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  replyingToId String? @db.ObjectId
+  content String
+  likes Int?
+  attachment String?
+  replies Message[] @relation("MessageReplies")
+  replyingTo Message? @relation("MessageReplies", fields: [replyingToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdBy User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  chatId String @db.ObjectId
+  chat Chat @relation(fields: [chatId], references: [id])
+}
+
+model Chat {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  createdBy User @relation(fields: [userId], references: [id])
+  messages Message[]
+  userIds String[] @db.ObjectId
+  members User[] @relation("ChatMembers", fields: [userIds], references: [id])
+  messagePinned String? @db.ObjectId
+  discussionId String? @db.ObjectId
+  discussion Discussion?
+  createdAt DateTime @default(now())
+}
+model Discussion {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  createdBy User @relation(fields: [userId], references: [id])
+  title String
+  description String
+  subjects String[]
+  chatId String @db.ObjectId @unique
+  chat Chat @relation(fields: [chatId], references: [id])
+  userIds String[] @db.ObjectId
+  members User[] @relation("DiscussionMembers", fields: [userIds], references: [id])
+  createdAt DateTime @default(now())
+  projectId String @db.ObjectId
+  project Project @relation(fields: [projectId], references: [id])
+}
 
 
 

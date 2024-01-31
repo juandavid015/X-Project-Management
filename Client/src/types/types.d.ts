@@ -65,3 +65,27 @@ export interface CustomErrorResponse {
     message?: string
     data?: Record<string, unknown>
 } 
+
+
+export interface Message {
+    id: string
+    content: string
+    createdBy: User
+    attachment: string
+    likes: number
+}
+export interface Chat {
+    id: string
+    messages: Message[]
+    members: User[]
+}
+export interface Discussion {
+    id: string
+    title: string
+    description: string
+    members: User[]
+    subjects: Array<string>
+    chat: Chat
+    createdBy: User
+    createdAt: string
+}
